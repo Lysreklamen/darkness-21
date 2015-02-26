@@ -1,0 +1,6 @@
+rootProject.name = 'darkness'
+
+include 'generator'
+
+include 'simulator'
+
