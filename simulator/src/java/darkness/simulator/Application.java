@@ -92,10 +92,9 @@ public class Application extends SimpleApplication {
         BulbManager bulbManager = BulbManager.getInstance();
         ChannelManager channelManager = ChannelManager.getInstance();
 
-
         try {
             parsePatternFile("patterns/skilt-013.txt", gesimsenLowerLeft);
-            player = new PgmPlayer("sequences/wave.pgm");
+            player = new PgmPlayer("sequences/uka13/uka13.pgm");
         } catch (IOException e) {
             e.printStackTrace();
         }
