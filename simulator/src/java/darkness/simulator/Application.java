@@ -2,18 +2,13 @@ package darkness.simulator;
 
 
 import com.jme3.app.SimpleApplication;
-import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
-import com.jme3.post.FilterPostProcessor;
-import com.jme3.post.filters.BloomFilter;
-import com.jme3.post.filters.FXAAFilter;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
-import com.jme3.scene.shape.Box;
-import com.jme3.math.ColorRGBA;
-import com.jme3.scene.shape.Sphere;
+import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
 import com.jme3.util.TangentBinormalGenerator;
 import com.simsilica.lemur.geom.MBox;
@@ -22,11 +17,14 @@ import darkness.simulator.dmx.BulbRGB;
 import darkness.simulator.dmx.ChannelManager;
 
 import java.awt.*;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 
-/** Sample 1 - how to get started with the most simple JME 3 application.
- * Display a blue 3D cube and view from all sides by
- * moving the mouse and pressing the WASD keys. */
+/**
+ * The simulators main class.
+ */
 public class Application extends SimpleApplication {
 
     private static Application instance;
@@ -51,14 +49,6 @@ public class Application extends SimpleApplication {
 
     @Override
     public void simpleInitApp() {
-        /*
-        viewPort.addProcessor(dsp = new DeferredSceneProcessor(this));
-        FilterPostProcessor fpp = new FilterPostProcessor(assetManager);
-        fpp.addFilter(new BloomFilter(BloomFilter.GlowMode.Scene));
-        fpp.addFilter(new FXAAFilter());
-        fpp.addFilter(new FXAAFilter());
-        viewPort.addProcessor(fpp);
-        */
         // Set up gesimsen
         Node gesimsenLowerLeft = new Node(); // Set up a new coordinate system with respect to the lower left corner (north) of gesimsen
         rootNode.attachChild(gesimsenLowerLeft);
@@ -66,31 +56,23 @@ public class Application extends SimpleApplication {
         MBox gesimsenBox = new MBox(10.0f, 1.0f, 0.05f, 100, 10, 1);
         Geometry gesimsenGeometry = new Geometry("Gesimsen", gesimsenBox);
 
+
         TangentBinormalGenerator.generate(gesimsenBox);
-        Material sphereMat = new Material(assetManager,
+        Material gesimsenMaterial = new Material(assetManager,
                 "Common/MatDefs/Light/Lighting.j3md");
-        //sphereMat.setTexture("DiffuseMap",
-        //        assetManager.loadTexture("Textures/Terrain/BrickWall/BrickWall.jpg"));
-        //sphereMat.setTexture("NormalMap",
-        //        assetManager.loadTexture("Textures/Terrain/BrickWall/BrickWall_normal.jpg"));
-        sphereMat.setBoolean("UseMaterialColors",true);
-        sphereMat.setColor("Diffuse",ColorRGBA.White);
-        sphereMat.setColor("Specular",ColorRGBA.Black);
-        sphereMat.setFloat("Shininess", 32.f);  // [0,128]
 
-        gesimsenGeometry.setMaterial(sphereMat);
+        gesimsenMaterial.setBoolean("UseMaterialColors", true);
+        gesimsenMaterial.setColor("Diffuse", ColorRGBA.White);
+        gesimsenMaterial.setColor("Specular", ColorRGBA.Black);
+        gesimsenMaterial.setFloat("Shininess", 32.f);  // [0,128]
 
-        //Material mat = assetManager.loadMaterial("Textures/FlatMaterial.j3m");
-        //gesimsenGeometry.setMaterial(mat);
+        gesimsenGeometry.setMaterial(gesimsenMaterial);
+
         gesimsenGeometry.setLocalTranslation(10.0f, 1f, -0.10f);
-        //gesimsenGeometry.setLocalTranslation(gesimsenBox.getXExtent()/2.0f, gesimsenBox.getYExtent()/2.0f, -gesimsenBox.getZExtent()*2.0f);
         gesimsenLowerLeft.attachChild(gesimsenGeometry);
 
         getFlyByCamera().setMoveSpeed(10.0f);
 
-
-        BulbManager bulbManager = BulbManager.getInstance();
-        ChannelManager channelManager = ChannelManager.getInstance();
 
         try {
             parsePatternFile("patterns/skilt-013.txt", gesimsenLowerLeft);
@@ -101,7 +83,6 @@ public class Application extends SimpleApplication {
         player.Start();
 
         /** Must add a light to make the lit object visible! */
-
         DirectionalLight sun = new DirectionalLight();
         sun.setDirection(new Vector3f(1, 0, -2).normalizeLocal());
         sun.setColor(ColorRGBA.White.mult(0.05f));
@@ -159,15 +140,6 @@ public class Application extends SimpleApplication {
 
     @Override
     public void simpleUpdate(float tpf) {
-        /*BulbManager bulbManager = BulbManager.getInstance();
-        for(BulbRGB bulb: bulbManager.getAllBulbs()) {
-
-            float[] hsb = Color.RGBtoHSB(bulb.getRed(), bulb.getGreen(), bulb.getBlue(), null);
-            hsb[0] += 1.0f / 50f;
-            //bulb.setHSB(0.5f, 0.5f, 0.5f);
-            bulb.setHSB(hsb[0], hsb[1], hsb[2]);
-        }
-        */
         player.update();
     }
 }
