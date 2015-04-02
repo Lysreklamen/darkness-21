@@ -1,6 +1,5 @@
 package darkness.simulator;
 
-
 import com.jme3.app.SimpleApplication;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
@@ -8,7 +7,6 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
-import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
 import com.jme3.util.TangentBinormalGenerator;
 import com.simsilica.lemur.geom.MBox;
@@ -16,36 +14,44 @@ import darkness.simulator.dmx.BulbManager;
 import darkness.simulator.dmx.BulbRGB;
 import darkness.simulator.dmx.ChannelManager;
 
-import java.awt.*;
+import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * The simulators main class.
+ * The simulator's main class.
  */
 public class Application extends SimpleApplication {
 
     private static Application instance;
 
-    public static void main(String[] args){
-        instance = new Application();
-        instance.setShowSettings(false);
+    private final Arguments arguments;
+    private PgmPlayer player;
+
+    public Application(Arguments arguments) {
+        this.arguments = arguments;
+        setShowSettings(false);
         AppSettings setting = new AppSettings(true);
         setting.put("Width", 1280);
         setting.put("Height", 720);
         setting.put("Title", "Darkness Simulator");
         setting.put("VSync", true);
+        setSettings(setting);
+    }
 
-        instance.setSettings(setting);
-
+    public static void main(String[] args) throws IOException {
+        instance = new Application(parseArguments(args));
         instance.start(); // start the game
     }
 
     public static Application getInstance() { return instance; }
-
-    PgmPlayer player;
 
     @Override
     public void simpleInitApp() {
@@ -73,22 +79,23 @@ public class Application extends SimpleApplication {
 
         getFlyByCamera().setMoveSpeed(10.0f);
 
-
         try {
-            parsePatternFile("patterns/skilt-013.txt", gesimsenLowerLeft);
-            player = new PgmPlayer("sequences/uka13/uka13.pgm");
+            parsePatternFile(arguments.getPatternFileName(), gesimsenLowerLeft);
+            List<PgmReader> pgmReaders = new ArrayList<PgmReader>();
+            for (String pgmFileName : arguments.getSequenceFileNames()) {
+                pgmReaders.add(new PgmReader(pgmFileName));
+            }
+            player = new PgmPlayer(pgmReaders);
+            player.start();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        player.Start();
 
         /** Must add a light to make the lit object visible! */
         DirectionalLight sun = new DirectionalLight();
         sun.setDirection(new Vector3f(1, 0, -2).normalizeLocal());
         sun.setColor(ColorRGBA.White.mult(0.05f));
         rootNode.addLight(sun);
-
-
     }
 
     public void parsePatternFile(String fileName, Node parentNode) throws IOException {
@@ -141,5 +148,41 @@ public class Application extends SimpleApplication {
     @Override
     public void simpleUpdate(float tpf) {
         player.update();
+    }
+
+    private static Arguments parseArguments(String[] args) throws IOException {
+        String patternFileName = null;
+        List<String> sequenceFileNames = new ArrayList<String>();
+        for (int i = 0; i < args.length; i++) {
+            if (args[i].equals("--pattern")) {
+                patternFileName = args[++i];
+            }
+            else if (args[i].equals("--playlist")) {
+                String playlist = args[++i];
+                sequenceFileNames.addAll(Files.readAllLines(Paths.get(playlist), StandardCharsets.UTF_8));
+            }
+            else if (args[i].equals("--sequence")) {
+                sequenceFileNames.add(args[++i]);
+            }
+        }
+        return new Arguments(patternFileName, sequenceFileNames);
+    }
+
+    private static class Arguments {
+        private final String patternFileName;
+        private final List<String> sequenceFileNames;
+
+        public Arguments(String patternFileName, List<String> sequenceFileNames) {
+            this.patternFileName = patternFileName;
+            this.sequenceFileNames = sequenceFileNames;
+        }
+
+        public String getPatternFileName() {
+            return patternFileName;
+        }
+
+        public List<String> getSequenceFileNames() {
+            return sequenceFileNames;
+        }
     }
 }

@@ -2,180 +2,82 @@ package darkness.simulator;
 
 import darkness.simulator.dmx.Channel;
 import darkness.simulator.dmx.ChannelManager;
+import darkness.simulator.dmx.Frame;
 
-import java.io.*;
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.io.IOException;
+import java.util.List;
 
-/**
- * Created by janosa on 2/23/15.
- */
 public class PgmPlayer implements Runnable {
-    private final String fileName;
-    private BufferedReader reader;
-    private final int maxLoadedFrames = 40;
-    private final int headerLineSize = 3;
+    private final List<PgmReader> readers;
+    private final Thread thread;
 
-    // The number of frames in the file
-    private  int frames = 0;
-    // Holds the current frame being viewed now
-    private int currentFrameNumber = 0;
-    private int lastViewedFrame = 0;
-    private int lineNumber = 0;
+    private int currentReaderIndex;
+    private int currentFrameIndex;
+    private long lastUpdateTime = 0;
 
-    private LinkedList<Integer> loadedFrameNumbers = new LinkedList<Integer>();
-    private HashMap<Integer, FrameContainer> loadedFrames = new HashMap<Integer, FrameContainer>();
+    private static final long frameDuration = 1000 / 24;
 
-    public PgmPlayer(String fileName) throws FileNotFoundException {
-        this.fileName = fileName;
-        reader = new BufferedReader(new FileReader(new File(fileName)));
+    public PgmPlayer(List<PgmReader> readers) {
+        if (readers == null || readers.size() == 0) {
+            throw new IllegalArgumentException("readers is null or empty");
+        }
+        this.readers = readers;
+        this.thread = new Thread(this, "PgmPlayer Worker");
+        this.thread.setDaemon(true);
     }
 
-    public void Start() {
-        Thread thread = new Thread(this, "PgmPlayer Worker");
-        thread.setDaemon(true);
+    public void start() {
         thread.start();
     }
 
-
-    @Override
-    public void run() {
-        try {
-            if(!readHeader()) {
-                return;
+    @Override public void run() {
+        for (PgmReader reader : readers) {
+            try {
+                reader.read();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
-
-            while(true) {
-                loadFrames();
-
-                Thread.sleep(1000/24);
-                currentFrameNumber++;
-                if(currentFrameNumber == frames) {
-                    currentFrameNumber = 0;
-                }
-            }
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
     }
 
     public void update() {
-        int frame = currentFrameNumber;
-        if(lastViewedFrame == frame) {
-            return; // We have already shown this frame, so no need to update
-        }
-
-
-        FrameContainer container = loadedFrames.get(frame);
-        if(container == null) {
-            System.err.println("PgmReader is lagging behind!!! :/");
+        long now = System.currentTimeMillis();
+        if (now - lastUpdateTime < frameDuration) {
             return;
         }
+        lastUpdateTime = now;
 
-
-
-        ChannelManager channelManager = ChannelManager.getInstance();
-        synchronized (container) {
-            for(int i = 0; i < 512; i++) {
-                Channel channel = channelManager.getChannel(i+1);
-                if(channel != null) {
-                    channel.setValue(container.channelValues[i]);
-                }
-            }
-        }
-
-        lastViewedFrame = frame;
-    }
-
-    private void loadFrames() throws IOException {
-        // We want to have +- maxLoadedFrames in memory at all times
-        for(int frameNumber = currentFrameNumber-maxLoadedFrames/2; frameNumber < currentFrameNumber+maxLoadedFrames/2; frameNumber++) {
-            if(frameNumber < 0) {
-                // TODO load end of file
-                continue; // There is no negative frame numbers...
-            }
-            if(frameNumber >= frames) {
-                // TODO load start of file
-                continue;
-            }
-            if(loadedFrames.containsKey(frameNumber)) {
-                continue;
-            }
-            // Already loaded. Great...
-
-            // We do not have this frame in memory, lets load it
-            if(frameNumber+headerLineSize < lineNumber) {
-                // TODO reload the file
-                System.err.println("Should reload! Want frame "+frameNumber+". We are on line: "+lineNumber);
+        while (true) {
+            PgmReader currentReader = readers.get(currentReaderIndex);
+            if (currentReader.getFrameCount() == null) {
+                System.err.println(String.format("Waiting for header of PGM file '%s' to be loaded", currentReader.getFileName()));
                 return;
             }
-
-            String line = null;
-            do {
-                line = reader.readLine();
-                lineNumber++;
-            } while(lineNumber != frameNumber+headerLineSize && lineNumber < frames+headerLineSize);
-
-
-            if(line == null) {
-                System.err.println("Could not find frame: "+frameNumber+" we are now on line: "+lineNumber);
-            }
-
-            FrameContainer container = null;
-            // Now lets get a slot for the frame
-            /*if(loadedFrameNumbers.size() > maxLoadedFrames) {
-                int replaceFrameNumber = loadedFrameNumbers.getFirst();
-                container = loadedFrames.remove(replaceFrameNumber);
-            }
-            else {*/
-                container = new FrameContainer();
-            //}
-
-            synchronized (container) {
-                container.frameNumber = frameNumber;
-                // We got the line representing the frame... Great
-                String[] parts = line.split(" ");
-                for(int i = 0; i < 512 && i < parts.length; i++) {
-                    int val = Integer.parseInt(parts[i]);
-                    container.channelValues[i] = val;
+            if (currentFrameIndex < currentReader.getFrameCount()) {
+                Frame currentFrame = currentReader.getFrame(currentFrameIndex);
+                if (currentFrame == null) {
+                    System.err.println(String.format("Waiting for frame %d of PGM file '%d' to be loaded", currentFrameIndex, currentReader.getFileName()));
+                    return;
+                } else {
+                    display(currentFrame);
+                    currentFrameIndex++;
+                    return;
                 }
-
-                loadedFrames.put(frameNumber, container);
-                loadedFrameNumbers.addLast(frameNumber);
+            } else {
+                currentFrameIndex = 0;
+                currentReaderIndex = (currentReaderIndex + 1) % readers.size();
             }
-
-            System.out.println("Loaded frame: "+frameNumber);
-
         }
     }
 
-    private boolean readHeader() throws IOException {
-        // Read header
-        String header = reader.readLine();
-        if(!header.equals("P2")) {
-            System.err.println("The PGM file: "+fileName+" is not in the correct format");
-            return false;
+    private void display(Frame frame) {
+        for (int i = 1; i <= Frame.SIZE; i++) {
+            Channel channel = ChannelManager.getInstance().getChannel(i);
+            if (channel != null) {
+                channel.setValue(frame.getChannelValue(i));
+            }
         }
-        // Skip the next two lines. We don't need them
-        String header2 = reader.readLine();
-        String[] header2Parts = header2.split(" ");
-        if(header2Parts.length == 2) {
-            frames = Integer.parseInt(header2Parts[1]);
-        }
-        reader.readLine();
-        lineNumber = headerLineSize-1;
-
-        return true;
     }
-
-    private class FrameContainer {
-        public int frameNumber = -1;
-        public int[] channelValues = new int[512];
-    }
-
-
 }
