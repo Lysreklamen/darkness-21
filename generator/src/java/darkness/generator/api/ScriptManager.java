@@ -1,6 +1,8 @@
 package darkness.generator.api;
 
 import darkness.generator.api.effects.EffectBase;
+import darkness.generator.output.ConsoleOutput;
+import darkness.generator.output.FileOutput;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -30,8 +32,14 @@ public class ScriptManager {
         ScriptContext mainScriptContext = new ScriptContext(mainScript);
         scriptContextList.add(mainScriptContext);
 
+        ConsoleOutput output = new ConsoleOutput();
+        //FileOutput output = new FileOutput( "test.txt" );
+
         // Start the script
         while(!scriptContextList.isEmpty()) {
+            // Start script
+            output.beginScript();
+
             // Make all scripts generate a single frame.
             // We do it in the reverse order to make sure its the main script that will always win the channel value if multiple scripts are working on a channel
             Iterator<ScriptContext> scriptContextIterator = scriptContextList.descendingIterator();
@@ -40,20 +48,19 @@ public class ScriptManager {
                 if(!sctx.doFrame()) {
                     // The script is done executing. Remove it
                     scriptContextIterator.remove();
-                    System.out.println("Script: "+sctx.script.getClass().getSimpleName()+" done");
+                    output.endScript( sctx.script.getClass().getSimpleName() );
                 }
             }
 
-            System.out.print("Frame: ");
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(System.out));
-            try {
-                ChannelManager.getInstance().dumpChannels(writer);
-                writer.flush();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            System.out.println();
+            output.beginFrame();
+
+            ChannelManager.getInstance().dumpChannels(output);
+
+            output.endFrame();
         }
+
+        // Flush output
+        output.flush();
     }
 
     public void registerEffect(EffectBase effect) {

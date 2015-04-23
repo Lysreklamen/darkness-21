@@ -1,5 +1,7 @@
 package darkness.generator.api;
 
+import darkness.generator.output.BaseOutput;
+
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -49,6 +51,13 @@ public class ChannelManager {
      */
     public Channel getChannel(int channel) {
         return getChannel(0, channel);
+    }
+
+    public void dumpChannels( BaseOutput output ) {
+        for (Channel channel: channelMap.values()) {
+
+            output.writeChannelValue( channel.getValue() );
+        }
     }
 
     public void dumpChannels(BufferedWriter writer) throws IOException {
