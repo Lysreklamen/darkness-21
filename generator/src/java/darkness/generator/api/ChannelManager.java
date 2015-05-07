@@ -7,9 +7,6 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.HashMap;
 
-/**
- * Created by janosa on 2/20/15.
- */
 public class ChannelManager {
     private static ChannelManager ourInstance = new ChannelManager();
 

@@ -2,9 +2,6 @@ package darkness.generator.api;
 
 import java.awt.*;
 
-/**
- * Created by janosa on 2/19/15.
- */
 public class BulbRGB {
     private final Channel channelRed;
     private final Channel channelGreen;

@@ -3,9 +3,6 @@ package darkness.generator.api;
 import java.util.HashMap;
 import java.util.NoSuchElementException;
 
-/**
- * Created by janosa on 2/19/15.
- */
 public class BulbManager {
     private static BulbManager instance = new BulbManager();
 

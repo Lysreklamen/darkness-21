@@ -5,9 +5,6 @@ import darkness.generator.api.ScriptBase;
 
 import java.awt.*;
 
-/**
- * Created by janosa on 2/20/15.
- */
 public class RGBFade extends EffectBase {
     private final Color startColor;
     private final Color endColor;

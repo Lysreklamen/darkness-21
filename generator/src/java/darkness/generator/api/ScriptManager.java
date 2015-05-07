@@ -15,9 +15,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-/**
- * Created by janosa on 2/20/15.
- */
 public class ScriptManager {
     private static ScriptManager instance = new ScriptManager();
 

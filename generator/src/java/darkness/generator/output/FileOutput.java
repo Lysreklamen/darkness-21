@@ -4,9 +4,6 @@ import java.io.FileWriter;
 import java.io.BufferedWriter;
 import java.io.IOException;
 
-/**
- * Created by knutaldrin on 26.02.15.
- */
 public class FileOutput extends BaseOutput {
 
     public FileOutput( String fileName ) {

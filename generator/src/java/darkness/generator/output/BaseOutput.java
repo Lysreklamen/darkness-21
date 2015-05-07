@@ -3,9 +3,6 @@ package darkness.generator.output;
 import java.io.BufferedWriter;
 import java.io.IOException;
 
-/**
- * Created by knutaldrin on 26.02.15.
- */
 public abstract class BaseOutput {
 
     protected BufferedWriter writer;

@@ -4,10 +4,6 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
-
-/**
- * Created by knutaldrin on 12.03.15.
- */
 public class ConsoleOutput extends BaseOutput {
 
     public ConsoleOutput() {

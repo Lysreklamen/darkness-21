@@ -6,9 +6,6 @@ import darkness.generator.api.effects.RGBFade;
 
 import java.awt.*;
 
-/**
- * Created by janosa on 2/19/15.
- */
 public abstract class ScriptBase extends Generator<Void> {
 
     protected BulbRGB bulb(int id) {
