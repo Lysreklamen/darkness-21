@@ -5,10 +5,13 @@ import darkness.simulator.dmx.ChannelManager;
 import darkness.simulator.dmx.Frame;
 
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 public class PgmPlayer implements Runnable {
     private final List<PgmReader> readers;
+	private final LinkedList<Iterator<Frame>> overlays;
     private final Thread thread;
 
     private int currentReaderIndex;
@@ -22,6 +25,7 @@ public class PgmPlayer implements Runnable {
             throw new IllegalArgumentException("readers is null or empty");
         }
         this.readers = readers;
+		this.overlays = new LinkedList<Iterator<Frame>>();
         this.thread = new Thread(this, "PgmPlayer Worker");
         this.thread.setDaemon(true);
     }
@@ -53,29 +57,49 @@ public class PgmPlayer implements Runnable {
             PgmReader currentReader = readers.get(currentReaderIndex);
             if (currentReader.getFrameCount() == null) {
                 System.err.println(String.format("Waiting for header of PGM file '%s' to be loaded", currentReader.getFileName()));
-                return;
+                break;
             }
             if (currentFrameIndex < currentReader.getFrameCount()) {
                 Frame currentFrame = currentReader.getFrame(currentFrameIndex);
                 if (currentFrame == null) {
                     System.err.println(String.format("Waiting for frame %d of PGM file '%d' to be loaded", currentFrameIndex, currentReader.getFileName()));
-                    return;
+                    break;
                 } else {
                     display(currentFrame);
                     currentFrameIndex++;
-                    return;
+                    break;
                 }
             } else {
                 currentFrameIndex = 0;
                 currentReaderIndex = (currentReaderIndex + 1) % readers.size();
             }
         }
+
+		Iterator<Iterator<Frame>> overlayIterator = overlays.iterator();
+		while (overlayIterator.hasNext()) {
+			Iterator<Frame> overlay = overlayIterator.next();
+			if (overlay.hasNext()) {
+				display(overlay.next());
+			} else {
+				overlayIterator.remove();
+			}
+		}
     }
+
+	public void addOverlay(PgmReader overlayReader) {
+		if (overlayReader.getFrameCount() == null) {
+			throw new IllegalArgumentException("An overlay PgmReader must be loaded by the time it is added");
+		}
+		synchronized (overlays) {
+			overlays.add(overlayReader.iterator());
+		}
+	}
 
     private void display(Frame frame) {
         for (int i = 1; i <= Frame.SIZE; i++) {
             Channel channel = ChannelManager.getInstance().getChannel(i);
-            if (channel != null) {
+			int channelValue = frame.getChannelValue(i);
+            if (channel != null && channelValue != Frame.TRANSPARENT) {
                 channel.setValue(frame.getChannelValue(i));
             }
         }

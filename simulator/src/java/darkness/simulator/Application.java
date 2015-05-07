@@ -44,6 +44,7 @@ public class Application extends SimpleApplication {
         setting.put("Title", "Darkness Simulator");
         setting.put("VSync", true);
         setSettings(setting);
+		setPauseOnLostFocus(false);
     }
 
     public static void main(String[] args) throws IOException {
@@ -87,6 +88,7 @@ public class Application extends SimpleApplication {
             }
             player = new PgmPlayer(pgmReaders);
             player.start();
+			new CommandSocket(player).start();
         } catch (IOException e) {
             e.printStackTrace();
         }

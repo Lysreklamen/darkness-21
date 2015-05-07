@@ -6,13 +6,15 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-public class PgmReader {
+public class PgmReader implements Iterable<Frame> {
     private final String fileName;
     private final List<Frame> frames = new ArrayList<Frame>();
     /** The number of frames in the file. Is null until {@link #read()} has been called and the headers have been read. */
     private Integer frameCount;
+	private boolean supportsTransparency;
     private BufferedReader reader;
     private int lineNumber = 0;
 
@@ -53,6 +55,10 @@ public class PgmReader {
         }
     }
 
+	public Iterator<Frame> iterator() {
+		return new PgmFrameIterator();
+	}
+
     private void readHeaders() throws IOException, ParseException {
         String magicHeader = reader.readLine();
         if(!magicHeader.equals("P2")) {
@@ -66,9 +72,10 @@ public class PgmReader {
         frameCount = Integer.parseInt(dimensions[1]);
 
         String maxValue = reader.readLine();
-        if (!maxValue.equals("255")) {
+        if (!(maxValue.equals("255") || maxValue.equals("256"))) {
             throw new ParseException(fileName, 3, "Unsupported max value header");
         }
+		supportsTransparency = maxValue.equals("256");
         lineNumber = 3;
     }
 
@@ -83,7 +90,7 @@ public class PgmReader {
             if (parts.length != Frame.SIZE) {
                 throw new ParseException(fileName, lineNumber, String.format("Line contains %d values (expected %d)", parts.length, Frame.SIZE));
             }
-            Frame frame = new Frame();
+            Frame frame = new Frame(supportsTransparency);
             for(int i = 0; i < parts.length; i++) {
                 int channel = i + 1;
                 try {
@@ -100,4 +107,26 @@ public class PgmReader {
             }
         }
     }
+
+	private class PgmFrameIterator implements Iterator<Frame> {
+		private int frameIndex;
+
+		private PgmFrameIterator() {
+			if (frameCount == null) {
+				throw new IllegalStateException("Can't create a PgmFrameIterator for a PgmFrame that isn't loaded");
+			}
+		}
+
+		@Override public boolean hasNext() {
+			return frameIndex < frameCount;
+		}
+
+		@Override public Frame next() {
+			return frames.get(frameIndex++);
+		}
+
+		@Override public void remove() {
+			throw new UnsupportedOperationException();
+		}
+	}
 }
