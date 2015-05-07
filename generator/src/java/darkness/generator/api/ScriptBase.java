@@ -3,6 +3,7 @@ package darkness.generator.api;
 import com.zoominfo.util.yieldreturn.Generator;
 import darkness.generator.api.effects.EffectBase;
 import darkness.generator.api.effects.RGBFade;
+import darkness.generator.api.effects.HSVFade;
 
 import java.awt.*;
 
@@ -83,6 +84,10 @@ public abstract class ScriptBase extends Generator<Void> {
 
     protected void rgbFade(BulbRGB bulb, Color color, int duration) {
         effect(new RGBFade(bulb, color, duration));
+    }
+
+    protected void hsvFade(BulbRGB bulb, float[] color, int duration) {
+        effect(new HSVFade(bulb, color, duration));
     }
 
     protected void rgbFade(BulbRGB bulb, int red, int green, int blue, int duration) {
