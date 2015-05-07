@@ -3,7 +3,7 @@ package darkness.generator.api.effects;
 import darkness.generator.api.BulbRGB;
 import darkness.generator.api.ScriptBase;
 
-import java.awt.*;
+import java.awt.Color;
 
 public class RGBFade extends EffectBase {
     private final Color startColor;
@@ -41,6 +41,6 @@ public class RGBFade extends EffectBase {
 
     @Override
     public String toString() {
-        return "Effect RGBFade on "+bulb + "from color: "+startColor+" to color " + endColor + " over "+frames+" frames.";
+        return "Effect RGBFade on " + bulb + " from color: " + startColor + " to color: " + endColor + " over " + frames + " frames.";
     }
 }
