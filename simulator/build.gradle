@@ -43,3 +43,15 @@ sourceSets {
         }
     }
 }
+
+processResources {
+    filesMatching('**/*.xml') {
+        filter {
+            it.replace('texture_coord_dimensions_0="float2"', 'texture_coord_dimensions_0="2"')
+        }
+    }
+}
+
+run {
+    args = ["--pattern", "./patterns/skilt-013.txt", "--sequence", "./sequences/uka13/uka13.pgm"]
+}

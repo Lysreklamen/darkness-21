@@ -1,12 +1,18 @@
 package darkness.simulator;
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.asset.plugins.FileLocator;
+import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
+import com.jme3.light.PointLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Quaternion;
+import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
 import com.jme3.util.TangentBinormalGenerator;
 import com.simsilica.lemur.geom.MBox;
@@ -56,32 +62,30 @@ public class Application extends SimpleApplication {
 
     @Override
     public void simpleInitApp() {
-        // Set up gesimsen
-        Node gesimsenLowerLeft = new Node(); // Set up a new coordinate system with respect to the lower left corner (north) of gesimsen
-        rootNode.attachChild(gesimsenLowerLeft);
+        // Load samfundet scene
+        final Node scene = (Node) assetManager.loadModel("scenes/uka_generic/samfundet.scene");
 
-        MBox gesimsenBox = new MBox(10.0f, 1.0f, 0.05f, 100, 10, 1);
-        Geometry gesimsenGeometry = new Geometry("Gesimsen", gesimsenBox);
+        // attach to root node
+        rootNode.attachChild(scene);
 
+        rootNode.addLight(new AmbientLight());
+        //rootNode.addLight(new PointLight());
 
-        TangentBinormalGenerator.generate(gesimsenBox);
-        Material gesimsenMaterial = new Material(assetManager,
-                "Common/MatDefs/Light/Lighting.j3md");
-
-        gesimsenMaterial.setBoolean("UseMaterialColors", true);
-        gesimsenMaterial.setColor("Diffuse", ColorRGBA.White);
-        gesimsenMaterial.setColor("Specular", ColorRGBA.Black);
-        gesimsenMaterial.setFloat("Shininess", 32.f);  // [0,128]
-
-        gesimsenGeometry.setMaterial(gesimsenMaterial);
-
-        gesimsenGeometry.setLocalTranslation(10.0f, 1f, -0.10f);
-        gesimsenLowerLeft.attachChild(gesimsenGeometry);
-
+        // Move the camera to the crossing, looking up towards gesimsen
+        cam.setLocation(new Vector3f(-10.450743f, 2.7112355f, 35.287804f));
+        cam.setRotation(new Quaternion(-0.024610115f, 0.9680668f, 0.105350286f, 0.22614653f));
         getFlyByCamera().setMoveSpeed(10.0f);
 
+        DirectionalLight sun = new DirectionalLight();
+        sun.setDirection(new Vector3f(1, 0, -2).normalizeLocal());
+        sun.setColor(ColorRGBA.White.mult(0.05f));
+        rootNode.addLight(sun);
+
+        Node skiltNode = (Node)rootNode.getChild("skilt");
+        Node skiltBottomLeft = (Node) skiltNode.getChild("bottom_left");
+
         try {
-            parsePatternFile(arguments.getPatternFileName(), gesimsenLowerLeft);
+            parsePatternFile(arguments.getPatternFileName(), skiltBottomLeft);
             List<PgmReader> pgmReaders = new ArrayList<PgmReader>();
             for (String pgmFileName : arguments.getSequenceFileNames()) {
                 pgmReaders.add(new PgmReader(pgmFileName));
@@ -92,12 +96,6 @@ public class Application extends SimpleApplication {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        /** Must add a light to make the lit object visible! */
-        DirectionalLight sun = new DirectionalLight();
-        sun.setDirection(new Vector3f(1, 0, -2).normalizeLocal());
-        sun.setColor(ColorRGBA.White.mult(0.05f));
-        rootNode.addLight(sun);
     }
 
     public void parsePatternFile(String fileName, Node parentNode) throws IOException {
@@ -124,8 +122,8 @@ public class Application extends SimpleApplication {
                 offsetY = (offsetY + Float.parseFloat(parts[i+1])) / 2;
             }
 
-            float posX = - 2.0f + (Float.parseFloat(parts[1]) + offsetX) / 5.0f;
-            float posY = 3.5f - (Float.parseFloat(parts[2]) + offsetY) / 10.0f ;
+            float posX = (Float.parseFloat(parts[1]) + offsetX - 16.0f) / 9.0f;
+            float posY = 3.4f - (Float.parseFloat(parts[2]) + offsetY) / 10.0f ;
 
 
 

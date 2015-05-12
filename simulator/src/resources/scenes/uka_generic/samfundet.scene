@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scene formatVersion="1.0" upAxis="y" unitsPerMeter="1" unitType="meters" minOgreVersion="1.8" ogreMaxVersion="2.6.4" author="OgreMax Scene Exporter (www.ogremax.com)" application="3DS Max">
+    <nodes>
+        <node name="Studentersamfundet">
+            <position x="0" y="8.5" z="-3.71547e-007"/>
+            <scale x="1" y="1" z="1"/>
+            <rotation qx="0" qy="0" qz="0" qw="1"/>
+            <node name="rund_del">
+                <position x="6.93393e-007" y="-8.5" z="9.65018e-007"/>
+                <scale x="1" y="1" z="1"/>
+                <rotation qx="0" qy="0" qz="0" qw="1"/>
+                <entity name="rund_del" castShadows="true" receiveShadows="true" meshFile="rund_del.mesh">
+                    <subentities>
+                        <subentity index="0" materialName="01-Default"/>
+                    </subentities>
+                </entity>
+            </node>
+            <node name="ingangsparti">
+                <position x="-0.0147882" y="-8.5" z="15.037"/>
+                <scale x="1" y="1" z="1"/>
+                <rotation qx="0" qy="0" qz="0" qw="1"/>
+                <entity name="ingangsparti" castShadows="true" receiveShadows="true" meshFile="ingangsparti.mesh">
+                    <subentities>
+                        <subentity index="0" materialName="01-Default"/>
+                    </subentities>
+                </entity>
+            </node>
+        </node>
+        <node name="bakke">
+            <position x="0.792704" y="8.61685e-007" z="19.7131"/>
+            <scale x="1.50584" y="0.92816" z="1.50584"/>
+            <rotation qx="0" qy="0.819152" qz="-3.58063e-008" qw="0.573576"/>
+            <entity name="bakke" castShadows="true" receiveShadows="true" meshFile="bakke.mesh">
+                <subentities>
+                    <subentity index="0" materialName="Material#15"/>
+                </subentities>
+            </entity>
+        </node>
+        <node name="skilt">
+            <position x="0" y="10" z="16"/>
+            <scale x="1" y="1" z="1"/>
+            <rotation qx="0" qy="0" qz="0" qw="1"/>
+            <node name="skilt_base">
+                <position x="0" y="0" z="0"/>
+                <scale x="1" y="1" z="1"/>
+                <rotation qx="0" qy="0" qz="0" qw="1"/>
+                <entity name="skilt_base" castShadows="true" receiveShadows="true" meshFile="skilt_base.mesh">
+                    <subentities>
+                        <subentity index="0" materialName="skilt_base"/>
+                    </subentities>
+                </entity>
+            </node>
+            <node name="bottom_left">
+                <position x="-5" y="0" z="0.200001"/>
+                <scale x="1" y="1" z="1"/>
+                <rotation qx="0" qy="0" qz="0" qw="1"/>
+            </node>
+        </node>
+    </nodes>
+</scene>
