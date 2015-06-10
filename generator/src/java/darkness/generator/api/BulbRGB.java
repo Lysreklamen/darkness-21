@@ -2,7 +2,7 @@ package darkness.generator.api;
 
 import java.awt.*;
 
-public class BulbRGB {
+public class BulbRGB implements BulbSet {
     private final Channel channelRed;
     private final Channel channelGreen;
     private final Channel channelBlue;
@@ -25,12 +25,14 @@ public class BulbRGB {
         return channelBlue;
     }
 
+    @Override
     public void set(int red, int green, int blue) {
         channelRed.setValue(red);
         channelGreen.setValue(green);
         channelBlue.setValue(blue);
     }
 
+    @Override
     public void set(Color color) {
         set(color.getRed(), color.getGreen(), color.getBlue());
     }
@@ -45,22 +47,27 @@ public class BulbRGB {
      * @param saturation In the range 0.0..1.0
      * @param brightness In the range 0.0..1.0
      */
+    @Override
     public void setHSB(float hue, float saturation, float brightness) {
         set(Color.getHSBColor(hue,saturation, brightness));
     }
 
+    @Override
     public Color getColor() {
         return new Color(getRed(), getGreen(), getBlue());
     }
 
+    @Override
     public int getRed() {
         return channelRed.getValue();
     }
 
+    @Override
     public int getGreen() {
         return channelGreen.getValue();
     }
 
+    @Override
     public int getBlue() {
         return channelBlue.getValue();
     }

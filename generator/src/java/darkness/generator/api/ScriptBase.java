@@ -13,6 +13,14 @@ public abstract class ScriptBase extends Generator<Void> {
         return BulbManager.getInstance().getBulb(id);
     }
 
+    protected BulbGroup group(int... ids) {
+        BulbRGB[] bulbs = new BulbRGB[ids.length];
+        for (int i = 0; i < bulbs.length; i++) {
+            bulbs[i] = bulb(ids[i]);
+        }
+        return new BulbGroup(bulbs);
+    }
+
     protected BulbRGB bulb(String name) {
         return BulbManager.getInstance().getBulb(name);
     }
@@ -62,35 +70,35 @@ public abstract class ScriptBase extends Generator<Void> {
 
     /**
      * Sets a color on a bulb
-     * @param bulb The bulb to set the color on
+     * @param bulbSet The bulb or bulb group to set the color on
      * @param red Value between 0..255
      * @param green Value between 0..255
      * @param blue Value between 0..255
      */
-    protected void setRGB(BulbRGB bulb, int red, int green, int blue) {
-        bulb.set(red, green, blue);
+    protected void setRGB(BulbSet bulbSet, int red, int green, int blue) {
+        bulbSet.set(red, green, blue);
     }
 
     /**
      * Sets a HSB color on a bulb
-     * @param bulb The bulb to set the color on
+     * @param bulbSet The bulb or bulb group to set the color on
      * @param hue The floor of this number is subtracted from it to create a fraction between 0 and 1. This fractional number is then multiplied by 360 to produce the hue angle in the HSB color model.
      * @param saturation In the range 0.0..1.0
      * @param brightness In the range 0.0..1.0
      */
-    protected void SetHSV(BulbRGB bulb, int hue, int saturation, int brightness) {
-        bulb.setHSB(hue, saturation, brightness);
+    protected void SetHSV(BulbSet bulbSet, int hue, int saturation, int brightness) {
+        bulbSet.setHSB(hue, saturation, brightness);
     }
 
-    protected void rgbFade(BulbRGB bulb, Color color, int duration) {
-        effect(new RGBFade(bulb, color, duration));
+    protected void rgbFade(BulbSet bulbSet, Color color, int duration) {
+        effect(new RGBFade(bulbSet, color, duration));
     }
 
-    protected void hsvFade(BulbRGB bulb, float[] color, int duration) {
-        effect(new HSVFade(bulb, color, duration));
+    protected void hsvFade(BulbSet bulbSet, float[] color, int duration) {
+        effect(new HSVFade(bulbSet, color, duration));
     }
 
-    protected void rgbFade(BulbRGB bulb, int red, int green, int blue, int duration) {
-        rgbFade(bulb, new Color(red, green, blue), duration);
+    protected void rgbFade(BulbSet bulbSet, int red, int green, int blue, int duration) {
+        rgbFade(bulbSet, new Color(red, green, blue), duration);
     }
 }

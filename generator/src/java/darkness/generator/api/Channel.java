@@ -1,8 +1,8 @@
 package darkness.generator.api;
 
 /**
- * A class that represent a single grayscale DMX channel.
- * Multiple channels can be grouped together to bulbs, giving for example an RGB bulb
+ * A class that represents a single grayscale DMX channel.
+ * Multiple channels can be grouped together to bulbs, giving for example an RGB bulb.
  */
 public class Channel {
     private final int universe;
@@ -50,11 +50,11 @@ public class Channel {
 
     /**
      * Sets a value to the channel
-     * @param value a value between 0 and 255 inclusive.
+     * @param value a value between 0 and 255 inclusive (to indicate a DMX channel value), or 256 (to indicate transparency; only useful in overlays).
      */
     public void setValue(int value) {
-        if(value < 0 || value > 255) {
-            throw new IllegalArgumentException("The channels value must be between 0 and 255 (inclusive)");
+        if(value < 0 || value > 256) {
+            throw new IllegalArgumentException("The channels value must be between 0 and 255 (inclusive), or 256 for transparency");
         }
         this.value = value;
     }

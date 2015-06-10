@@ -1,21 +1,20 @@
 package darkness.generator.api.effects;
 
-import darkness.generator.api.BulbRGB;
-import darkness.generator.api.ScriptBase;
+import darkness.generator.api.BulbSet;
 
 import java.awt.Color;
 
 public class RGBFade extends EffectBase {
     private final Color startColor;
     private final Color endColor;
-    private final BulbRGB bulb;
+    private final BulbSet bulbSet;
     private final int frames;
     private boolean cancelled = false;
 
-    public RGBFade(BulbRGB bulb, Color endColor, int frames) {
-        this.startColor = bulb.getColor();
+    public RGBFade(BulbSet bulbSet, Color endColor, int frames) {
+        this.startColor = bulbSet.getColor();
         this.endColor = endColor;
-        this.bulb = bulb;
+        this.bulbSet = bulbSet;
         this.frames = frames;
     }
 
@@ -29,7 +28,7 @@ public class RGBFade extends EffectBase {
             int green  = startColor.getGreen() + ((endColor.getGreen() - startColor.getGreen())*frame) / frames;
             int blue = startColor.getBlue() + ((endColor.getBlue() - startColor.getBlue())*frame) / frames;
 
-            bulb.set(red, green, blue);
+            bulbSet.set(red, green, blue);
             next();
         }
     }
@@ -41,6 +40,6 @@ public class RGBFade extends EffectBase {
 
     @Override
     public String toString() {
-        return "Effect RGBFade on " + bulb + " from color: " + startColor + " to color: " + endColor + " over " + frames + " frames.";
+        return "Effect RGBFade on " + bulbSet + " from color: " + startColor + " to color: " + endColor + " over " + frames + " frames.";
     }
 }

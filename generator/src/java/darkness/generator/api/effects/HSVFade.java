@@ -1,6 +1,6 @@
 package darkness.generator.api.effects;
 
-import darkness.generator.api.BulbRGB;
+import darkness.generator.api.BulbSet;
 
 import java.awt.Color;
 
@@ -11,14 +11,14 @@ public class HSVFade extends EffectBase {
 
     private final float[] startHSV;
     private final float[] endHSV;
-    private final BulbRGB bulb;
+    private final BulbSet bulbSet;
     private final int frames;
     private boolean cancelled = false;
 
-    public HSVFade(BulbRGB bulb, float[] endHSV, int frames) {
-        startHSV = Color.RGBtoHSB( bulb.getRed(), bulb.getGreen(), bulb.getRed(), null );
+    public HSVFade(BulbSet bulbSet, float[] endHSV, int frames) {
+        startHSV = Color.RGBtoHSB( bulbSet.getRed(), bulbSet.getGreen(), bulbSet.getBlue(), null );
         this.endHSV = endHSV;
-        this.bulb = bulb;
+        this.bulbSet = bulbSet;
         this.frames = frames;
     }
 
@@ -32,7 +32,7 @@ public class HSVFade extends EffectBase {
             float s = startHSV[1] + ( ( endHSV[1] - startHSV[1] ) * frame ) / frames;
             float v = startHSV[2] + ( ( endHSV[2] - startHSV[2] ) * frame ) / frames;
 
-            bulb.setHSB(h, s, v);
+            bulbSet.setHSB(h, s, v);
             next();
         }
     }
@@ -44,7 +44,7 @@ public class HSVFade extends EffectBase {
 
     @Override
     public String toString() {
-        return "Effect HSVFade on " + bulb + " from color: [h=" + startHSV[0] + ",s=" + startHSV[1] + ",v=" + startHSV[2]
+        return "Effect HSVFade on " + bulbSet + " from color: [h=" + startHSV[0] + ",s=" + startHSV[1] + ",v=" + startHSV[2]
                 + "] to color: [h=" + endHSV[0] + ",s=" + endHSV[1] + ",v=" + endHSV[2] + "] over " + frames + " frames.";
     }
 }
