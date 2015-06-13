@@ -1,21 +1,16 @@
 package darkness.simulator;
 
 import com.jme3.app.SimpleApplication;
-import com.jme3.asset.plugins.FileLocator;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
-import com.jme3.light.PointLight;
-import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
-import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
-import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
-import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
-import com.jme3.util.TangentBinormalGenerator;
-import com.simsilica.lemur.geom.MBox;
+import darkness.generator.api.ScriptBase;
+import darkness.generator.api.ScriptManager;
+import darkness.generator.output.PgmOutput;
 import darkness.simulator.dmx.BulbManager;
 import darkness.simulator.dmx.BulbRGB;
 import darkness.simulator.dmx.ChannelManager;
@@ -87,13 +82,16 @@ public class Application extends SimpleApplication {
         try {
             parsePatternFile(arguments.getPatternFileName(), skiltBottomLeft);
             List<PgmReader> pgmReaders = new ArrayList<PgmReader>();
+            if (arguments.getScriptClassName() != null) {
+                pgmReaders.add(generatePgmFromScript());
+            }
             for (String pgmFileName : arguments.getSequenceFileNames()) {
                 pgmReaders.add(new PgmReader(pgmFileName));
             }
             player = new PgmPlayer(pgmReaders);
             player.start();
 			new CommandSocket(player).start();
-        } catch (IOException e) {
+        } catch (IOException | ClassNotFoundException | IllegalAccessException | InstantiationException e) {
             e.printStackTrace();
         }
     }
@@ -104,6 +102,7 @@ public class Application extends SimpleApplication {
         BufferedReader reader = new BufferedReader(fileReader);
 
         BulbManager bulbManager = BulbManager.getInstance();
+        darkness.generator.api.BulbManager generatorBulbManager = darkness.generator.api.BulbManager.getInstance();
         ChannelManager channelManager = ChannelManager.getInstance();
 
         for(String line = reader.readLine(); line != null; line = reader.readLine()) {
@@ -135,6 +134,10 @@ public class Application extends SimpleApplication {
                     channelManager.getChannel(channelRed),
                     channelManager.getChannel(channelGreen),
                     channelManager.getChannel(channelBlue), parentNode, new Vector3f(posX, posY, 0.0f));
+            if (arguments.getScriptClassName() != null) {
+                // If we want to use the generator, its bulb manager must also be populated
+                generatorBulbManager.registerBulb(id, channelRed, channelGreen, channelBlue);
+            }
 
             float hue = (posX*posX+posY*posY) / (10.0f*10.0f + 1.0f*1.0f);
             Color color = Color.getHSBColor(hue, 1f, 0.9f);
@@ -150,9 +153,20 @@ public class Application extends SimpleApplication {
         player.update();
     }
 
+    private PgmReader generatePgmFromScript() throws ClassNotFoundException, IllegalAccessException, InstantiationException, IOException {
+        String qualifiedScriptClassName = (arguments.getScriptClassName().contains(".") ? "" : "darkness.generator.scripts.uka15.") + arguments.getScriptClassName();
+        ScriptBase script = (ScriptBase) Class.forName(qualifiedScriptClassName).newInstance();
+        File tempFile = File.createTempFile("darkness-sequence-" + qualifiedScriptClassName + "-", ".pgm");
+        tempFile.deleteOnExit();
+        ScriptManager scriptManager = ScriptManager.getInstance();
+        scriptManager.start(script, new PgmOutput(tempFile.getPath()));
+        return new PgmReader(tempFile.getPath());
+    }
+
     private static Arguments parseArguments(String[] args) throws IOException {
         String patternFileName = null;
         List<String> sequenceFileNames = new ArrayList<String>();
+        String scriptClassName = null;
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("--pattern")) {
                 patternFileName = args[++i];
@@ -163,18 +177,22 @@ public class Application extends SimpleApplication {
             }
             else if (args[i].equals("--sequence")) {
                 sequenceFileNames.add(args[++i]);
+            } else if (args[i].equals("--script")) {
+                scriptClassName = args[++i];
             }
         }
-        return new Arguments(patternFileName, sequenceFileNames);
+        return new Arguments(patternFileName, sequenceFileNames, scriptClassName);
     }
 
     private static class Arguments {
         private final String patternFileName;
         private final List<String> sequenceFileNames;
+        private final String scriptClassName;
 
-        public Arguments(String patternFileName, List<String> sequenceFileNames) {
+        public Arguments(String patternFileName, List<String> sequenceFileNames, String scriptClassName) {
             this.patternFileName = patternFileName;
             this.sequenceFileNames = sequenceFileNames;
+            this.scriptClassName = scriptClassName;
         }
 
         public String getPatternFileName() {
@@ -183,6 +201,10 @@ public class Application extends SimpleApplication {
 
         public List<String> getSequenceFileNames() {
             return sequenceFileNames;
+        }
+
+        public String getScriptClassName() {
+            return scriptClassName;
         }
     }
 }

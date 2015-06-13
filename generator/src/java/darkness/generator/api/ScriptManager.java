@@ -1,6 +1,7 @@
 package darkness.generator.api;
 
 import darkness.generator.api.effects.EffectBase;
+import darkness.generator.output.BaseOutput;
 import darkness.generator.output.ConsoleOutput;
 import darkness.generator.output.FileOutput;
 
@@ -8,8 +9,11 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -25,29 +29,28 @@ public class ScriptManager {
 
     public static ScriptManager getInstance() { return instance;  }
 
-    public void Start(ScriptBase mainScript) {
+    public void start(ScriptBase mainScript, BaseOutput output) throws IOException {
         ScriptContext mainScriptContext = new ScriptContext(mainScript);
         scriptContextList.add(mainScriptContext);
 
-        ConsoleOutput output = new ConsoleOutput();
-        //FileOutput output = new FileOutput( "test.txt" );
-
         // Start the script
-        while(!scriptContextList.isEmpty()) {
+        while (!scriptContextList.isEmpty()) {
             // Start script
             output.beginScript();
 
             // Make all scripts generate a single frame.
             // We do it in the reverse order to make sure its the main script that will always win the channel value if multiple scripts are working on a channel
-            Iterator<ScriptContext> scriptContextIterator = scriptContextList.descendingIterator();
-            while(scriptContextIterator.hasNext()) {
-                ScriptContext sctx = scriptContextIterator.next();
-                if(!sctx.doFrame()) {
-                    // The script is done executing. Remove it
-                    scriptContextIterator.remove();
-                    output.endScript( sctx.script.getClass().getSimpleName() );
+            Iterator<ScriptContext> contextIterator = scriptContextList.descendingIterator();
+            Set<ScriptContext> contextsToRemove = new HashSet<>();
+            while (contextIterator.hasNext()) {
+                ScriptContext context = contextIterator.next();
+                if (!context.doFrame()) {
+                    // The script is done executing. Remove it (but this must be done afterwards because doFrame() might cause scriptContextList to be modified)
+                    contextsToRemove.add(context);
+                    output.endScript(context.script.getClass().getSimpleName());
                 }
             }
+            scriptContextList.removeAll(contextsToRemove);
 
             output.beginFrame();
 

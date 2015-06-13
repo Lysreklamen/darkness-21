@@ -5,21 +5,12 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 
 public class FileOutput extends BaseOutput {
-
-    public FileOutput( String fileName ) {
-        try {
-            writer = new BufferedWriter( new FileWriter( fileName ) );
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public FileOutput(String fileName) throws IOException {
+        writer = new BufferedWriter(new FileWriter(fileName));
     }
 
     @Override
-    public void flush() {
-        try {
-            writer.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void flush() throws IOException {
+        writer.flush();
     }
 }

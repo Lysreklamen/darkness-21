@@ -1,5 +1,6 @@
 apply plugin: 'java'
-apply plugin:'application'
+apply plugin: 'application'
+apply plugin: 'idea'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -31,6 +32,7 @@ dependencies {
     compile "com.jme3:jme3-desktop:$jmonkeyengine_version.+"
     compile "com.jme3:jme3-lwjgl:$jmonkeyengine_version.+"
     compile files('libs/jME3-testdata.jar')
+    compile project(":generator")
 }
 
 sourceSets {

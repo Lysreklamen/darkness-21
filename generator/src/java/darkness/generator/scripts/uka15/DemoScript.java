@@ -1,4 +1,4 @@
-package darkness.generator.scripts.uka13;
+package darkness.generator.scripts.uka15;
 
 import darkness.generator.api.BulbGroup;
 import darkness.generator.api.ScriptBase;

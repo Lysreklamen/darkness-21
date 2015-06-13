@@ -52,8 +52,7 @@ public class ChannelManager {
 
     public void dumpChannels( BaseOutput output ) {
         for (Channel channel: channelMap.values()) {
-
-            output.writeChannelValue( channel.getValue() );
+            output.writeChannelValue(channel);
         }
     }
 

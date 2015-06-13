@@ -1,5 +1,7 @@
 package darkness.generator.output;
 
+import darkness.generator.api.Channel;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 
@@ -13,9 +15,9 @@ public abstract class BaseOutput {
      */
     //public abstract void write();
 
-    public void writeChannelValue( int value ) {
+    public void writeChannelValue(Channel channel) {
         try {
-            writer.write(Integer.toString( value ));
+            writer.write(Integer.toString(channel.getValue()));
             writer.write( " " );
         } catch (IOException e) {
             e.printStackTrace();
@@ -66,7 +68,7 @@ public abstract class BaseOutput {
        nextFrame();
     }
 
-    public abstract void flush();
+    public abstract void flush() throws IOException;
 
     public void nextFrame() {
         ++frameNumber;

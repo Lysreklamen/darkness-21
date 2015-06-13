@@ -2,10 +2,13 @@ package darkness.generator;
 
 import darkness.generator.api.BulbManager;
 import darkness.generator.api.ScriptManager;
-import darkness.generator.scripts.uka13.DemoScript;
+import darkness.generator.output.PgmOutput;
+import darkness.generator.scripts.uka15.DemoScript;
+
+import java.io.IOException;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         System.out.println("Darkness sequence generator started");
 
         BulbManager bulbManager = BulbManager.getInstance();
@@ -14,6 +17,6 @@ public class Main {
         }
 
         ScriptManager scriptManager = ScriptManager.getInstance();
-        scriptManager.Start(new DemoScript());
+        scriptManager.start(new DemoScript(), new PgmOutput("demo.pgm"));
     }
 }

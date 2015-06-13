@@ -8,4 +8,8 @@ gradlew
 *.iml
 *.so
 *.class
+*.setting
+*.ipr
+*.iws
+*.dylib
 
