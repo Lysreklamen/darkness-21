@@ -1,20 +1,26 @@
 package darkness.generator.output;
 
 import darkness.generator.api.Channel;
+import darkness.generator.api.ScriptBase;
+import darkness.generator.api.ScriptManager;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
 
+/**
+ * Instances of subclasses of this class can be passed to {@link ScriptManager#start(ScriptBase, BaseOutput)},
+ * and their methods will be invoked at various points in the generation of a sequence.
+ * Thus, a generated sequence may be output in various manners.
+ */
 public abstract class BaseOutput {
 
     protected BufferedWriter writer;
     protected int frameNumber = 1;
 
     /**
-     * Writes a frame to whatever output we want.
+     * Is called once per channel per frame; however, it might not be called in the sequence of the channel index.
+     * TODO: This essentially means that {@link ConsoleOutput} and {@link FileOutput} are useless, and should be fixed.
      */
-    //public abstract void write();
-
     public void writeChannelValue(Channel channel) {
         try {
             writer.write(Integer.toString(channel.getValue()));

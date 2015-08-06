@@ -8,6 +8,18 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Generates a PGM file from a sequence. PGM is a simple image format, and we let each row in the image
+ * represent the channel values in a frame: the value of channel c in frame f is represented by the grayscale value
+ * of the pixel at column c-1 in row f. PGM files are text files with the following structure:
+ * - First line: the magic string "P2", meaning a grayscale PGM file
+ * - Second line: the width (number of channels) and height (number of frames) of the picture
+ * - Third line: the grayscale value that represents white; the pixel values will be between 0 and this value, inclusive.
+ *               This will normally be 255, but if we use the transparency hack, transparency is represented by 256.
+ * - Subsequent lines: each line contains the values of the channels in a frame, from beginning to end
+ * Because the number of lines must be specified early on, this class stores all of the frames as they are being generated,
+ * and only outputs the PGM file at the very end.
+ */
 public class PgmOutput extends BaseOutput {
     private final String fileName;
     private final List<int[]> frames = new ArrayList<>();
