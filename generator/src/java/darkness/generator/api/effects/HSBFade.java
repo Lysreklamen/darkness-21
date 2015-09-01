@@ -30,9 +30,9 @@ public class HSBFade extends EffectBase {
 
             float h = startHSB[0] + ( ( endHSB[0] - startHSB[0] ) * frame ) / frames;
             float s = startHSB[1] + ( ( endHSB[1] - startHSB[1] ) * frame ) / frames;
-            float v = startHSB[2] + ( ( endHSB[2] - startHSB[2] ) * frame ) / frames;
+            float b = startHSB[2] + ( ( endHSB[2] - startHSB[2] ) * frame ) / frames;
 
-            bulbSet.setHSB(h, s, v);
+            bulbSet.setHSB(h, s, b);
             next();
         }
     }
@@ -44,7 +44,7 @@ public class HSBFade extends EffectBase {
 
     @Override
     public String toString() {
-        return "Effect HSBFade on " + bulbSet + " from color: [h=" + startHSB[0] + ",s=" + startHSB[1] + ",v=" + startHSB[2]
-                + "] to color: [h=" + endHSB[0] + ",s=" + endHSB[1] + ",v=" + endHSB[2] + "] over " + frames + " frames.";
+        return "Effect HSBFade on " + bulbSet + " from color: [h=" + startHSB[0] + ",s=" + startHSB[1] + ",b=" + startHSB[2]
+                + "] to color: [h=" + endHSB[0] + ",s=" + endHSB[1] + ",b=" + endHSB[2] + "] over " + frames + " frames.";
     }
 }

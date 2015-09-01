@@ -2,12 +2,15 @@ package darkness.generator.api;
 
 import java.awt.Color;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Spliterator;
+import java.util.function.Consumer;
 
 /**
  * A group of one or more bulbs, that can mostly be treated as one "big" bulb through the {@link BulbSet} interface.
  */
-public class BulbGroup implements BulbSet {
+public class BulbGroup implements BulbSet, Iterable<BulbRGB> {
 	private final List<BulbRGB> bulbs;
 
 	/**
@@ -94,5 +97,20 @@ public class BulbGroup implements BulbSet {
 	@Override
 	public Color getColor() {
 		return bulbs.get(0).getColor();
+	}
+
+	@Override
+	public Iterator<BulbRGB> iterator() {
+		return bulbs.iterator();
+	}
+
+	@Override
+	public void forEach(Consumer<? super BulbRGB> action) {
+		bulbs.forEach(action);
+	}
+
+	@Override
+	public Spliterator<BulbRGB> spliterator() {
+		return bulbs.spliterator();
 	}
 }

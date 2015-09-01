@@ -76,7 +76,7 @@ public abstract class ScriptBase extends Generator<Void> {
     }
 
     /**
-     * Sets a color on a bulb
+     * Sets a color on a bulb.
      * @param bulbSet The bulb or bulb group to set the color on
      * @param red Value between 0..255
      * @param green Value between 0..255
@@ -87,7 +87,14 @@ public abstract class ScriptBase extends Generator<Void> {
     }
 
     /**
-     * Sets a HSB color on a bulb
+     * Sets a color on a bulb.
+     */
+    protected void setRGB(BulbSet bulbSet, Color color) {
+        bulbSet.set(color);
+    }
+
+    /**
+     * Sets a HSB color on a bulb.
      * @param bulbSet The bulb or bulb group to set the color on
      * @param hue The floor of this number is subtracted from it to create a fraction between 0 and 1. This fractional number is then multiplied by 360 to produce the hue angle in the HSB color model.
      * @param saturation In the range 0.0..1.0
