@@ -4,7 +4,7 @@ import darkness.generator.api.BulbRGB;
 
 import java.awt.*;
 
-public class DemoSubScript extends DemoBaseScript {
+public class DemoSubScript13 extends DemoBaseScriptUka13 {
 	@Override
 	public void run() {
 		super.run();

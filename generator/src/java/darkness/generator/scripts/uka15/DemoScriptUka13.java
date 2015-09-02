@@ -5,7 +5,7 @@ import darkness.generator.api.BulbRGB;
 
 import java.awt.Color;
 
-public class DemoScript extends DemoBaseScript {
+public class DemoScriptUka13 extends DemoBaseScriptUka13 {
     @Override
     public void run() {
         super.run(); // Must call super if extending a custom base script
@@ -29,7 +29,7 @@ public class DemoScript extends DemoBaseScript {
         // Start the same sub-script three times. Note that with the current implementation, a bulb that is turned off
         // by one script cannot in the same frame be turned on by another; hence the skip.
         for (int i = 0; i < 3; i++) {
-            merge(new DemoSubScript());
+            merge(new DemoSubScript13());
             skip(2);
         }
 

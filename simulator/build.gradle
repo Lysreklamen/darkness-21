@@ -55,5 +55,5 @@ processResources {
 }
 
 run {
-    args = ["--pattern", "./patterns/skilt-013.txt", "--sequence", "./sequences/uka13/uka13.pgm"]
+    args = ["--pattern", "./patterns/uka13.txt", "--script", "DemoScriptUka13"]
 }

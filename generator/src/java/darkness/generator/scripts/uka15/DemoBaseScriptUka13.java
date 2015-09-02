@@ -4,8 +4,7 @@ import darkness.generator.api.BulbGroup;
 import darkness.generator.api.BulbRGB;
 import darkness.generator.api.ScriptBase;
 
-// We should make one such base class for UKA'15, so that the individual scripts don't need to define all the letters
-public class DemoBaseScript extends ScriptBase {
+public abstract class DemoBaseScriptUka13 extends ScriptBase {
 	protected BulbRGB topOfJ;
 	protected BulbGroup J;
 	protected BulbGroup U;
