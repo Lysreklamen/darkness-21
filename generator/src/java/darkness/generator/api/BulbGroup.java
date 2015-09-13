@@ -13,6 +13,7 @@ import java.lang.IllegalArgumentException;
  */
 public class BulbGroup implements BulbSet, Iterable<BulbRGB> {
 	private final List<BulbRGB> bulbs;
+	public final int numBulbs;
 
 	/**
 	 * Create a bulb group that consists of the given bulbs.
@@ -27,6 +28,16 @@ public class BulbGroup implements BulbSet, Iterable<BulbRGB> {
 			}
 		}
 		this.bulbs = Arrays.asList(bulbs);
+		this.numBulbs = bulbs.length;
+	}
+
+	/**
+	 * Get a single bulb
+	 * @param idx Bulb index
+	 * @return
+	 */
+	public BulbRGB getBulb(int idx) {
+		return bulbs.get(idx);
 	}
 
 	/**
