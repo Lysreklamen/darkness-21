@@ -121,7 +121,7 @@ public class Application extends SimpleApplication {
                 offsetY = (offsetY + Float.parseFloat(parts[i+1])) / 2;
             }
 
-            final float scale = 1.2f;
+            final float scale = 1.5f;
             float posX = (Float.parseFloat(parts[1]) + offsetX - 16.0f) / 9.0f * scale;
             float posY = 1.8f - (Float.parseFloat(parts[2]) + offsetY) / 10.0f * scale;
 

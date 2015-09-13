@@ -1,10 +1,7 @@
 package darkness.generator.api;
 
 import java.awt.Color;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Spliterator;
+import java.util.*;
 import java.util.function.Consumer;
 import java.lang.IllegalArgumentException;
 
@@ -129,5 +126,9 @@ public class BulbGroup implements BulbSet, Iterable<BulbRGB> {
 	@Override
 	public Spliterator<BulbRGB> spliterator() {
 		return bulbs.spliterator();
+	}
+
+	public Collection<BulbRGB> getAllBulbs() {
+		return bulbs;
 	}
 }

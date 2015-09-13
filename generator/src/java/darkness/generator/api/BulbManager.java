@@ -1,5 +1,6 @@
 package darkness.generator.api;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.NoSuchElementException;
 
@@ -88,5 +89,9 @@ public class BulbManager {
             throw new NoSuchElementException("There is no bulb with the ID: "+id);
         }
         return nameBulb(getBulb(id), name);
+    }
+
+    public Collection<BulbRGB> getAllBulbs() {
+        return bulbMap.values();
     }
 }
