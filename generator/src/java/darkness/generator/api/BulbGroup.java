@@ -6,12 +6,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Spliterator;
 import java.util.function.Consumer;
+import java.lang.IllegalArgumentException;
 
 /**
  * A group of one or more bulbs, that can mostly be treated as one "big" bulb through the {@link BulbSet} interface.
  */
 public class BulbGroup implements BulbSet, Iterable<BulbRGB> {
 	private final List<BulbRGB> bulbs;
+	public final int numBulbs;
 
 	/**
 	 * Create a bulb group that consists of the given bulbs.
@@ -20,7 +22,22 @@ public class BulbGroup implements BulbSet, Iterable<BulbRGB> {
 		if (bulbs == null || bulbs.length == 0) {
 			throw new IllegalArgumentException("bulbs must be non-null and contain elements");
 		}
+		for (int i = 0; i < bulbs.length; i++) {
+			if (bulbs[i] == null) {
+				throw new IllegalArgumentException("The bulb at index " + i + " is null");
+			}
+		}
 		this.bulbs = Arrays.asList(bulbs);
+		this.numBulbs = bulbs.length;
+	}
+
+	/**
+	 * Get a single bulb
+	 * @param idx Bulb index
+	 * @return
+	 */
+	public BulbRGB getBulb(int idx) {
+		return bulbs.get(idx);
 	}
 
 	/**

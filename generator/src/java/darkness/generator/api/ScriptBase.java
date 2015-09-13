@@ -4,6 +4,7 @@ import com.zoominfo.util.yieldreturn.Generator;
 import darkness.generator.api.effects.EffectBase;
 import darkness.generator.api.effects.RGBFade;
 import darkness.generator.api.effects.HSBFade;
+import java.lang.IllegalArgumentException;
 
 import java.awt.*;
 
@@ -30,6 +31,11 @@ public abstract class ScriptBase extends Generator<Void> {
         BulbRGB[] bulbs = new BulbRGB[ids.length];
         for (int i = 0; i < bulbs.length; i++) {
             bulbs[i] = bulb(ids[i]);
+
+            // Error check
+            if (bulbs[i] == null) {
+                throw new IllegalArgumentException("There is no bulb with id " + ids[i]);
+            }
         }
         return new BulbGroup(bulbs);
     }
@@ -100,7 +106,7 @@ public abstract class ScriptBase extends Generator<Void> {
      * @param saturation In the range 0.0..1.0
      * @param brightness In the range 0.0..1.0
      */
-    protected void setHSB(BulbSet bulbSet, int hue, int saturation, int brightness) {
+    protected void setHSB(BulbSet bulbSet, float hue, float saturation, float brightness) {
         bulbSet.setHSB(hue, saturation, brightness);
     }
 
