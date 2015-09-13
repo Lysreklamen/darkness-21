@@ -11,21 +11,23 @@ public class MiniLysreklamen15 extends BaseScriptUka15 {
 	@Override
 	public void run() {
 		super.run();
-		
+
 		randomBulbs();
 		fadeIn();
+
+		skip(4);
 
 		for (BulbGroup letter : letters) {
 			rgbFade(letter, 255, 255, 255, 4);
 			skip(4);
 		}
 
-		skip(4);
+		skip(16);
 
-		rainbow();
+		rainbow(64);
 		turnOnSequentially();
 
-		skip(16);
+		skip(64);
 
 		/*
 
@@ -110,7 +112,7 @@ public class MiniLysreklamen15 extends BaseScriptUka15 {
 		}
 	}
 
-	private void rainbow() {
+	private void rainbow(int frames) {
 		// Horizontal rainbow
 		int numColors = columns.length;
 		Color colors[] = new Color[numColors];
@@ -119,7 +121,7 @@ public class MiniLysreklamen15 extends BaseScriptUka15 {
 			colors[i] = Color.getHSBColor((1.0f/numColors)*i, 0.4f, 0.8f);
 		}
 
-		for (int i = 0; i < 64; ++i) {
+		for (int i = 0; i < frames; ++i) {
 			int j = 0;
 			for (BulbGroup col : columns) {
 				for (BulbRGB bulb : col) {
