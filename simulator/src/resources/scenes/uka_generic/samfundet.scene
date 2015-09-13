@@ -51,7 +51,7 @@
                 </entity>
             </node>
             <node name="bottom_left">
-                <position x="-5" y="0" z="0.200001"/>
+                <position x="-5" y="0" z="0.10000"/>
                 <scale x="1" y="1" z="1"/>
                 <rotation qx="0" qy="0" qz="0" qw="1"/>
             </node>

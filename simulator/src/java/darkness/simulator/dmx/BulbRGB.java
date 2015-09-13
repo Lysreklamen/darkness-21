@@ -56,7 +56,7 @@ public class BulbRGB {
 
         light = new PointLight();
         light.setColor(color);
-        light.setRadius(0.75f);
+        light.setRadius(0.25f);
 
         bulbNode.attachChild(geometry);
 
