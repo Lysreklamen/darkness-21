@@ -10,23 +10,27 @@ public class RGBFade extends EffectBase {
     private final BulbSet bulbSet;
     private final int frames;
     private boolean cancelled = false;
+    private final float delta_r, delta_g, delta_b;
 
     public RGBFade(BulbSet bulbSet, Color endColor, int frames) {
         this.startColor = bulbSet.getColor();
         this.endColor = endColor;
         this.bulbSet = bulbSet;
         this.frames = frames;
+        this.delta_r = (float)(endColor.getRed() - startColor.getRed()) / (float)frames;
+        this.delta_g = (float)(endColor.getGreen() - startColor.getGreen()) / (float)frames;
+        this.delta_b = (float)(endColor.getBlue() - startColor.getBlue()) / (float)frames;
     }
 
     @Override
     public void run() {
-        for(int frame = 0; frame < frames; frame++) {
+        for(int frame = 1; frame <= frames; frame++) {
             if(cancelled) {
                 return;
             }
-            int red  = startColor.getRed() + ((endColor.getRed() - startColor.getRed())*frame) / frames;
-            int green  = startColor.getGreen() + ((endColor.getGreen() - startColor.getGreen())*frame) / frames;
-            int blue = startColor.getBlue() + ((endColor.getBlue() - startColor.getBlue())*frame) / frames;
+            int red  = startColor.getRed() + (int)(delta_r*frame);
+            int green  = startColor.getGreen() + (int)(delta_g*frame);
+            int blue = startColor.getBlue() + (int)(delta_b*frame);
 
             bulbSet.set(red, green, blue);
             next();

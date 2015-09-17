@@ -14,16 +14,18 @@ public class IntroJanosa15 extends BaseScriptUka15 {
 	public void run() {
 		super.run();
 
-		/*
+		/*MiniLysreklamen15
 		Phase 1, blink bulbs randomly
 		Phase 2: for each letter fill up with one color.
 				Then increase the intensity, and decrease it again. This will make a glowing effect
 		Phase 3: Scroll the current colors out of the sign to right
 		Phase 4: Fade the whole sign in one color
-		Phase 5: Morph into a rainbow
-		Phase 6: Do the rainbow dance
-		Phase 7: Fade back to the color in phase 4
-		Phase 8: Fade to black and exit
+		Phase 5: Fade out to black
+		Phase 6: Phase one and one letter in
+		Phase 7: Morph into a rainbow
+		Phase 8: Do the rainbow dance
+		Phase 9: Fade back to the color in phase 4
+		Phase 10: Fade to black and exit
 		 */
 
 		// Start phase 1 in a parallel.
@@ -49,11 +51,23 @@ public class IntroJanosa15 extends BaseScriptUka15 {
             rgbFade(letter, 255, 147, 41, 10);
         }
 
-        skip(10);
+        skip(20);
+
+        for(BulbGroup letter: letters) {
+            rgbFade(letter, 0, 0, 0, 20);
+        }
 
         skip(40);
 
-	}
+
+        for(BulbGroup letter: letters) {
+            rgbFade(letter, 255, 147, 41, 10);
+            skip(20);
+        }
+
+
+
+    }
 
     private void scrollOut() {
         for(int iteration = 0; iteration < columns.length; iteration++) {
@@ -77,24 +91,28 @@ public class IntroJanosa15 extends BaseScriptUka15 {
 
         BulbGroup[] fadeInOrder = {C, F, A, D, G, E, B};
 
-        for (BulbGroup letter : fadeInOrder) {
+
+        for (int idx = 0; idx < fadeInOrder.length; idx++) {
+            BulbGroup letter = fadeInOrder[idx];
             // Bulbs
             LinkedList<BulbRGB> freeBulbs = new LinkedList<BulbRGB>(letter.getAllBulbs());
             // Get a color for our letter
-            float colorAngle = random.nextFloat();
+            float colorAngle = ((float)idx)/((float)fadeInOrder.length);
 
+            int i = 0;
             while(!freeBulbs.isEmpty()) {
                 int bulbIndex = random.nextInt(freeBulbs.size());
                 BulbRGB bulb = freeBulbs.get(bulbIndex);
-                bulb.setHSB(colorAngle, 0.6f, 0.3f);
+                bulb.setHSB(colorAngle, 1f, 0.6f);
                 freeBulbs.remove(bulbIndex);
-                skip(1);
+                if(++i%2 == 0)
+                    skip(1);
             }
 
-            rgbFade(letter, 255, 255, 255, 4);
+            rgbFade(letter, 255, 255, 255, 2);
             //hsbFade(letter, new float[]{colorAngle, 1.0f, 1.0f}, 4);
             skip(4);
-            hsbFade(letter,  new float[]{colorAngle, 0.6f, 0.7f}, 4);
+            hsbFade(letter,  new float[]{colorAngle, 1f, 0.8f}, 4);
             skip(4);
         }
     }

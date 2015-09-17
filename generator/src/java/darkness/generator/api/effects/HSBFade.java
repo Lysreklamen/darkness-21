@@ -24,7 +24,7 @@ public class HSBFade extends EffectBase {
 
     @Override
     public void run() {
-        for(int frame = 0; frame < frames; ++frame) {
+        for(int frame = 1; frame <= frames; ++frame) {
             if(cancelled)
                 return;
 

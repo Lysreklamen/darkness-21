@@ -105,45 +105,52 @@ public class Application extends SimpleApplication {
         darkness.generator.api.BulbManager generatorBulbManager = darkness.generator.api.BulbManager.getInstance();
         ChannelManager channelManager = ChannelManager.getInstance();
 
+        int lineNumber = 0;
         for(String line = reader.readLine(); line != null; line = reader.readLine()) {
-            String[] parts = line.split(" ");
-            if(parts.length < 7) {
-                System.err.println("Parse error: "+line);
-                continue;
+            lineNumber++;
+            try {
+                String[] parts = line.split(" ");
+                if (parts.length < 7) {
+                    System.err.println("Parse error: " + line);
+                    continue;
+                }
+
+                int id = Integer.parseInt(parts[0]);
+
+                float offsetX = 0;
+                float offsetY = 0;
+                for (int i = 7; i < parts.length; i += 2) {
+                    offsetX = (offsetX + Float.parseFloat(parts[i])) / 2;
+                    offsetY = (offsetY + Float.parseFloat(parts[i + 1])) / 2;
+                }
+
+                final float scale = 1.5f;
+                float posX = (Float.parseFloat(parts[1]) + offsetX - 16.0f) / 9.0f * scale;
+                float posY = 1.8f - (Float.parseFloat(parts[2]) + offsetY) / 10.0f * scale;
+
+
+                int channelRed = Integer.parseInt(parts[4]);
+                int channelGreen = Integer.parseInt(parts[5]);
+                int channelBlue = Integer.parseInt(parts[6]);
+
+                BulbRGB bulb = bulbManager.registerBulb(id,
+                        channelManager.getChannel(channelRed),
+                        channelManager.getChannel(channelGreen),
+                        channelManager.getChannel(channelBlue), parentNode, new Vector3f(posX, posY, 0.0f));
+                if (arguments.getScriptClassName() != null) {
+                    // If we want to use the generator, its bulb manager must also be populated
+                    generatorBulbManager.registerBulb(id, channelRed, channelGreen, channelBlue);
+                }
+
+                float hue = (posX * posX + posY * posY) / (10.0f * 10.0f + 1.0f * 1.0f);
+                Color color = Color.getHSBColor(hue, 1f, 0.9f);
+                bulb.set(color);
             }
-
-            int id = Integer.parseInt(parts[0]);
-
-            float offsetX = 0;
-            float offsetY = 0;
-            for(int i = 7; i < parts.length; i+= 2) {
-                offsetX = (offsetX + Float.parseFloat(parts[i])) / 2;
-                offsetY = (offsetY + Float.parseFloat(parts[i+1])) / 2;
+            catch (Exception ex) {
+                System.err.println("An exception occurred while parsing line "+lineNumber+" of the pattern file.");
+                // Rethrow the exception but write the line number first
+                throw  ex;
             }
-
-            final float scale = 1.5f;
-            float posX = (Float.parseFloat(parts[1]) + offsetX - 16.0f) / 9.0f * scale;
-            float posY = 1.8f - (Float.parseFloat(parts[2]) + offsetY) / 10.0f * scale;
-
-
-
-            int channelRed = Integer.parseInt(parts[4]);
-            int channelGreen = Integer.parseInt(parts[5]);
-            int channelBlue = Integer.parseInt(parts[6]);
-
-            BulbRGB bulb = bulbManager.registerBulb(id,
-                    channelManager.getChannel(channelRed),
-                    channelManager.getChannel(channelGreen),
-                    channelManager.getChannel(channelBlue), parentNode, new Vector3f(posX, posY, 0.0f));
-            if (arguments.getScriptClassName() != null) {
-                // If we want to use the generator, its bulb manager must also be populated
-                generatorBulbManager.registerBulb(id, channelRed, channelGreen, channelBlue);
-            }
-
-            float hue = (posX*posX+posY*posY) / (10.0f*10.0f + 1.0f*1.0f);
-            Color color = Color.getHSBColor(hue, 1f, 0.9f);
-            bulb.set(color);
-
         }
 
         reader.close();
@@ -157,8 +164,10 @@ public class Application extends SimpleApplication {
     private PgmReader generatePgmFromScript() throws ClassNotFoundException, IllegalAccessException, InstantiationException, IOException {
         String qualifiedScriptClassName = (arguments.getScriptClassName().contains(".") ? "" : "darkness.generator.scripts.uka15.") + arguments.getScriptClassName();
         ScriptBase script = (ScriptBase) Class.forName(qualifiedScriptClassName).newInstance();
-        File tempFile = File.createTempFile("darkness-sequence-" + qualifiedScriptClassName + "-", ".pgm");
-        tempFile.deleteOnExit();
+        //File tempFile = File.createTempFile("darkness-sequence-" + qualifiedScriptClassName + "-", ".pgm");
+        File tempFile = new File("pgmtest.pgm");
+
+        //tempFile.deleteOnExit();
         ScriptManager scriptManager = ScriptManager.getInstance();
         scriptManager.start(script, new PgmOutput(tempFile.getPath()));
         return new PgmReader(tempFile.getPath());
