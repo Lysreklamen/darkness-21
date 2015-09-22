@@ -3,7 +3,7 @@ package darkness.generator.scripts.uka15;
 import darkness.generator.api.BulbGroup;
 import darkness.generator.api.BulbRGB;
 
-public class DefaultFrame extends BaseScriptUka15 {
+public class DefaultFrame extends BaseScript {
 	@Override
 	public void run() {
 		super.run();

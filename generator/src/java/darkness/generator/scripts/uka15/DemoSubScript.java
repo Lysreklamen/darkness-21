@@ -3,28 +3,21 @@ package darkness.generator.scripts.uka15;
 import darkness.generator.api.BulbGroup;
 import darkness.generator.api.BulbRGB;
 
-import java.awt.Color;
-
-public class DemoScriptUka15 extends BaseScriptUka15 {
+public class DemoSubScript extends BaseScript {
 	@Override
 	public void run() {
 		super.run();
-
+		BulbRGB previous = null;
 		for (BulbGroup letter : letters) {
 			for (BulbRGB bulb : letter) {
-				set(bulb, Color.GREEN);
+				if (previous != null) {
+					relinquish(previous);
+				}
+				set(bulb, 255, 0, 0);
+				previous = bulb;
 				next();
 			}
 		}
-
-		skip(96);
-
-		for (int i = 0; i < 4; i++) {
-			merge(new DemoSubScript15());
-			next();
-		}
-
-		skip(96);
-
+		relinquish(previous);
 	}
 }

@@ -1,10 +1,10 @@
-package darkness.generator.scripts.uka15;
+package darkness.generator.scripts.uka13;
 
 import darkness.generator.api.BulbRGB;
 
 import java.awt.*;
 
-public class DemoSubScript13 extends DemoBaseScriptUka13 {
+public class DemoSubScript extends DemoBaseScript {
 	@Override
 	public void run() {
 		super.run();

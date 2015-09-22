@@ -6,7 +6,7 @@ import darkness.generator.api.BulbRGB;
 import java.awt.*;
 import java.util.Random;
 
-public class MiniLysreklamen15 extends BaseScriptUka15 {
+public class MiniLysreklamen extends BaseScript {
 	@Override
 	public void run() {
 		super.run();

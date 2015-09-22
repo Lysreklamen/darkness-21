@@ -9,12 +9,12 @@ import java.awt.*;
 import java.util.LinkedList;
 import java.util.Random;
 
-public class IntroJanosa15 extends BaseScriptUka15 {
+public class IntroJanosa extends BaseScript {
 	@Override
 	public void run() {
 		super.run();
 
-		/*MiniLysreklamen15
+		/*MiniLysreklamen
 		Phase 1, blink bulbs randomly
 		Phase 2: for each letter fill up with one color.
 				Then increase the intensity, and decrease it again. This will make a glowing effect

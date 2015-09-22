@@ -1,10 +1,10 @@
-package darkness.generator.scripts.uka15;
+package darkness.generator.scripts.uka13;
 
 import darkness.generator.api.BulbGroup;
 import darkness.generator.api.BulbRGB;
 import darkness.generator.api.ScriptBase;
 
-public abstract class DemoBaseScriptUka13 extends ScriptBase {
+public abstract class DemoBaseScript extends ScriptBase {
 	protected BulbRGB topOfJ;
 	protected BulbGroup J;
 	protected BulbGroup U;

@@ -3,7 +3,7 @@ package darkness.generator;
 import darkness.generator.api.BulbManager;
 import darkness.generator.api.ScriptManager;
 import darkness.generator.output.PgmOutput;
-import darkness.generator.scripts.uka15.DemoScriptUka13;
+import darkness.generator.scripts.uka13.DemoScript;
 
 import java.io.IOException;
 
@@ -17,6 +17,6 @@ public class Main {
         }
 
         ScriptManager scriptManager = ScriptManager.getInstance();
-        scriptManager.start(new DemoScriptUka13(), new PgmOutput("demo.pgm"));
+        scriptManager.start(new DemoScript(), new PgmOutput("demo.pgm"));
     }
 }

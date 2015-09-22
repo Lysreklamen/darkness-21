@@ -3,7 +3,7 @@ package darkness.generator.scripts.uka15;
 import darkness.generator.api.BulbGroup;
 import darkness.generator.api.ScriptBase;
 
-public class BaseScriptUka15 extends ScriptBase {
+public class BaseScript extends ScriptBase {
 	// Obfuscated letters, to prevent the UKA name from being directly readable by someone who looks at the source code over someone's shoulder.
 	// Feel free to change to the actual letters if there is consensus that it is safe to do so (or to change to another obfuscation scheme).
 	protected BulbGroup A;

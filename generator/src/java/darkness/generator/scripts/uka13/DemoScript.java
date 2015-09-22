@@ -1,11 +1,11 @@
-package darkness.generator.scripts.uka15;
+package darkness.generator.scripts.uka13;
 
 import darkness.generator.api.BulbGroup;
 import darkness.generator.api.BulbRGB;
 
 import java.awt.Color;
 
-public class DemoScriptUka13 extends DemoBaseScriptUka13 {
+public class DemoScript extends DemoBaseScript {
     @Override
     public void run() {
         super.run(); // Must call super if extending a custom base script
@@ -29,7 +29,7 @@ public class DemoScriptUka13 extends DemoBaseScriptUka13 {
         // Start the same sub-script three times. Note that with the current implementation, a bulb that is turned off
         // by one script cannot in the same frame be turned on by another; hence the skip.
         for (int i = 0; i < 3; i++) {
-            merge(new DemoSubScript13());
+            merge(new DemoSubScript());
             skip(2);
         }
 
