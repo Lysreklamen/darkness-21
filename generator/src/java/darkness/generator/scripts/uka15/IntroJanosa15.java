@@ -79,7 +79,7 @@ public class IntroJanosa15 extends BaseScriptUka15 {
                     preColumnColor = columns[preColumn].getBulb(0).getColor();
                 }
                 for(BulbRGB bulb: columns[column]) {
-                    bulb.set(preColumnColor);
+                    set(bulb, preColumnColor);
                 }
             }
             next();
@@ -103,7 +103,7 @@ public class IntroJanosa15 extends BaseScriptUka15 {
             while(!freeBulbs.isEmpty()) {
                 int bulbIndex = random.nextInt(freeBulbs.size());
                 BulbRGB bulb = freeBulbs.get(bulbIndex);
-                bulb.setHSB(colorAngle, 1f, 0.6f);
+                setHSB(bulb, colorAngle, 1f, 0.6f);
                 freeBulbs.remove(bulbIndex);
                 if(++i%2 == 0)
                     skip(1);
@@ -134,15 +134,14 @@ public class IntroJanosa15 extends BaseScriptUka15 {
                     freeBulbs.remove(bulbIndex);
                     continue;
                 }
-                bulb.setHSB(random.nextFloat(), 0.6f, 0.7f);
+                setHSB(bulb, random.nextFloat(), 0.6f, 0.7f);
                 Color color = bulb.getColor();
                 next();
                 // The color has not changed by another effect. Turn it off
                 if(bulb.getColor().equals(color))
                 {
-                    bulb.set(0, 0, 0);
+                    set(bulb, 0, 0, 0);
                 }
-
 			}
 		}
 
@@ -155,7 +154,6 @@ public class IntroJanosa15 extends BaseScriptUka15 {
 		public void cancel() {
 			cancelled = true;
 		}
-
 
 	}
 }

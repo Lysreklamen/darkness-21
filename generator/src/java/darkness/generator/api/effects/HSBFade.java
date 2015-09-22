@@ -32,7 +32,7 @@ public class HSBFade extends EffectBase {
             float s = startHSB[1] + ( ( endHSB[1] - startHSB[1] ) * frame ) / frames;
             float b = startHSB[2] + ( ( endHSB[2] - startHSB[2] ) * frame ) / frames;
 
-            bulbSet.setHSB(h, s, b);
+            setHSB(bulbSet, h, s, b);
             next();
         }
     }

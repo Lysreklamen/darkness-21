@@ -9,6 +9,9 @@ public class Channel {
     private final int channel;
 
     private int value;
+    private ScriptBase lastSetterInCurrentFrame;
+
+    public static final int RELINQUISH = 257;
 
     /**
      * Constructs a channel object with universe and channel number
@@ -50,13 +53,34 @@ public class Channel {
 
     /**
      * Sets a value to the channel
-     * @param value a value between 0 and 255 inclusive (to indicate a DMX channel value), or 256 (to indicate transparency; only useful in overlays).
+     * @param value A value between 0 and 255 inclusive (to indicate a DMX channel value),
+     *              or 256 (to indicate transparency; only useful in overlays),
+     *              or 257 (to indicate relinquishment of the channel, which will set the channel to 0
+     *              unless it has already been actively set to something else in the same frame).
+     *              If the channel has been set in the same frame, the setter's priorities are used to determine a winner;
+     *              with equal priorities, the original value wins.
      */
-    public void setValue(int value) {
-        if(value < 0 || value > 256) {
-            throw new IllegalArgumentException("The channels value must be between 0 and 255 (inclusive), or 256 for transparency");
+    public void setValue(int value, ScriptBase setter) {
+        if (value < 0 || value > RELINQUISH) {
+            throw new IllegalArgumentException("The channels value must be between 0 and 255 (inclusive), or 256 for transparency, or 257 for relinquishing");
         }
-        this.value = value;
+        if (setter == null) {
+            throw new IllegalArgumentException("setter must be specified");
+        }
+        if (value == RELINQUISH) {
+            if (lastSetterInCurrentFrame == null) {
+                this.value = 0;
+            }
+        } else {
+            if (lastSetterInCurrentFrame == null || lastSetterInCurrentFrame.getPriority() < setter.getPriority()) {
+                this.value = value;
+                lastSetterInCurrentFrame = setter;
+            }
+        }
+    }
+
+    public void nextFrame() {
+        lastSetterInCurrentFrame = null;
     }
 
     @Override

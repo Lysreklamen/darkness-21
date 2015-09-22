@@ -44,26 +44,26 @@ public class BulbRGB implements BulbSet {
      * Set the RGB color of this bulb, by setting the individual channels to the given values.
      */
     @Override
-    public void set(int red, int green, int blue) {
-        channelRed.setValue(red);
-        channelGreen.setValue(green);
-        channelBlue.setValue(blue);
+    public void set(int red, int green, int blue, ScriptBase setter) {
+        channelRed.setValue(red, setter);
+        channelGreen.setValue(green, setter);
+        channelBlue.setValue(blue, setter);
     }
 
     /**
      * Set the RGB color of this bulb, by setting the individual channels to the components of the given {@link Color}.
      */
     @Override
-    public void set(Color color) {
-        set(color.getRed(), color.getGreen(), color.getBlue());
+    public void set(Color color, ScriptBase setter) {
+        set(color.getRed(), color.getGreen(), color.getBlue(), setter);
     }
 
     /**
      * Set the RGB color of this bulb, by setting the individual channels to the components of the given hexadecimal RGB string.
      * {@code hexColor} must start with "0x" or "#".
      */
-    public void set(String hexColor) {
-        set(Color.decode(hexColor));
+    public void set(String hexColor, ScriptBase setter) {
+        set(Color.decode(hexColor), setter);
     }
 
     /**
@@ -73,8 +73,12 @@ public class BulbRGB implements BulbSet {
      * @param brightness In the range 0.0..1.0
      */
     @Override
-    public void setHSB(float hue, float saturation, float brightness) {
-        set(Color.getHSBColor(hue,saturation, brightness));
+    public void setHSB(float hue, float saturation, float brightness, ScriptBase setter) {
+        set(Color.getHSBColor(hue, saturation, brightness), setter);
+    }
+
+    public void relinquish(ScriptBase setter) {
+        set(Channel.RELINQUISH, Channel.RELINQUISH, Channel.RELINQUISH, setter);
     }
 
     /**

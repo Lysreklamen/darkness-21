@@ -21,7 +21,7 @@ public class DemoScriptUka13 extends DemoBaseScriptUka13 {
         // Turn each bulb white, one per frame
         for (BulbGroup letter : letters) {
             for (BulbRGB bulb : letter) {
-                setRGB(bulb, Color.WHITE);
+                set(bulb, Color.WHITE);
                 next();
             }
         }

@@ -10,13 +10,13 @@ public class DemoSubScript13 extends DemoBaseScriptUka13 {
 		super.run();
 		BulbRGB previous = null;
 		for (BulbRGB bulb : O) {
-			setRGB(bulb, Color.RED);
+			set(bulb, Color.RED);
 			if (previous != null) {
-				setRGB(previous, Color.BLACK);
+				set(previous, Color.BLACK);
 			}
 			previous = bulb;
 			next();
 		}
-		setRGB(previous, Color.BLACK);
+		set(previous, Color.BLACK);
 	}
 }

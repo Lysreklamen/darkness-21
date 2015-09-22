@@ -2,7 +2,6 @@ package darkness.generator.scripts.uka15;
 
 import darkness.generator.api.BulbGroup;
 import darkness.generator.api.BulbRGB;
-import darkness.generator.api.BulbSet;
 
 import java.awt.*;
 import java.util.Random;
@@ -64,7 +63,7 @@ public class MiniLysreklamen15 extends BaseScriptUka15 {
 			int j = 0;
 			for (BulbGroup col : columns) {
 				for (BulbRGB bulb : col) {
-					setRGB(bulb, colors[(i + j) % numColors]);
+					set(bulb, colors[(i + j) % numColors]);
 				}
 				++j;
 			}
@@ -85,9 +84,9 @@ public class MiniLysreklamen15 extends BaseScriptUka15 {
 
 			for (BulbGroup letter : kindaRandom) {
 				BulbRGB bulb = letter.getBulb(r.nextInt(letter.numBulbs));
-				bulb.setHSB(r.nextFloat(), 0.6f, 0.7f);
+				setHSB(bulb, r.nextFloat(), 0.6f, 0.7f);
 				next();
-				bulb.set(0, 0, 0);
+				set(bulb, 0, 0, 0);
 				if (i < 2) {
 					skip(2-i);
 				}
@@ -125,7 +124,7 @@ public class MiniLysreklamen15 extends BaseScriptUka15 {
 			int j = 0;
 			for (BulbGroup col : columns) {
 				for (BulbRGB bulb : col) {
-					setRGB(bulb, colors[(i + j) % numColors]);
+					set(bulb, colors[(i + j) % numColors]);
 				}
 				++j;
 			}
@@ -136,13 +135,13 @@ public class MiniLysreklamen15 extends BaseScriptUka15 {
 	private void turnOnSequentially() {
 
 		for (BulbGroup letter : letters) {
-			letter.set(0, 0, 0);
+			set(letter, 0, 0, 0);
 		}
 
 		// Turn each bulb on one by one
 		for (BulbGroup letter : letters) {
 			for (BulbRGB bulb : letter) {
-				setRGB(bulb, Color.WHITE);
+				set(bulb, Color.WHITE);
 				next();
 			}
 		}

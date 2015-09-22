@@ -32,7 +32,7 @@ public class RGBFade extends EffectBase {
             int green  = startColor.getGreen() + (int)(delta_g*frame);
             int blue = startColor.getBlue() + (int)(delta_b*frame);
 
-            bulbSet.set(red, green, blue);
+            set(bulbSet, red, green, blue);
             next();
         }
     }

@@ -50,6 +50,12 @@ public class ChannelManager {
         return getChannel(0, channel);
     }
 
+    public void nextFrame() {
+        for (Channel channel : channelMap.values()) {
+            channel.nextFrame();
+        }
+    }
+
     public void dumpChannels( BaseOutput output ) {
         for (Channel channel: channelMap.values()) {
             output.writeChannelValue(channel);

@@ -9,17 +9,23 @@ public interface BulbSet {
 	/**
 	 * Set the bulb(s) to the given RGB color.
 	 */
-	void set(int red, int green, int blue);
+	void set(int red, int green, int blue, ScriptBase setter);
 
 	/**
 	 * Set the bulb(s) to the given RGB color.
 	 */
-	void set(Color color);
+	void set(Color color, ScriptBase setter);
 
 	/**
 	 * Set the bulb(s) to the given HSB color.
 	 */
-	void setHSB(float hue, float saturation, float brightness);
+	void setHSB(float hue, float saturation, float brightness, ScriptBase setter);
+
+	/**
+	 * Relinquish control over the bulb(s). If no other script(s) in the same frame set the bulb(s),
+	 * it/they will turn black; otherwise, the other script(s) will win.
+	 */
+	void relinquish(ScriptBase setter);
 
 	/**
 	 * If this is a single bulb, return the red component of that bulb.

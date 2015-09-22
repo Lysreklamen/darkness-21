@@ -55,6 +55,7 @@ public class ScriptManager {
             output.beginFrame();
 
             ChannelManager.getInstance().dumpChannels(output);
+            ChannelManager.getInstance().nextFrame();
 
             output.endFrame();
         }

@@ -41,9 +41,9 @@ public class BulbGroup implements BulbSet, Iterable<BulbRGB> {
 	 * Set all bulbs in the group to the given RGB color.
 	 */
 	@Override
-	public void set(int red, int green, int blue) {
+	public void set(int red, int green, int blue, ScriptBase setter) {
 		for (BulbRGB bulb : bulbs) {
-			bulb.set(red, green, blue);
+			bulb.set(red, green, blue, setter);
 		}
 	}
 
@@ -51,9 +51,9 @@ public class BulbGroup implements BulbSet, Iterable<BulbRGB> {
 	 * Set all bulbs in the group to the given RGB color.
 	 */
 	@Override
-	public void set(Color color) {
+	public void set(Color color, ScriptBase setter) {
 		for (BulbRGB bulb : bulbs) {
-			bulb.set(color);
+			bulb.set(color, setter);
 		}
 	}
 
@@ -61,9 +61,16 @@ public class BulbGroup implements BulbSet, Iterable<BulbRGB> {
 	 * Set all bulbs in the group to the given HSB color.
 	 */
 	@Override
-	public void setHSB(float hue, float saturation, float brightness) {
+	public void setHSB(float hue, float saturation, float brightness, ScriptBase setter) {
 		for (BulbRGB bulb : bulbs) {
-			bulb.setHSB(hue, saturation, brightness);
+			bulb.setHSB(hue, saturation, brightness, setter);
+		}
+	}
+
+	@Override
+	public void relinquish(ScriptBase setter) {
+		for (BulbRGB bulb : bulbs) {
+			bulb.relinquish(setter);
 		}
 	}
 

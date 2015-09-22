@@ -17,6 +17,8 @@ import java.awt.*;
  * will advance to the next frame.
  */
 public abstract class ScriptBase extends Generator<Void> {
+    private int priority;
+
     /**
      * Convenience method for accessing the bulb with id {@code id}.
      */
@@ -44,6 +46,14 @@ public abstract class ScriptBase extends Generator<Void> {
      * The run function of the script is responsible for generating the sequence.
      */
     public abstract void run();
+
+    public int getPriority() {
+        return priority;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
 
     /*************************************************
      * Sequence functions below
@@ -88,15 +98,15 @@ public abstract class ScriptBase extends Generator<Void> {
      * @param green Value between 0..255
      * @param blue Value between 0..255
      */
-    protected void setRGB(BulbSet bulbSet, int red, int green, int blue) {
-        bulbSet.set(red, green, blue);
+    protected void set(BulbSet bulbSet, int red, int green, int blue) {
+        bulbSet.set(red, green, blue, this);
     }
 
     /**
      * Sets a color on a bulb.
      */
-    protected void setRGB(BulbSet bulbSet, Color color) {
-        bulbSet.set(color);
+    protected void set(BulbSet bulbSet, Color color) {
+        bulbSet.set(color, this);
     }
 
     /**
@@ -107,7 +117,11 @@ public abstract class ScriptBase extends Generator<Void> {
      * @param brightness In the range 0.0..1.0
      */
     protected void setHSB(BulbSet bulbSet, float hue, float saturation, float brightness) {
-        bulbSet.setHSB(hue, saturation, brightness);
+        bulbSet.setHSB(hue, saturation, brightness, this);
+    }
+
+    protected void relinquish(BulbSet bulbSet) {
+        bulbSet.relinquish(this);
     }
 
     /**
