@@ -1,6 +1,7 @@
 build/
 gradle/
 out/
+pgmplayer/dmx
 .gradle/
 .idea/
 gradlew
@@ -13,4 +14,5 @@ gradlew
 *.ipr
 *.iws
 *.dylib
+*.o
 simulator/sequences/output.pgm
