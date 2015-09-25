@@ -1,6 +1,7 @@
 package darkness.generator.scripts.uka15;
 
 import darkness.generator.api.BulbGroup;
+import darkness.generator.api.BulbManager;
 import darkness.generator.api.ScriptBase;
 
 public class BaseScript extends ScriptBase {
@@ -72,6 +73,8 @@ public class BaseScript extends ScriptBase {
 				group(86, 94),
 				group(87, 95)
 		};
+
+
 
 	}
 }

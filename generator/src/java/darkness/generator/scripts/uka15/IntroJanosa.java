@@ -38,7 +38,10 @@ public class IntroJanosa extends BaseScript {
         fadeIn();
         blinky.cancel();
 
-        skip(30);
+        skip(1*20);
+
+        // Glow
+        glow();
 
         // Scroll out
         scrollOut();
@@ -65,8 +68,22 @@ public class IntroJanosa extends BaseScript {
             skip(20);
         }
 
+        skip(20*20);
 
 
+
+    }
+
+    private void glow() {
+        for(int frameCount = 0; frameCount < 9*20; frameCount++) {
+            for(BulbRGB bulb: BulbManager.getInstance().getAllBulbs()) {
+                float[] colors = Color.RGBtoHSB( bulb.getRed(), bulb.getGreen(), bulb.getBlue(), null );
+
+
+                setHSB(bulb, colors[0], 1.0f, 0.8f+(float)(0.2f*Math.sin((float)frameCount * 0.1f)));
+            }
+            next();
+        }
     }
 
     private void scrollOut() {
@@ -109,7 +126,8 @@ public class IntroJanosa extends BaseScript {
                     skip(1);
             }
 
-            rgbFade(letter, 255, 255, 255, 2);
+            hsbFade(letter,  new float[]{colorAngle, 1f, 1.0f}, 4);
+            //rgbFade(letter, 255, 255, 255, 2);
             //hsbFade(letter, new float[]{colorAngle, 1.0f, 1.0f}, 4);
             skip(4);
             hsbFade(letter,  new float[]{colorAngle, 1f, 0.8f}, 4);

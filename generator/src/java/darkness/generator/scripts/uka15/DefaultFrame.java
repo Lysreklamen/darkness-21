@@ -3,20 +3,26 @@ package darkness.generator.scripts.uka15;
 import darkness.generator.api.BulbGroup;
 import darkness.generator.api.BulbRGB;
 
+import java.util.LinkedList;
+import java.util.Random;
+
 public class DefaultFrame extends BaseScript {
 	@Override
 	public void run() {
 		super.run();
-		int[] values = {127, 255};
-		int i = 0;
-		for (BulbGroup letter : letters) {
-			for (BulbRGB bulb : letter) {
-				int r = values[i % values.length];
-				int g = values[(i / values.length) % values.length];
-				int b = values[(i / (values.length * values.length)) % values.length];
-				set(bulb, r, g, b);
-				i++;
-			}
+		Random random = new Random(1);
+
+		BulbGroup[] fadeInOrder = {C, F, A, D, G, E, B};
+
+
+		for (int idx = 0; idx < fadeInOrder.length; idx++) {
+			BulbGroup letter = fadeInOrder[idx];
+			// Get a color for our letter
+			float colorAngle = ((float)idx)/((float)fadeInOrder.length);
+
+			setHSB(letter, colorAngle, 1.0f, 0.8f);
+
 		}
+		next();
 	}
 }
