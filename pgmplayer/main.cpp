@@ -213,8 +213,8 @@ int countdown(int seconds) {
 	const int TOP = 5;
 	const int MIDDLE = 6;
 	const int segmentChannels[NUM_DIGITS][NUM_SEGMENTS] = {
-		{0, 1, 2, 3, 4, 5, 6}, //TODO
-		{7, 8, 9, 10, 11, 12, 13} //TODO
+		{493, 492, 491, 490, 489, 488, 494}, //TODO
+		{502, 501, 500, 499, 498, 497, 503} //TODO
 	};
 	vector<vector<int> > segments(10);
 	segments[0].push_back(UPPER_LEFT);
