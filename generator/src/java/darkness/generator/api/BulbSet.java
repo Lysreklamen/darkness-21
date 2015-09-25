@@ -50,4 +50,10 @@ public interface BulbSet {
 	 * Otherwise, return the RGB color of the first bulb in the group.
 	 */
 	Color getColor();
+
+	/**
+	 * Gets the position (or average of positions of multiple bulbs).
+	 * @return a 3 element array with x, y and z position. (Should be meters from the bottom left corner of the sign). z is normally set to 0.0f
+	 */
+	float[] getPosition();
 }

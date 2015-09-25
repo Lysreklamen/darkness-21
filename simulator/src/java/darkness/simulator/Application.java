@@ -139,7 +139,7 @@ public class Application extends SimpleApplication {
                         channelManager.getChannel(channelBlue), parentNode, new Vector3f(posX, posY, 0.0f));
                 if (arguments.getScriptClassName() != null) {
                     // If we want to use the generator, its bulb manager must also be populated
-                    generatorBulbManager.registerBulb(id, channelRed, channelGreen, channelBlue);
+                    generatorBulbManager.registerBulb(id, channelRed, channelGreen, channelBlue, posX, posY);
                 }
 
                 float hue = (posX * posX + posY * posY) / (10.0f * 10.0f + 1.0f * 1.0f);

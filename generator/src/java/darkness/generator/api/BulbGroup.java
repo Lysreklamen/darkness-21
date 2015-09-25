@@ -121,6 +121,25 @@ public class BulbGroup implements BulbSet, Iterable<BulbRGB> {
 	}
 
 	@Override
+	public float[] getPosition() {
+		float[] averagePosition = {0.0f, 0.0f, 0.0f};
+		int count = 0;
+		for(BulbRGB bulb: bulbs) {
+			float[] pos = bulb.getPosition();
+			averagePosition[0] += pos[0];
+			averagePosition[1] += pos[1];
+			averagePosition[2] += pos[2];
+			count++;
+		}
+
+		averagePosition[0] /= (float)count;
+		averagePosition[1] /= (float)count;
+		averagePosition[2] /= (float)count;
+		return averagePosition;
+
+	}
+
+	@Override
 	public Iterator<BulbRGB> iterator() {
 		return bulbs.iterator();
 	}

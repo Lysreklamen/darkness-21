@@ -31,14 +31,22 @@ public class BulbManager {
      * @param channelBlue
      * @return
      */
+    public BulbRGB registerBulb(int id, Channel channelRed, Channel channelGreen, Channel channelBlue, float posX, float posY) {
+        if(bulbMap.containsKey(id)) {
+            throw new IllegalArgumentException("The bulb with the ID: "+id+" already exists.");
+        }
+
+        BulbRGB bulb = new BulbRGB(channelRed, channelGreen, channelBlue, posX, posY);
+        bulbMap.put(id, bulb);
+        return bulb;
+    }
+
     public BulbRGB registerBulb(int id, Channel channelRed, Channel channelGreen, Channel channelBlue) {
         if(bulbMap.containsKey(id)) {
             throw new IllegalArgumentException("The bulb with the ID: "+id+" already exists.");
         }
 
-        BulbRGB bulb = new BulbRGB(channelRed, channelGreen, channelBlue);
-        bulbMap.put(id, bulb);
-        return bulb;
+        return registerBulb(id, channelRed, channelGreen, channelBlue, -1.0f, -1.0f);
     }
 
     /**
@@ -76,6 +84,16 @@ public class BulbManager {
         return registerBulb(id, channelManager.getChannel(0, channelRed), channelManager.getChannel(0, channelGreen), channelManager.getChannel(0, channelBlue));
     }
 
+    public BulbRGB registerBulb(int id, int channelRed, int channelGreen, int channelBlue, float posX, float posY) {
+        if(bulbMap.containsKey(id)) {
+            throw new IllegalArgumentException("The bulb with the ID: "+id+" already exists.");
+        }
+        ChannelManager channelManager = ChannelManager.getInstance();
+
+        return registerBulb(id, channelManager.getChannel(0, channelRed), channelManager.getChannel(0, channelGreen), channelManager.getChannel(0, channelBlue), posX, posY);
+    }
+
+
     public BulbRGB nameBulb(BulbRGB bulb, String name) {
         if(bulbNameMap.containsKey(name)) {
             throw new IllegalArgumentException("There is already a bulb with the name: "+name);
@@ -94,4 +112,5 @@ public class BulbManager {
     public Collection<BulbRGB> getAllBulbs() {
         return bulbMap.values();
     }
+
 }

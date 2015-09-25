@@ -9,6 +9,7 @@ public class BulbRGB implements BulbSet {
     private final Channel channelRed;
     private final Channel channelGreen;
     private final Channel channelBlue;
+    private final float position[] = {-1.0f, -1.0f, 0.0f};
 
     /**
      * Create a new bulb that is controlled by the given channels.
@@ -17,6 +18,14 @@ public class BulbRGB implements BulbSet {
         this.channelRed = channelRed;
         this.channelGreen = channelGreen;
         this.channelBlue = channelBlue;
+    }
+
+    public BulbRGB(Channel channelRed, Channel channelGreen, Channel channelBlue, float posX, float posY) {
+        this.channelRed = channelRed;
+        this.channelGreen = channelGreen;
+        this.channelBlue = channelBlue;
+        this.position[0] = posX;
+        this.position[1] = posY;
     }
 
     /**
@@ -87,6 +96,11 @@ public class BulbRGB implements BulbSet {
     @Override
     public Color getColor() {
         return new Color(getRed(), getGreen(), getBlue());
+    }
+
+    @Override
+    public float[] getPosition() {
+        return position;
     }
 
     /**
