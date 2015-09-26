@@ -41,12 +41,14 @@ unsigned char ** loadFramesFromPgm(const char * filename, map<int, vector<int> >
 	unsigned char * readBuffer = new unsigned char[FRAME_SIZE];
 	for (int f = 0; f < *numFrames; ++f) {
 		frames[f] = new unsigned char[FRAME_SIZE];
-		// We copy the values in two passes - first, channel i from the source is copied to channel i in the target, then, all mapped channels are copied.
+		// We copy the values in two passes - first, channel i from the source (which is a logical channel) is copied to index i in a temporary buffer, then, all mapped channels are copied to the (physical) frame.
 		// This is a simple way to ensure that a channel that is the target of a mapping will not get overwritten by the value from the source channel at the same index.
+		// Note that physical channels that are not the target of a mapping will always be zero.
 		for (int i = 0; i < FRAME_SIZE; ++i) {
 			unsigned int pixelValue;
 			file >> pixelValue;
-			frames[f][i] = readBuffer[i] = (unsigned char)pixelValue;
+			readBuffer[i] = (unsigned char)pixelValue;
+			frames[f][i] = 0;
 		}
 		for (map<int, vector<int> >::iterator it = channelMapping.begin(); it != channelMapping.end(); ++it)
 			for (unsigned int i = 0; i < it->second.size(); ++i)
