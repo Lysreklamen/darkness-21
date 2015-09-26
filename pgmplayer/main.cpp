@@ -152,8 +152,11 @@ string getNextFrameFilenameFromPlaylist(string playlistFilename, string currentF
 	string line;
 	vector<string> filenames;
 	ifstream playlistFile(playlistFilename.c_str());
-	while (getline(playlistFile, line))
-		filenames.push_back(line);
+	while (getline(playlistFile, line)) {
+		if (line.find_first_not_of(" \t") != string::npos) {
+			filenames.push_back(line);
+		}
+	}
 	if (filenames.size() == 0) {
 		cout << "Playlist file is empty or nonexistent" << endl;
 		return "";
