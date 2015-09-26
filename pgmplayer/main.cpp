@@ -269,7 +269,7 @@ int countdown(int seconds) {
 
 	unsigned long long startTimestamp = getUnixTimestamp();
 	for (int t = seconds; t >= 0; t--) {
-		int number = t > 60 ? t / 60 : t; // Count minutes if there's more than one minute left; otherwise, count seconds
+		int number = t < 60 ? t : t / 60; // Count seconds if there's less than one minute left; otherwise, count minutes
 		int digits[] = {number / 10, number % 10};
 		for (int d = 0; d < NUM_DIGITS; d++) {
 			for (int i = 0; i < NUM_SEGMENTS; i++) {
@@ -284,6 +284,7 @@ int countdown(int seconds) {
 			cerr << "Send DMX failed" << endl;
 			return 4;
 		}
+		cout << "Countdown: " << t << " s (" << t / 60 << " m)" << endl;
 		long long timeToWait = startTimestamp + 1000000 * (seconds + 1 - t) - getUnixTimestamp();
 		if (t > 0 && timeToWait > 0) { // Return immediately after displaying 0, in order to start the main sequence "simultaneously"
 			usleep(timeToWait);
