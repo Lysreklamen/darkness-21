@@ -10,10 +10,14 @@ public class Sinus extends BaseScript {
 			for (BulbRGB bulb : allBulbs) {
 				float x = bulb.getPosition()[0];
 				float y = bulb.getPosition()[1];
-				if ((Math.sin(x + t) + 1) / 2 * 1.5 > y) {
+				double sin = (Math.sin(x + t) + 1) / 2 * 1.5;
+				final float blurRadius = 0.2f;
+				if (sin > y + blurRadius) {
 					set(bulb, 255, 0, 0);
-				} else {
+				} else if (sin < y - blurRadius) {
 					set(bulb, 0, 0, 0);
+				} else {
+					setCoerced(bulb, (sin - (y - blurRadius)) / (blurRadius * 2) * 255, 0, 0);
 				}
 			}
 			next();
