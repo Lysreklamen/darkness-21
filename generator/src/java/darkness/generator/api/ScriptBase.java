@@ -19,6 +19,7 @@ import java.awt.*;
  */
 public abstract class ScriptBase extends Generator<Void> {
     private int priority;
+    private boolean cancelled;
 
     /**
      * Convenience method for accessing the bulb with id {@code id}.
@@ -56,6 +57,14 @@ public abstract class ScriptBase extends Generator<Void> {
         this.priority = priority;
     }
 
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    public void cancel() {
+        cancelled = true;
+    }
+
     /*************************************************
      * Sequence functions below
      *************************************************/
@@ -73,7 +82,7 @@ public abstract class ScriptBase extends Generator<Void> {
      * @param frames The number of frames to wait.
      */
     protected void skip(int frames) {
-        for(int i = 0; i < frames; i++) {
+        for(int i = 0; i < frames && !cancelled; i++) {
             next();
         }
     }
@@ -122,6 +131,13 @@ public abstract class ScriptBase extends Generator<Void> {
     }
 
     /**
+     * Set the bulb(s) to the given RGB color. Out-of-range values will be coerced to [0-255].
+     */
+    protected void setCoerced(BulbSet bulbSet, double red, double green, double blue) {
+        bulbSet.setCoerced(red, green, blue, this);
+    }
+
+    /**
      * Can be used from the main script to override the color of a bulb or bulb group which would otherwise be set by a subscript or effect.
      * As opposed to {@link #set(BulbSet, Color)}, its effect can last for many frames.
      */
@@ -165,6 +181,13 @@ public abstract class ScriptBase extends Generator<Void> {
      */
     protected void hsbFade(BulbSet bulbSet, float[] color, int duration) {
         effect(new HSBFade(bulbSet, color, duration));
+    }
+
+    /**
+     * Starts a new {@link HSBFade} effect on the given bulb(s).
+     */
+    protected void hsbFade(BulbSet bulbSet, float red,float green, float blue,int duration){
+        hsbFade(bulbSet, new float[] {red, green, blue},duration);
     }
 
     /**

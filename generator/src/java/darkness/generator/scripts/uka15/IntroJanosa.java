@@ -63,15 +63,6 @@ public class IntroJanosa extends BaseScript {
         skip(40);
 
 
-        for(BulbGroup letter: letters) {
-            rgbFade(letter, 255, 147, 41, 10);
-            skip(20);
-        }
-
-        skip(20*20);
-
-
-
     }
 
     private void glow() {
@@ -80,7 +71,7 @@ public class IntroJanosa extends BaseScript {
                 float[] colors = Color.RGBtoHSB( bulb.getRed(), bulb.getGreen(), bulb.getBlue(), null );
 
 
-                setHSB(bulb, colors[0], 1.0f, 0.8f+(float)(0.2f*Math.sin((float)frameCount * 0.1f)));
+                setHSB(bulb, colors[0], 1.0f, 0.8f+(float)(0.2f*Math.sin((float)frameCount * 0.1f +  bulb.getPosition()[0]/2.5f)));
             }
             next();
         }

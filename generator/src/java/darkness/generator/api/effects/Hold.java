@@ -8,7 +8,6 @@ public class Hold extends EffectBase {
 	private final BulbSet bulbSet;
 	private final Color color;
 	private final int frames;
-	private boolean cancelled;
 
 	public Hold(BulbSet bulbSet, Color color, int frames) {
 		this.bulbSet = bulbSet;
@@ -18,18 +17,10 @@ public class Hold extends EffectBase {
 
 	@Override
 	public void run() {
-		for (int f = 0; f < frames; f++) {
-			if (cancelled) {
-				return;
-			}
+		for (int f = 0; f < frames && !isCancelled(); f++) {
 			set(bulbSet, color);
 			next();
 		}
-	}
-
-	@Override
-	public void cancel() {
-		cancelled = true;
 	}
 
 	@Override

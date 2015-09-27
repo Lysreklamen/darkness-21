@@ -22,6 +22,17 @@ public interface BulbSet {
 	void setHSB(float hue, float saturation, float brightness, ScriptBase setter);
 
 	/**
+	 * Set the bulb(s) to the given RGB color. Out-of-range values will be coerced to [0-255].
+	 */
+	default void setCoerced(double red, double green, double blue, ScriptBase setter) {
+		set(
+				(int) Math.max(0, Math.min(255, Math.round(red))),
+				(int) Math.max(0, Math.min(255, Math.round(green))),
+				(int) Math.max(0, Math.min(255, Math.round(blue))),
+				setter);
+	}
+
+	/**
 	 * Relinquish control over the bulb(s). If no other script(s) in the same frame set the bulb(s),
 	 * it/they will turn black; otherwise, the other script(s) will win.
 	 */

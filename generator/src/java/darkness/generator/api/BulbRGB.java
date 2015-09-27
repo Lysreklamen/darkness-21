@@ -6,6 +6,7 @@ import java.awt.*;
  * An RGB bulb, whose color is defined by three channels.
  */
 public class BulbRGB implements BulbSet {
+    private final int id;
     private final Channel channelRed;
     private final Channel channelGreen;
     private final Channel channelBlue;
@@ -14,18 +15,17 @@ public class BulbRGB implements BulbSet {
     /**
      * Create a new bulb that is controlled by the given channels.
      */
-    public BulbRGB(Channel channelRed, Channel channelGreen, Channel channelBlue) {
-        this.channelRed = channelRed;
-        this.channelGreen = channelGreen;
-        this.channelBlue = channelBlue;
-    }
-
-    public BulbRGB(Channel channelRed, Channel channelGreen, Channel channelBlue, float posX, float posY) {
+    public BulbRGB(int id, Channel channelRed, Channel channelGreen, Channel channelBlue, float posX, float posY) {
+        this.id = id;
         this.channelRed = channelRed;
         this.channelGreen = channelGreen;
         this.channelBlue = channelBlue;
         this.position[0] = posX;
         this.position[1] = posY;
+    }
+
+    public int getId() {
+        return id;
     }
 
     /**
