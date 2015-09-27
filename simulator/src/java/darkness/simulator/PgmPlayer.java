@@ -18,7 +18,7 @@ public class PgmPlayer implements Runnable {
     private int currentFrameIndex;
     private long lastUpdateTime = 0;
 
-    private static final long frameDuration = 1000 / 24;
+    private static final long frameDuration = 1000 / 20;
 
     public PgmPlayer(List<PgmReader> readers) {
         if (readers == null || readers.size() == 0) {
