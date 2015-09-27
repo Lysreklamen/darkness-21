@@ -164,7 +164,7 @@ public class Application extends SimpleApplication {
     private PgmReader generatePgmFromScript() throws ClassNotFoundException, IllegalAccessException, InstantiationException, IOException {
         String qualifiedScriptClassName = (arguments.getScriptClassName().contains(".") ? "" : "darkness.generator.scripts.uka15.") + arguments.getScriptClassName();
         ScriptBase script = (ScriptBase) Class.forName(qualifiedScriptClassName).newInstance();
-        File tempFile = new File("sequences/output.pgm");
+        File tempFile = new File("sequences/" + arguments.getScriptClassName() + ".pgm");
         ScriptManager scriptManager = ScriptManager.getInstance();
         scriptManager.start(script, new PgmOutput(tempFile.getPath()));
         return new PgmReader(tempFile.getPath());

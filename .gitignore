@@ -15,4 +15,3 @@ gradlew
 *.iws
 *.dylib
 *.o
-simulator/sequences/output.pgm
