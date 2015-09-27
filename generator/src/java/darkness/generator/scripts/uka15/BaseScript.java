@@ -2,7 +2,11 @@ package darkness.generator.scripts.uka15;
 
 import darkness.generator.api.BulbGroup;
 import darkness.generator.api.BulbManager;
+import darkness.generator.api.BulbRGB;
 import darkness.generator.api.ScriptBase;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class BaseScript extends ScriptBase {
 	// Obfuscated letters, to prevent the UKA name from being directly readable by someone who looks at the source code over someone's shoulder.
@@ -16,6 +20,9 @@ public class BaseScript extends ScriptBase {
 	protected BulbGroup G;
 	protected BulbGroup[] letters;
 	protected BulbGroup[] columns;
+	protected BulbRGB[] allBulbs;
+	protected BulbRGB[] allBulbsSortedHorizontally;
+	protected BulbRGB[] allBulbsSortedVertically;
 
 	@Override
 	public void run() {
@@ -74,7 +81,20 @@ public class BaseScript extends ScriptBase {
 				group(87, 95)
 		};
 
-
-
+		allBulbs = Arrays.stream(letters).flatMap(letter -> letter.getAllBulbs().stream()).toArray(BulbRGB[]::new);
+		allBulbsSortedHorizontally = Arrays.stream(allBulbs).sorted((a, b) -> {
+			float diff = a.getPosition()[0] - b.getPosition()[0];
+			if (diff == 0) {
+				return 0;
+			}
+			return diff < 0 ? -1 : 1;
+		}).toArray(BulbRGB[]::new);
+		allBulbsSortedVertically = Arrays.stream(allBulbs).sorted((a, b) -> {
+			float diff = a.getPosition()[1] - b.getPosition()[1];
+			if (diff == 0) {
+				return 0;
+			}
+			return diff < 0 ? -1 : 1;
+		}).toArray(BulbRGB[]::new);
 	}
 }
