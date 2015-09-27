@@ -91,7 +91,7 @@ public class CW extends EffectBase {
 
     public CW(BulbSet bulbSet, String str, Color color, int framesPerDit) {
         this.bulbSet = bulbSet;
-        this.str = str;
+        this.str = str.toLowerCase();
         this.color = color;
         this.framesPerDit = framesPerDit;
 
