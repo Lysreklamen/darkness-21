@@ -19,6 +19,7 @@ import java.awt.*;
  */
 public abstract class ScriptBase extends Generator<Void> {
     private int priority;
+    private boolean cancelled;
 
     /**
      * Convenience method for accessing the bulb with id {@code id}.
@@ -56,6 +57,14 @@ public abstract class ScriptBase extends Generator<Void> {
         this.priority = priority;
     }
 
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    public void cancel() {
+        cancelled = true;
+    }
+
     /*************************************************
      * Sequence functions below
      *************************************************/
@@ -73,7 +82,7 @@ public abstract class ScriptBase extends Generator<Void> {
      * @param frames The number of frames to wait.
      */
     protected void skip(int frames) {
-        for(int i = 0; i < frames; i++) {
+        for(int i = 0; i < frames && !cancelled; i++) {
             next();
         }
     }

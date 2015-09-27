@@ -13,7 +13,6 @@ public class HSBFade extends EffectBase {
     private final float[] endHSB;
     private final BulbSet bulbSet;
     private final int frames;
-    private boolean cancelled = false;
 
     public HSBFade(BulbSet bulbSet, float[] endHSB, int frames) {
         startHSB = Color.RGBtoHSB( bulbSet.getRed(), bulbSet.getGreen(), bulbSet.getBlue(), null );
@@ -24,10 +23,7 @@ public class HSBFade extends EffectBase {
 
     @Override
     public void run() {
-        for(int frame = 1; frame <= frames; ++frame) {
-            if(cancelled)
-                return;
-
+        for(int frame = 1; frame <= frames && !isCancelled(); ++frame) {
             float h = startHSB[0] + ( ( endHSB[0] - startHSB[0] ) * frame ) / frames;
             float s = startHSB[1] + ( ( endHSB[1] - startHSB[1] ) * frame ) / frames;
             float b = startHSB[2] + ( ( endHSB[2] - startHSB[2] ) * frame ) / frames;
@@ -35,11 +31,6 @@ public class HSBFade extends EffectBase {
             setHSB(bulbSet, h, s, b);
             next();
         }
-    }
-
-    @Override
-    public void cancel() {
-        cancelled = true;
     }
 
     @Override
