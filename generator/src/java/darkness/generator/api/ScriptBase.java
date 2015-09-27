@@ -2,6 +2,7 @@ package darkness.generator.api;
 
 import com.zoominfo.util.yieldreturn.Generator;
 import darkness.generator.api.effects.EffectBase;
+import darkness.generator.api.effects.Hold;
 import darkness.generator.api.effects.RGBFade;
 import darkness.generator.api.effects.HSBFade;
 import java.lang.IllegalArgumentException;
@@ -120,6 +121,34 @@ public abstract class ScriptBase extends Generator<Void> {
         bulbSet.setHSB(hue, saturation, brightness, this);
     }
 
+    /**
+     * Can be used from the main script to override the color of a bulb or bulb group which would otherwise be set by a subscript or effect.
+     * As opposed to {@link #set(BulbSet, Color)}, its effect can last for many frames.
+     */
+    protected void hold(BulbSet bulbSet, Color color, int frames) {
+        effect(new Hold(bulbSet, color, frames));
+    }
+
+    /**
+     * Can be used from the main script to override the color of a bulb or bulb group which would otherwise be set by a subscript or effect.
+     * As opposed to {@link #set(BulbSet, int, int, int)}, its effect can last for many frames.
+     */
+    protected void hold(BulbSet bulbSet, int red, int green, int blue, int frames) {
+        hold(bulbSet, new Color(red, green, blue), frames);
+    }
+
+    /**
+     * Can be used from the main script to override the color of a bulb or bulb group which would otherwise be set by a subscript or effect.
+     * As opposed to {@link #setHSB(BulbSet, float, float, float)}, its effect can last for many frames.
+     */
+    protected void holdHSB(BulbSet bulbSet, float hue, float saturation, float brightness, int frames) {
+        hold(bulbSet, Color.getHSBColor(hue, saturation, brightness), frames);
+    }
+
+    /**
+     * Relinquish control over the bulb(s). If no other script(s) in the same frame set the bulb(s),
+     * it/they will turn black; otherwise, the other script(s) will win.
+     */
     protected void relinquish(BulbSet bulbSet) {
         bulbSet.relinquish(this);
     }
