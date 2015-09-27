@@ -140,8 +140,6 @@ public class CW extends EffectBase {
         // Space equal to one dah between characters
         // Space equal to seven dits between words
 
-        Color color = new Color(200, 200, 200);
-
         for( ArrayList<Boolean[]> word : sequence) {
             for (Boolean[] c : word) {
                 if (cancelled)
