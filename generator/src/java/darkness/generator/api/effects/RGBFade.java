@@ -9,7 +9,6 @@ public class RGBFade extends EffectBase {
     private final Color endColor;
     private final BulbSet bulbSet;
     private final int frames;
-    private boolean cancelled = false;
     private final float delta_r, delta_g, delta_b;
 
     public RGBFade(BulbSet bulbSet, Color endColor, int frames) {
@@ -24,10 +23,7 @@ public class RGBFade extends EffectBase {
 
     @Override
     public void run() {
-        for(int frame = 1; frame <= frames; frame++) {
-            if(cancelled) {
-                return;
-            }
+        for(int frame = 1; frame <= frames && !isCancelled(); frame++) {
             int red  = startColor.getRed() + (int)(delta_r*frame);
             int green  = startColor.getGreen() + (int)(delta_g*frame);
             int blue = startColor.getBlue() + (int)(delta_b*frame);
@@ -35,11 +31,6 @@ public class RGBFade extends EffectBase {
             set(bulbSet, red, green, blue);
             next();
         }
-    }
-
-    @Override
-    public void cancel() {
-        cancelled = true;
     }
 
     @Override
