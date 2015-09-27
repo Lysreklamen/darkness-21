@@ -1,13 +1,10 @@
 package darkness.generator.api.effects;
 
 import darkness.generator.api.BulbSet;
-import javafx.scene.effect.Effect;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by knutaldrin on 27.09.2015.
@@ -95,7 +92,7 @@ public class CW extends EffectBase {
         this.color = color;
         this.framesPerDit = framesPerDit;
 
-        int totalFrames = 0;
+        totalFrames = 0;
 
 
         String[] words = str.split(" ");
@@ -111,8 +108,22 @@ public class CW extends EffectBase {
             sequence.add(morseWord);
         }
 
-        // TODO: Actually compute this
-        totalFrames = 0; // Something
+        // Really crude computation, could be more effective, but since this runs offline, meh...
+        for (ArrayList<Boolean[]> word : sequence) {
+            for (Boolean[] c : word) {
+                for (Boolean ditdah : c) {
+                    // One for dit, 3 for dah, + one for separation
+                    totalFrames += (ditdah ? framesPerDit : 3 * framesPerDit) + framesPerDit;
+                }
+
+                // Add another 2 for character separation
+                totalFrames += 2 * framesPerDit;
+            }
+
+            // Add another 4 for word separation
+            totalFrames += 4 * framesPerDit;
+
+        }
     }
 
     public CW(BulbSet bulbSet, String str) {
@@ -151,6 +162,10 @@ public class CW extends EffectBase {
             skip(4 * framesPerDit);
         }
 
+    }
+
+    public int getTotalFrames() {
+        return totalFrames;
     }
 
     @Override
