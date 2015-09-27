@@ -19,6 +19,7 @@ import java.awt.*;
  */
 public abstract class ScriptBase extends Generator<Void> {
     private int priority;
+    private boolean cancelled;
 
     /**
      * Convenience method for accessing the bulb with id {@code id}.
@@ -56,6 +57,14 @@ public abstract class ScriptBase extends Generator<Void> {
         this.priority = priority;
     }
 
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    public void cancel() {
+        cancelled = true;
+    }
+
     /*************************************************
      * Sequence functions below
      *************************************************/
@@ -73,7 +82,7 @@ public abstract class ScriptBase extends Generator<Void> {
      * @param frames The number of frames to wait.
      */
     protected void skip(int frames) {
-        for(int i = 0; i < frames; i++) {
+        for(int i = 0; i < frames && !cancelled; i++) {
             next();
         }
     }
@@ -119,6 +128,13 @@ public abstract class ScriptBase extends Generator<Void> {
      */
     protected void setHSB(BulbSet bulbSet, float hue, float saturation, float brightness) {
         bulbSet.setHSB(hue, saturation, brightness, this);
+    }
+
+    /**
+     * Set the bulb(s) to the given RGB color. Out-of-range values will be coerced to [0-255].
+     */
+    protected void setCoerced(BulbSet bulbSet, double red, double green, double blue) {
+        bulbSet.setCoerced(red, green, blue, this);
     }
 
     /**
