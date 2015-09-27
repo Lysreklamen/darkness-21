@@ -131,6 +131,13 @@ public abstract class ScriptBase extends Generator<Void> {
     }
 
     /**
+     * Set the bulb(s) to the given RGB color. Out-of-range values will be coerced to [0-255].
+     */
+    protected void setCoerced(BulbSet bulbSet, double red, double green, double blue) {
+        bulbSet.setCoerced(red, green, blue, this);
+    }
+
+    /**
      * Can be used from the main script to override the color of a bulb or bulb group which would otherwise be set by a subscript or effect.
      * As opposed to {@link #set(BulbSet, Color)}, its effect can last for many frames.
      */
