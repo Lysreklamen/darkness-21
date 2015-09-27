@@ -36,7 +36,7 @@ public class BulbManager {
             throw new IllegalArgumentException("The bulb with the ID: "+id+" already exists.");
         }
 
-        BulbRGB bulb = new BulbRGB(channelRed, channelGreen, channelBlue, posX, posY);
+        BulbRGB bulb = new BulbRGB(id, channelRed, channelGreen, channelBlue, posX, posY);
         bulbMap.put(id, bulb);
         return bulb;
     }
