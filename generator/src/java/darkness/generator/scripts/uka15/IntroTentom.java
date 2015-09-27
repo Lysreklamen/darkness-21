@@ -36,7 +36,7 @@ public class IntroTentom extends BaseScript {
         effect(LetterE);
         effect(LetterF);
         effect(LetterG);
-        skip(50);
+        skip(100);
         LetterA.cancel();
         LetterB.cancel();
         LetterC.cancel();
@@ -72,7 +72,7 @@ public class IntroTentom extends BaseScript {
 
                 set(Letter,255,147,41);
                 next();
-                skip(Math.min((int) Math.exp(-random.nextInt(20) + time), 100));
+                skip(Math.min((int) Math.exp(-random.nextInt(20) + Math.round(0.2*time)), 100));
                 set(Letter,0,0,0);
                 time = time + 1;
 
