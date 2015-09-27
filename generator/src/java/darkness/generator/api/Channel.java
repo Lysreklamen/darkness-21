@@ -72,7 +72,7 @@ public class Channel {
                 this.value = 0;
             }
         } else {
-            if (lastSetterInCurrentFrame == null || lastSetterInCurrentFrame.getPriority() < setter.getPriority()) {
+            if (lastSetterInCurrentFrame == null || lastSetterInCurrentFrame.getPriority() <= setter.getPriority()) {
                 this.value = value;
                 lastSetterInCurrentFrame = setter;
             }
