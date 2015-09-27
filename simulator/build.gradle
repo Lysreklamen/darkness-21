@@ -1,0 +1,52 @@
+apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'idea'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+version = '1.0'
+
+mainClassName = "darkness.simulator.Application"
+//mainClassName = "me.merciless.dmonkey.Main"
+
+repositories {
+    mavenCentral()
+    maven {
+        url 'http://updates.jmonkeyengine.org/maven'
+    }
+}
+
+def jmonkeyengine_version = '3.1'
+
+dependencies {
+    testCompile group: 'junit', name: 'DefaultFramejunit', version: '4.11'
+    compile "com.jme3:jme3-core:$jmonkeyengine_version.+"
+    compile "com.jme3:jme3-desktop:$jmonkeyengine_version.+"
+    compile "com.jme3:jme3-lwjgl:$jmonkeyengine_version.+"
+    compile "com.jme3:jme3-plugins:$jmonkeyengine_version.+"
+    compile files('libs/jME3-testdata.jar')
+    compile project(":generator")
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/java'
+        }
+        resources {
+            srcDir 'src/resources'
+        }
+    }
+}
+
+processResources {
+    filesMatching('**/*.xml') {
+        filter {
+            it.replace('texture_coord_dimensions_0="float2"', 'texture_coord_dimensions_0="2"')
+        }
+    }
+}
+
+run {
+    args = ["--pattern", "./patterns/uka15.txt", "--script", "IntroJanosa"]
+}
