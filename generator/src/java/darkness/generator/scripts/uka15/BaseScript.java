@@ -24,6 +24,11 @@ public class BaseScript extends ScriptBase {
 	protected BulbRGB[] allBulbsSortedHorizontally;
 	protected BulbRGB[] allBulbsSortedVertically;
 
+	protected final double LETTER_HEIGHT = 1.5;
+	protected final double LEFT = 1.73;
+	protected final double RIGHT = 8.62;
+	protected final double WIDTH = RIGHT - LEFT;
+
 	@Override
 	public void run() {
 		A = group(0, 1, 2, 3, 4, 5, 6, 7, 8);
