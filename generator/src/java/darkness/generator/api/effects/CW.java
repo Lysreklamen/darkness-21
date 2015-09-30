@@ -140,6 +140,8 @@ public class CW extends EffectBase {
         // Space equal to one dah between characters
         // Space equal to seven dits between words
 
+        Color oldColor = bulbSet.getColor();
+
         for( ArrayList<Boolean[]> word : sequence) {
             for (Boolean[] c : word) {
                 if (cancelled)
@@ -148,7 +150,7 @@ public class CW extends EffectBase {
                 for( Boolean ditdah : c) {
                     set(bulbSet, color);
                     skip(ditdah ? framesPerDit : 3 * framesPerDit); // Skip 3xdit for a dah
-                    relinquish(bulbSet);
+                    set(bulbSet, oldColor);
                     skip(framesPerDit);
                 }
 
