@@ -1,0 +1,7 @@
+sequences/Intro.pgm
+sequences/Fade.pgm
+sequences/SuperH.pgm
+sequences/LGBT.pgm
+sequences/CW15.pgm
+sequences/Snow.pgm
+sequences/Pong.pgm
