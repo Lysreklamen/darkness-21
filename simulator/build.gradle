@@ -48,5 +48,5 @@ processResources {
 }
 
 run {
-    args = ["--pattern", "./patterns/uka15.txt", "--script", "IntroJanosa"]
+    args = ["--pattern", "./patterns/uka15.txt", "--script", "Intro"]
 }

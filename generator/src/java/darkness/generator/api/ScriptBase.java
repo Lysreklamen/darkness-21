@@ -186,8 +186,8 @@ public abstract class ScriptBase extends Generator<Void> {
     /**
      * Starts a new {@link HSBFade} effect on the given bulb(s).
      */
-    protected void hsbFade(BulbSet bulbSet, float red,float green, float blue,int duration){
-        hsbFade(bulbSet, new float[] {red, green, blue},duration);
+    protected void hsbFade(BulbSet bulbSet, float hue, float saturation, float brightness, int duration){
+        hsbFade(bulbSet, new float[] {hue, saturation, brightness},duration);
     }
 
     /**
