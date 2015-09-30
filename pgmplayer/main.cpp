@@ -14,6 +14,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <iostream>
+#include <iomanip>
 
 using namespace std;
 
@@ -89,8 +90,8 @@ bool parseParameters(int argc, char * argv[], string & filename, bool & usePlayl
 				startAtFrame = value;
 			}
 			else {
-				if (value >= 6000) {
-					cout << "--countdown must be less than 6000.\n" << helpText << endl;
+				if (value >= 360000) {
+					cout << "--countdown must be less than 360000.\n" << helpText << endl;
 					return false;
 				}
 				countdownSeconds = value;
@@ -272,7 +273,10 @@ int countdown(int seconds) {
 
 	unsigned long long startTimestamp = getUnixTimestamp();
 	for (int t = seconds; t >= 0; t--) {
-		int number = t < 60 ? t : t / 60; // Count seconds if there's less than one minute left; otherwise, count minutes
+		int s = t % 60;
+		int m = (t / 60) % 60;
+		int h = t / 3600;
+		int number = h > 0 ? h : (m > 0 ? m : s);
 		int digits[] = {number / 10, number % 10};
 		for (int d = 0; d < NUM_DIGITS; d++) {
 			for (int i = 0; i < NUM_SEGMENTS; i++) {
@@ -287,9 +291,10 @@ int countdown(int seconds) {
 			cerr << "Send DMX failed" << endl;
 			return 4;
 		}
-		cout << "Countdown: " << t << " s (" << t / 60 << " m)" << endl;
+		cout << std::setfill('0');
+		cout << "Countdown: " << number << " (" << std::setw(2) << h << ":" << std::setw(2) << m << ":" << std::setw(2) << s << ")" << endl;
 		long long timeToWait = startTimestamp + 1000000 * (seconds + 1 - t) - getUnixTimestamp();
-		if (t > 0 && timeToWait > 0) { // Return immediately after displaying 0, in order to start the main sequence "simultaneously"
+		if (timeToWait > 0) {
 			usleep(timeToWait);
 		}
 	}
