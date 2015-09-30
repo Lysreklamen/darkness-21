@@ -1,4 +1,7 @@
 sequences/Intro.pgm
+sequences/Fade2.pgm
+sequences/UKA.pgm
+sequences/Betydning1.pgm
 sequences/Fade.pgm
 sequences/SuperH.pgm
 sequences/LGBT.pgm
