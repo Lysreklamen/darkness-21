@@ -16,3 +16,6 @@ gradlew
 *.dylib
 *.o
 *.dll
+
+# Don't upload pgm files
+*.pgm
