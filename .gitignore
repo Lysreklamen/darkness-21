@@ -1,12 +1,9 @@
 build/
-gradle/
 out/
 pgmplayer/dmx
 .gradle/
 .idea/
-gradlew
 *.swp
-*.bat
 *.iml
 *.so
 *.class
