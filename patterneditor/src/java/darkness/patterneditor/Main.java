@@ -28,7 +28,7 @@ public class Main implements WindowListener {
         mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         mainFrame.addWindowListener(this);
         mainFrame.setContentPane(bulbPanel);
-        mainFrame.setSize(new Dimension(1280, 480));
+        mainFrame.setSize(new Dimension(1800, 700));
         mainFrame.setVisible(true);
     }
 

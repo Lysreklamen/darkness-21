@@ -44,7 +44,7 @@ public class BulbPanel extends JPanel implements ActionListener, ChangeListener,
     private Integer hoveredPointIndex;
     private Integer selectedPointIndex;
     private Point previousDragPos;
-    private double gridResolution = 2;
+    private double gridResolution = 0.2;
     private boolean isGridVisible;
     
     private final JLabel frameLabel;
@@ -55,12 +55,18 @@ public class BulbPanel extends JPanel implements ActionListener, ChangeListener,
     private final JToggleButton gridToggleButton;
     private final JLabel bulbInfoLabel;
 
-    private final static double SCALE = 10;
-    private final static double OFFSET_X = 0;
-    private final static double OFFSET_Y = 100;
+    private final static double RENDER_OFFSET_X = 50; // Pixels
+    private final static double RENDER_OFFSET_Y = 100; // Pixels
+    private final static double RENDER_SCALE = 150; // Pixels per meter
     private final static double HOVER_POINT_SIZE = 6;
     private final static double HOVER_POINT_DISTANCE = 10;
     private final static int MAJOR_GRID_MULTIPLE = 5;
+    // Cornice == gesims
+    private final static double CORNICE_X = 0;
+    private final static double CORNICE_Y = 0;
+    private final static double CORNICE_WIDTH = 10;
+    private final static double CORNICE_HEIGHT = 2;
+
 
     public BulbPanel(String patternFileName) throws Exception {
         this.patternFileName = patternFileName;
@@ -177,6 +183,7 @@ public class BulbPanel extends JPanel implements ActionListener, ChangeListener,
     public void paint(Graphics g) {
         super.paint(g);
         drawGrid(g);
+        drawCornice(g);
         for (Bulb bulb : bulbs) {
             drawBulb(g, bulb);
         }
@@ -191,18 +198,23 @@ public class BulbPanel extends JPanel implements ActionListener, ChangeListener,
         g2.setColor(Color.LIGHT_GRAY);
         
         int count = 0;
-        for (double x = OFFSET_X; x < getWidth(); x += gridResolution * SCALE) {
+        for (double x = RENDER_OFFSET_X; x < getWidth(); x += gridResolution * RENDER_SCALE) {
             g2.setStroke(new BasicStroke(count % MAJOR_GRID_MULTIPLE == 0 ? 2 : 1));
-            g.drawLine((int) x, (int) OFFSET_Y, (int) x, (int) getHeight());
+            g.drawLine((int) x, (int) RENDER_OFFSET_Y, (int) x, (int) getHeight());
             ++count;
         }
         
         count = 0;
-        for (double y = OFFSET_Y; y < getHeight(); y += gridResolution * SCALE) {
+        for (double y = RENDER_OFFSET_Y; y < getHeight(); y += gridResolution * RENDER_SCALE) {
             g2.setStroke(new BasicStroke(count % MAJOR_GRID_MULTIPLE == 0 ? 2 : 1));
-            g.drawLine((int) OFFSET_X, (int) y, (int) getWidth(), (int) y);
+            g.drawLine((int) RENDER_OFFSET_X, (int) y, (int) getWidth(), (int) y);
             ++count;
         }
+    }
+
+    private void drawCornice(Graphics g) {
+        g.setColor(Color.DARK_GRAY);
+        g.drawRect(scaleX(CORNICE_X), scaleY(CORNICE_Y), scaleX(CORNICE_WIDTH), scaleY(CORNICE_HEIGHT));
     }
     
     private void drawBulb(Graphics g, Bulb bulb) {
@@ -210,7 +222,7 @@ public class BulbPanel extends JPanel implements ActionListener, ChangeListener,
         g2.setStroke(new BasicStroke(bulb == hoveredBulb ? 3 : 1));
         Color fillColor = createColor(bulb.getColor());
         Color borderColor = (bulb == hoveredBulb ? Color.YELLOW : Color.BLACK);
-        Polygon polygon = bulb.createPolygon(SCALE, OFFSET_X, OFFSET_Y);
+        Polygon polygon = bulb.createPolygon(RENDER_SCALE, RENDER_OFFSET_X, RENDER_OFFSET_Y);
         g.setColor(fillColor);
         g.fillPolygon(polygon);
         g.setColor(borderColor);
@@ -220,13 +232,21 @@ public class BulbPanel extends JPanel implements ActionListener, ChangeListener,
     private void drawHoveredPoint(Graphics g) {
         if (hoveredPointIndex == null)
             return;
-        Polygon p = hoveredBulb.createPolygon(SCALE, OFFSET_X, OFFSET_Y);
+        Polygon p = hoveredBulb.createPolygon(RENDER_SCALE, RENDER_OFFSET_X, RENDER_OFFSET_Y);
         g.setColor(Color.WHITE);
         int x = (int) (p.xpoints[hoveredPointIndex] - HOVER_POINT_SIZE / 2);
         int y = (int) (p.ypoints[hoveredPointIndex] - HOVER_POINT_SIZE / 2);
         g.fillOval(x, y, (int) HOVER_POINT_SIZE, (int) HOVER_POINT_SIZE);
         g.setColor(Color.BLACK);
         g.drawOval(x, y, (int) HOVER_POINT_SIZE, (int) HOVER_POINT_SIZE);
+    }
+
+    private int scaleX(double value) {
+        return (int) (value * RENDER_SCALE + RENDER_OFFSET_X);
+    }
+
+    private int scaleY(double value) {
+        return (int) (value * RENDER_SCALE + RENDER_OFFSET_Y);
     }
     
     private static Color createColor(RgbColor source) {
@@ -238,7 +258,7 @@ public class BulbPanel extends JPanel implements ActionListener, ChangeListener,
         hoveredPointIndex = null;
         for (int b = bulbs.size() - 1; b >= 0; --b) {
             Bulb bulb = bulbs.get(b);
-            Polygon p = bulb.createPolygon(SCALE, OFFSET_X, OFFSET_Y);
+            Polygon p = bulb.createPolygon(RENDER_SCALE, RENDER_OFFSET_X, RENDER_OFFSET_Y);
             if (p.contains(mousePos)) {
                 hoveredBulb = bulb;
                 hoveredPointIndex = null;
@@ -352,10 +372,10 @@ public class BulbPanel extends JPanel implements ActionListener, ChangeListener,
         int xDelta = e.getPoint().x - previousDragPos.x;
         int yDelta = e.getPoint().y - previousDragPos.y;
         if (selectedPointIndex != null && e.isAltDown()) {
-            selectedBulb.shiftPoint(selectedPointIndex, xDelta, yDelta, SCALE);
+            selectedBulb.shiftPoint(selectedPointIndex, xDelta, yDelta, RENDER_SCALE);
         }
         else {
-            selectedBulb.shift(xDelta, yDelta, SCALE);
+            selectedBulb.shift(xDelta, yDelta, RENDER_SCALE);
         }
         previousDragPos = e.getPoint();
         repaint();

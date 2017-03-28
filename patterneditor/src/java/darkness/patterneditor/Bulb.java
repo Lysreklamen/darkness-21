@@ -12,7 +12,7 @@ public abstract class Bulb {
     private final List<Double> xCoordinates;
     private final List<Double> yCoordinates;
     
-    private final static double DEFAULT_BULB_SIZE = 1;
+    private final static double DEFAULT_BULB_SIZE = 0.5;
     
     protected Bulb(int id, double x, double y, List<Double> xCoordinates, List<Double> yCoordinates) {
         if (xCoordinates == null || yCoordinates == null || xCoordinates.size() != yCoordinates.size())
@@ -40,11 +40,11 @@ public abstract class Bulb {
     public double getX() {
         return x;
     }
-    
+
     public double getY() {
         return y;
     }
-    
+
     public void shift(double x, double y, double scale) {
         this.x += x / scale;
         this.y += y / scale;
@@ -54,7 +54,7 @@ public abstract class Bulb {
         xCoordinates.set(index, xCoordinates.get(index) + x / scale);
         yCoordinates.set(index, yCoordinates.get(index) + y / scale);
     }
-    
+
     public Polygon createPolygon(double scale, double xOffset, double yOffset) {
         int[] xPolyCoords = new int[xCoordinates.size()];
         int[] yPolyCoords = new int[yCoordinates.size()];

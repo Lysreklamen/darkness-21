@@ -11,6 +11,9 @@ public class PatternFileParser {
         List<Bulb> bulbs = new ArrayList<Bulb>();
         List<String> errors = new ArrayList<String>();
         HashSet<Integer> ids = new HashSet<Integer>();
+        double offsetX = 0;
+        double offsetY = 0;
+        double scale = 1;
         int lineNumber = 0;
         try {
             BufferedReader reader = new BufferedReader(sourceReader);
@@ -21,6 +24,16 @@ public class PatternFileParser {
                 List<String> items = tokenizeLine(line);
                 if (items.size() == 0)
                     continue;
+                String maybeInstruction = items.get(0).toUpperCase();
+                if (maybeInstruction.equals("OFFSET")) {
+                    offsetX = Double.parseDouble(items.get(1));
+                    offsetY = Double.parseDouble(items.get(2));
+                    continue;
+                }
+                if (maybeInstruction.equals("SCALE")) {
+                    scale = Double.parseDouble(items.get(1));
+                    continue;
+                }
                 if (items.size() < 4) {
                     errors.add(lineNumber + ": No bulb type (line contains less than three elements)");
                     continue;
@@ -33,8 +46,8 @@ public class PatternFileParser {
                         continue;
                     }
                     ids.add(id);
-                    double x = Double.parseDouble(items.get(1));
-                    double y = Double.parseDouble(items.get(2));
+                    double x = (Double.parseDouble(items.get(1)) - offsetX) * scale;
+                    double y = (Double.parseDouble(items.get(2)) - offsetY) * scale;
                     if (bulbType.equals("F")) {
                         bulbs.add(new FixedColorBulb(
                                 id, x, y,
@@ -43,8 +56,8 @@ public class PatternFileParser {
                                         Integer.parseInt(items.get(5)),
                                         Integer.parseInt(items.get(6)),
                                         Integer.parseInt(items.get(7))),
-                                getCoordinates(items, 8),
-                                getCoordinates(items, 9)));
+                                getCoordinates(items, 8, scale),
+                                getCoordinates(items, 9, scale)));
                     }
                     else if (bulbType.equals("R")) {
                         bulbs.add(new RgbBulb(
@@ -52,8 +65,8 @@ public class PatternFileParser {
                                 Integer.parseInt(items.get(4)),
                                 Integer.parseInt(items.get(5)),
                                 Integer.parseInt(items.get(6)),
-                                getCoordinates(items, 7),
-                                getCoordinates(items, 8)));
+                                getCoordinates(items, 7, scale),
+                                getCoordinates(items, 8, scale)));
                     }
                     else {
                         errors.add(lineNumber + ": Unknown bulb type '" + items.get(3) + "' (must be 'F' or 'R')");
@@ -95,10 +108,10 @@ public class PatternFileParser {
         return result;
     }
     
-    private List<Double> getCoordinates(List<String> items, int startIndex) {
+    private List<Double> getCoordinates(List<String> items, int startIndex, double scale) {
         List<Double> result = new ArrayList<Double>();
         for (int i = startIndex; i < items.size(); i += 2) {
-            result.add(Double.parseDouble(items.get(i)));
+            result.add(Double.parseDouble(items.get(i)) * scale);
         }
         return result;
     }
