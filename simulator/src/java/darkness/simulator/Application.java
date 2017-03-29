@@ -105,11 +105,25 @@ public class Application extends SimpleApplication {
         darkness.generator.api.BulbManager generatorBulbManager = darkness.generator.api.BulbManager.getInstance();
         ChannelManager channelManager = ChannelManager.getInstance();
 
+        float offsetX = 0;
+        float offsetY = 0;
+        float scale = 1;
+
         int lineNumber = 0;
         for(String line = reader.readLine(); line != null; line = reader.readLine()) {
             lineNumber++;
             try {
                 String[] parts = line.split(" ");
+                String maybeInstruction = parts[0].toUpperCase();
+                if (maybeInstruction.equals("OFFSET")) {
+                    offsetX = Float.parseFloat(parts[1]);
+                    offsetY = Float.parseFloat(parts[2]);
+                    continue;
+                }
+                if (maybeInstruction.equals("SCALE")) {
+                    scale = Float.parseFloat(parts[1]);
+                    continue;
+                }
                 if (parts.length < 7) {
                     System.err.println("Parse error: " + line);
                     continue;
@@ -117,17 +131,18 @@ public class Application extends SimpleApplication {
 
                 int id = Integer.parseInt(parts[0]);
 
-                float offsetX = 0;
-                float offsetY = 0;
+                float bulbOffsetX = 0;
+                float bulbOffsetY = 0;
                 for (int i = 7; i < parts.length; i += 2) {
-                    offsetX = (offsetX + Float.parseFloat(parts[i])) / 2;
-                    offsetY = (offsetY + Float.parseFloat(parts[i + 1])) / 2;
+                    bulbOffsetX = (bulbOffsetX + Float.parseFloat(parts[i])) / 2;
+                    bulbOffsetY = (bulbOffsetY + Float.parseFloat(parts[i + 1])) / 2;
                 }
 
-                final float scale = 1.5f;
-                float posX = (Float.parseFloat(parts[1]) + offsetX - 16.0f) / 9.0f * scale;
-                float posY = 1.8f - (Float.parseFloat(parts[2]) + offsetY) / 10.0f * scale;
-
+                final float RENDER_SCALE = 7 / 9.0f;
+                final float RENDER_OFFSET_X = -1f;
+                final float RENDER_OFFSET_Y = 2f;
+                float posX = (Float.parseFloat(parts[1]) + bulbOffsetX - offsetX) * RENDER_SCALE * scale - RENDER_OFFSET_X;
+                float posY = RENDER_OFFSET_Y - (Float.parseFloat(parts[2]) + bulbOffsetY - offsetY) * RENDER_SCALE * scale;
 
                 int channelRed = Integer.parseInt(parts[4]);
                 int channelGreen = Integer.parseInt(parts[5]);

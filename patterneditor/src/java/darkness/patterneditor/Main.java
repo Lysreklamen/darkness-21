@@ -13,8 +13,7 @@ public class Main implements WindowListener {
     
     public static void main(String[] args) throws Exception {
         Main program = new Main();
-        //program.run(args);
-        program.run(new String[]{"E:\\programs\\darkness\\simulator\\patterns\\uka15.txt"});
+        program.run(args);
     }
     
     private void run(String[] args) throws Exception {
