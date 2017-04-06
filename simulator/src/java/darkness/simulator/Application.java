@@ -36,6 +36,12 @@ public class Application extends SimpleApplication {
     private final Arguments arguments;
     private PgmPlayer player;
 
+    // These constants are rather uninteresting with their current values,
+    // but we'll keep them in case we need to shift things around at some point
+    private static final float RENDER_SCALE = 10f / 10f; // Render size: 10 x 2 graphics units; real size: 10 x 2 m(?)
+    private static final float RENDER_OFFSET_X = 0;
+    private static  final float RENDER_OFFSET_Y = 0;
+
     public Application(Arguments arguments) {
         this.arguments = arguments;
         setShowSettings(false);
@@ -77,7 +83,7 @@ public class Application extends SimpleApplication {
         rootNode.addLight(sun);
 
         Node skiltNode = (Node)rootNode.getChild("skilt");
-        Node skiltBottomLeft = (Node) skiltNode.getChild("bottom_left");
+        Node skiltBottomLeft = (Node) skiltNode.getChild("top_left");
 
         try {
             parsePatternFile(arguments.getPatternFileName(), skiltBottomLeft);
@@ -105,11 +111,27 @@ public class Application extends SimpleApplication {
         darkness.generator.api.BulbManager generatorBulbManager = darkness.generator.api.BulbManager.getInstance();
         ChannelManager channelManager = ChannelManager.getInstance();
 
+        float offsetX = 0;
+        float offsetY = 0;
+        float scaleX = 1;
+        float scaleY = 1;
+
         int lineNumber = 0;
         for(String line = reader.readLine(); line != null; line = reader.readLine()) {
             lineNumber++;
             try {
                 String[] parts = line.split(" ");
+                String maybeInstruction = parts[0].toUpperCase();
+                if (maybeInstruction.equals("OFFSET")) {
+                    offsetX = Float.parseFloat(parts[1]);
+                    offsetY = Float.parseFloat(parts[2]);
+                    continue;
+                }
+                if (maybeInstruction.equals("SCALE")) {
+                    scaleX = Float.parseFloat(parts[1]);
+                    scaleY = Float.parseFloat(parts[2]);
+                    continue;
+                }
                 if (parts.length < 7) {
                     System.err.println("Parse error: " + line);
                     continue;
@@ -117,17 +139,15 @@ public class Application extends SimpleApplication {
 
                 int id = Integer.parseInt(parts[0]);
 
-                float offsetX = 0;
-                float offsetY = 0;
+                float bulbOffsetX = 0;
+                float bulbOffsetY = 0;
                 for (int i = 7; i < parts.length; i += 2) {
-                    offsetX = (offsetX + Float.parseFloat(parts[i])) / 2;
-                    offsetY = (offsetY + Float.parseFloat(parts[i + 1])) / 2;
+                    bulbOffsetX = (bulbOffsetX + Float.parseFloat(parts[i])) / 2;
+                    bulbOffsetY = (bulbOffsetY + Float.parseFloat(parts[i + 1])) / 2;
                 }
 
-                final float scale = 1.5f;
-                float posX = (Float.parseFloat(parts[1]) + offsetX - 16.0f) / 9.0f * scale;
-                float posY = 1.8f - (Float.parseFloat(parts[2]) + offsetY) / 10.0f * scale;
-
+                float posX = (Float.parseFloat(parts[1]) + bulbOffsetX - offsetX) * RENDER_SCALE * scaleX - RENDER_OFFSET_X;
+                float posY = RENDER_OFFSET_Y - (Float.parseFloat(parts[2]) + bulbOffsetY - offsetY) * RENDER_SCALE * scaleY;
 
                 int channelRed = Integer.parseInt(parts[4]);
                 int channelGreen = Integer.parseInt(parts[5]);
