@@ -36,6 +36,12 @@ public class Application extends SimpleApplication {
     private final Arguments arguments;
     private PgmPlayer player;
 
+    // These constants are rather uninteresting with their current values,
+    // but we'll keep them in case we need to shift things around at some point
+    private static final float RENDER_SCALE = 10f / 10f; // Render size: 10 x 2 graphics units; real size: 10 x 2 m(?)
+    private static final float RENDER_OFFSET_X = 0;
+    private static  final float RENDER_OFFSET_Y = 0;
+
     public Application(Arguments arguments) {
         this.arguments = arguments;
         setShowSettings(false);
@@ -77,7 +83,7 @@ public class Application extends SimpleApplication {
         rootNode.addLight(sun);
 
         Node skiltNode = (Node)rootNode.getChild("skilt");
-        Node skiltBottomLeft = (Node) skiltNode.getChild("bottom_left");
+        Node skiltBottomLeft = (Node) skiltNode.getChild("top_left");
 
         try {
             parsePatternFile(arguments.getPatternFileName(), skiltBottomLeft);
@@ -138,9 +144,6 @@ public class Application extends SimpleApplication {
                     bulbOffsetY = (bulbOffsetY + Float.parseFloat(parts[i + 1])) / 2;
                 }
 
-                final float RENDER_SCALE = 7 / 9.0f;
-                final float RENDER_OFFSET_X = -1f;
-                final float RENDER_OFFSET_Y = 2f;
                 float posX = (Float.parseFloat(parts[1]) + bulbOffsetX - offsetX) * RENDER_SCALE * scale - RENDER_OFFSET_X;
                 float posY = RENDER_OFFSET_Y - (Float.parseFloat(parts[2]) + bulbOffsetY - offsetY) * RENDER_SCALE * scale;
 

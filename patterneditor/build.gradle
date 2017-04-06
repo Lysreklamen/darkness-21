@@ -26,3 +26,7 @@ sourceSets {
         }
     }
 }
+
+run {
+    args = ["../simulator/patterns/uka15.txt"]
+}
