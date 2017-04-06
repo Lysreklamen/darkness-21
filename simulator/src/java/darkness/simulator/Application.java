@@ -113,7 +113,8 @@ public class Application extends SimpleApplication {
 
         float offsetX = 0;
         float offsetY = 0;
-        float scale = 1;
+        float scaleX = 1;
+        float scaleY = 1;
 
         int lineNumber = 0;
         for(String line = reader.readLine(); line != null; line = reader.readLine()) {
@@ -127,7 +128,8 @@ public class Application extends SimpleApplication {
                     continue;
                 }
                 if (maybeInstruction.equals("SCALE")) {
-                    scale = Float.parseFloat(parts[1]);
+                    scaleX = Float.parseFloat(parts[1]);
+                    scaleY = Float.parseFloat(parts[2]);
                     continue;
                 }
                 if (parts.length < 7) {
@@ -144,8 +146,8 @@ public class Application extends SimpleApplication {
                     bulbOffsetY = (bulbOffsetY + Float.parseFloat(parts[i + 1])) / 2;
                 }
 
-                float posX = (Float.parseFloat(parts[1]) + bulbOffsetX - offsetX) * RENDER_SCALE * scale - RENDER_OFFSET_X;
-                float posY = RENDER_OFFSET_Y - (Float.parseFloat(parts[2]) + bulbOffsetY - offsetY) * RENDER_SCALE * scale;
+                float posX = (Float.parseFloat(parts[1]) + bulbOffsetX - offsetX) * RENDER_SCALE * scaleX - RENDER_OFFSET_X;
+                float posY = RENDER_OFFSET_Y - (Float.parseFloat(parts[2]) + bulbOffsetY - offsetY) * RENDER_SCALE * scaleY;
 
                 int channelRed = Integer.parseInt(parts[4]);
                 int channelGreen = Integer.parseInt(parts[5]);

@@ -13,7 +13,8 @@ public class PatternFileParser {
         HashSet<Integer> ids = new HashSet<Integer>();
         double offsetX = 0;
         double offsetY = 0;
-        double scale = 1;
+        double scaleX = 1;
+        double scaleY = 1;
         int lineNumber = 0;
         try {
             BufferedReader reader = new BufferedReader(sourceReader);
@@ -31,7 +32,8 @@ public class PatternFileParser {
                     continue;
                 }
                 if (maybeInstruction.equals("SCALE")) {
-                    scale = Double.parseDouble(items.get(1));
+                    scaleX = Double.parseDouble(items.get(1));
+                    scaleY = Double.parseDouble(items.get(2));
                     continue;
                 }
                 if (items.size() < 4) {
@@ -46,8 +48,8 @@ public class PatternFileParser {
                         continue;
                     }
                     ids.add(id);
-                    double x = (Double.parseDouble(items.get(1)) - offsetX) * scale;
-                    double y = (Double.parseDouble(items.get(2)) - offsetY) * scale;
+                    double x = (Double.parseDouble(items.get(1)) - offsetX) * scaleX;
+                    double y = (Double.parseDouble(items.get(2)) - offsetY) * scaleY;
                     if (bulbType.equals("F")) {
                         bulbs.add(new FixedColorBulb(
                                 id, x, y,
@@ -56,8 +58,8 @@ public class PatternFileParser {
                                         Integer.parseInt(items.get(5)),
                                         Integer.parseInt(items.get(6)),
                                         Integer.parseInt(items.get(7))),
-                                getCoordinates(items, 8, scale),
-                                getCoordinates(items, 9, scale)));
+                                getCoordinates(items, 8, scaleX),
+                                getCoordinates(items, 9, scaleY)));
                     }
                     else if (bulbType.equals("R")) {
                         bulbs.add(new RgbBulb(
@@ -65,8 +67,8 @@ public class PatternFileParser {
                                 Integer.parseInt(items.get(4)),
                                 Integer.parseInt(items.get(5)),
                                 Integer.parseInt(items.get(6)),
-                                getCoordinates(items, 7, scale),
-                                getCoordinates(items, 8, scale)));
+                                getCoordinates(items, 7, scaleX),
+                                getCoordinates(items, 8, scaleY)));
                     }
                     else {
                         errors.add(lineNumber + ": Unknown bulb type '" + items.get(3) + "' (must be 'F' or 'R')");

@@ -214,7 +214,11 @@ public class BulbPanel extends JPanel implements ActionListener, ChangeListener,
 
     private void drawCornice(Graphics g) {
         g.setColor(Color.DARK_GRAY);
-        g.drawRect(scaleX(CORNICE_X), scaleY(CORNICE_Y), scaleX(CORNICE_WIDTH), scaleY(CORNICE_HEIGHT));
+        g.drawRect(
+                (int) (CORNICE_X * RENDER_SCALE + RENDER_OFFSET_X),
+                (int) (CORNICE_Y * RENDER_SCALE + RENDER_OFFSET_Y),
+                (int) (CORNICE_WIDTH * RENDER_SCALE),
+                (int) (CORNICE_HEIGHT * RENDER_SCALE));
     }
     
     private void drawBulb(Graphics g, Bulb bulb) {
