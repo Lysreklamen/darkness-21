@@ -83,10 +83,10 @@ public class Application extends SimpleApplication {
         rootNode.addLight(sun);
 
         Node skiltNode = (Node)rootNode.getChild("skilt");
-        Node skiltBottomLeft = (Node) skiltNode.getChild("top_left");
+        Node skiltTopLeft = (Node) skiltNode.getChild("top_left");
 
         try {
-            parsePatternFile(arguments.getPatternFileName(), skiltBottomLeft);
+            parsePatternFile(arguments.getPatternFileName(), skiltTopLeft);
             List<PgmReader> pgmReaders = new ArrayList<PgmReader>();
             if (arguments.getScriptClassName() != null) {
                 pgmReaders.add(generatePgmFromScript());
