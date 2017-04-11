@@ -1,11 +1,6 @@
 package darkness.simulator;
 
 import com.jme3.app.SimpleApplication;
-import com.jme3.light.AmbientLight;
-import com.jme3.light.DirectionalLight;
-import com.jme3.math.ColorRGBA;
-import com.jme3.math.Quaternion;
-import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.system.AppSettings;
 import darkness.generator.api.ScriptBase;
@@ -14,6 +9,7 @@ import darkness.generator.output.PgmOutput;
 import darkness.simulator.dmx.BulbManager;
 import darkness.simulator.dmx.BulbRGB;
 import darkness.simulator.dmx.ChannelManager;
+import darkness.simulator.graphics.Scene;
 
 import java.awt.Color;
 import java.io.BufferedReader;
@@ -63,30 +59,9 @@ public class Application extends SimpleApplication {
 
     @Override
     public void simpleInitApp() {
-        // Load samfundet scene
-        final Node scene = (Node) assetManager.loadModel("scenes/uka_generic/samfundet.scene");
-
-        // attach to root node
-        rootNode.attachChild(scene);
-
-        rootNode.addLight(new AmbientLight());
-        //rootNode.addLight(new PointLight());
-
-        // Move the camera to the crossing, looking up towards gesimsen
-        cam.setLocation(new Vector3f(-10.450743f, 2.7112355f, 35.287804f));
-        cam.setRotation(new Quaternion(-0.024610115f, 0.9680668f, 0.105350286f, 0.22614653f));
-        getFlyByCamera().setMoveSpeed(10.0f);
-
-        DirectionalLight sun = new DirectionalLight();
-        sun.setDirection(new Vector3f(1, 0, -2).normalizeLocal());
-        sun.setColor(ColorRGBA.White.mult(0.05f));
-        rootNode.addLight(sun);
-
-        Node skiltNode = (Node)rootNode.getChild("skilt");
-        Node skiltTopLeft = (Node) skiltNode.getChild("top_left");
-
+        Scene scene = new Scene();
         try {
-            parsePatternFile(arguments.getPatternFileName(), skiltTopLeft);
+            parsePatternFile(arguments.getPatternFileName(), scene.getParentNodeForBulbs());
             List<PgmReader> pgmReaders = new ArrayList<PgmReader>();
             if (arguments.getScriptClassName() != null) {
                 pgmReaders.add(generatePgmFromScript());
@@ -132,43 +107,46 @@ public class Application extends SimpleApplication {
                     scaleY = Float.parseFloat(parts[2]);
                     continue;
                 }
-                if (parts.length < 7) {
+                if (parts.length < 7 || parts.length % 2 != 1) {
                     System.err.println("Parse error: " + line);
                     continue;
                 }
 
                 int id = Integer.parseInt(parts[0]);
 
-                float bulbOffsetX = 0;
-                float bulbOffsetY = 0;
-                for (int i = 7; i < parts.length; i += 2) {
-                    bulbOffsetX = (bulbOffsetX + Float.parseFloat(parts[i])) / 2;
-                    bulbOffsetY = (bulbOffsetY + Float.parseFloat(parts[i + 1])) / 2;
-                }
-
-                float posX = (Float.parseFloat(parts[1]) + bulbOffsetX - offsetX) * RENDER_SCALE * scaleX - RENDER_OFFSET_X;
-                float posY = RENDER_OFFSET_Y - (Float.parseFloat(parts[2]) + bulbOffsetY - offsetY) * RENDER_SCALE * scaleY;
+                float positionX = (Float.parseFloat(parts[1]) - offsetX) * RENDER_SCALE * scaleX - RENDER_OFFSET_X;
+                float positionY = RENDER_OFFSET_Y - (Float.parseFloat(parts[2]) - offsetY) * RENDER_SCALE * scaleY;
 
                 int channelRed = Integer.parseInt(parts[4]);
                 int channelGreen = Integer.parseInt(parts[5]);
                 int channelBlue = Integer.parseInt(parts[6]);
 
+                List<Float> perimeterX = new ArrayList<>();
+                List<Float> perimeterY = new ArrayList<>();
+                for (int i = 7; i < parts.length; i += 2) {
+                    perimeterX.add(Float.parseFloat(parts[i]) * RENDER_SCALE * scaleX);
+                    perimeterY.add(Float.parseFloat(parts[i + 1]) * RENDER_SCALE * scaleY);
+                }
+
                 BulbRGB bulb = bulbManager.registerBulb(id,
                         channelManager.getChannel(channelRed),
                         channelManager.getChannel(channelGreen),
-                        channelManager.getChannel(channelBlue), parentNode, new Vector3f(posX, posY, 0.0f));
+                        channelManager.getChannel(channelBlue),
+                        positionX, positionY,
+                        perimeterX, perimeterY,
+                        parentNode);
                 if (arguments.getScriptClassName() != null) {
                     // If we want to use the generator, its bulb manager must also be populated
-                    generatorBulbManager.registerBulb(id, channelRed, channelGreen, channelBlue, posX, posY);
+                    generatorBulbManager.registerBulb(id, channelRed, channelGreen, channelBlue, positionX, positionY);
                 }
 
-                float hue = (posX * posX + posY * posY) / (10.0f * 10.0f + 1.0f * 1.0f);
+                float hue = (positionX * positionX + positionY * positionY) / (10.0f * 10.0f + 1.0f * 1.0f);
                 Color color = Color.getHSBColor(hue, 1f, 0.9f);
                 bulb.set(color);
             }
             catch (Exception ex) {
-                System.err.println("An exception occurred while parsing line "+lineNumber+" of the pattern file.");
                 // Rethrow the exception but write the line number first
+                System.err.println("An exception occurred while parsing line " + lineNumber + " of the pattern file.");
                 throw  ex;
             }
         }

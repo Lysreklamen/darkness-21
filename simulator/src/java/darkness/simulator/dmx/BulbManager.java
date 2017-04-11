@@ -1,15 +1,12 @@
 package darkness.simulator.dmx;
 
-import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.NoSuchElementException;
 
-/**
- * Created by janosa on 2/19/15.
- */
 public class BulbManager {
     private static BulbManager instance = new BulbManager();
 
@@ -30,19 +27,15 @@ public class BulbManager {
     }
 
     /**
-     * Registers a bulb with the given integer id
-     * @param id
-     * @param channelRed
-     * @param channelGreen
-     * @param channelBlue
-     * @return
+     * Creates a bulb with the given integer id and registers it
      */
-    public BulbRGB registerBulb(int id, Channel channelRed, Channel channelGreen, Channel channelBlue, Node parentNode, Vector3f localTranslation) {
+    public BulbRGB registerBulb(int id, Channel channelRed, Channel channelGreen, Channel channelBlue,
+            float positionX, float positionY, List<Float> perimeterX, List<Float> perimeterY, Node parentNode) {
         if(bulbMap.containsKey(id)) {
-            throw new IllegalArgumentException("The bulb with the ID: "+id+" already exists.");
+            throw new IllegalArgumentException("The bulb with the ID " + id + " already exists.");
         }
 
-        BulbRGB bulb = new BulbRGB(channelRed, channelGreen, channelBlue, parentNode, localTranslation);
+        BulbRGB bulb = new BulbRGB(channelRed, channelGreen, channelBlue, positionX, positionY, perimeterX, perimeterY, parentNode);
         bulbMap.put(id, bulb);
         return bulb;
     }
