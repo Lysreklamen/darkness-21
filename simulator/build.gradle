@@ -7,7 +7,6 @@ targetCompatibility = 1.8
 version = '1.0'
 
 mainClassName = "darkness.simulator.Application"
-//mainClassName = "me.merciless.dmonkey.Main"
 
 repositories {
     mavenCentral()
@@ -48,5 +47,5 @@ processResources {
 }
 
 run {
-    args = ["--pattern", "./patterns/uka15.txt", "--script", "Intro"]
+    args = ["--pattern", "./patterns/uka17.txt", "--script", "RGBTest"]
 }

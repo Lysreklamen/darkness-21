@@ -1,10 +1,10 @@
 package darkness.simulator.dmx;
 
 import com.jme3.scene.Node;
+import darkness.simulator.graphics.Point;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 public class BulbManager {
@@ -30,12 +30,12 @@ public class BulbManager {
      * Creates a bulb with the given integer id and registers it
      */
     public BulbRGB registerBulb(int id, Channel channelRed, Channel channelGreen, Channel channelBlue,
-            float positionX, float positionY, List<Float> perimeterX, List<Float> perimeterY, Node parentNode) {
+            Point position, Node parentNode) {
         if(bulbMap.containsKey(id)) {
             throw new IllegalArgumentException("The bulb with the ID " + id + " already exists.");
         }
 
-        BulbRGB bulb = new BulbRGB(channelRed, channelGreen, channelBlue, positionX, positionY, perimeterX, perimeterY, parentNode);
+        BulbRGB bulb = new BulbRGB(channelRed, channelGreen, channelBlue, position, parentNode);
         bulbMap.put(id, bulb);
         return bulb;
     }

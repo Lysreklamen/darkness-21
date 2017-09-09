@@ -2,9 +2,9 @@ package darkness.simulator.dmx;
 
 import com.jme3.scene.Node;
 import darkness.simulator.graphics.Bulb;
+import darkness.simulator.graphics.Point;
 
 import java.awt.Color;
-import java.util.List;
 
 public class BulbRGB {
     private final Channel channelRed;
@@ -14,14 +14,14 @@ public class BulbRGB {
     private final ChannelController controller = new ChannelController();
 
     BulbRGB(Channel channelRed, Channel channelGreen, Channel channelBlue,
-            float positionX, float positionY, List<Float> perimeterX, List<Float> perimeterY, Node parentNode) {
+            Point position, Node parentNode) {
         this.channelRed = channelRed;
         this.channelRed.setOwner(controller);
         this.channelGreen = channelGreen;
         this.channelGreen.setOwner(controller);
         this.channelBlue = channelBlue;
         this.channelBlue.setOwner(controller);
-        this.bulb = new Bulb(positionX, positionY, perimeterX, perimeterY, parentNode, toString());
+        this.bulb = new Bulb(position, parentNode, toString());
     }
 
     public Channel getChannelRed() {

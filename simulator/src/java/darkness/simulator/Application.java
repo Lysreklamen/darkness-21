@@ -9,6 +9,8 @@ import darkness.generator.output.PgmOutput;
 import darkness.simulator.dmx.BulbManager;
 import darkness.simulator.dmx.BulbRGB;
 import darkness.simulator.dmx.ChannelManager;
+import darkness.simulator.graphics.Aluminum;
+import darkness.simulator.graphics.Point;
 import darkness.simulator.graphics.Scene;
 
 import java.awt.Color;
@@ -86,61 +88,59 @@ public class Application extends SimpleApplication {
         darkness.generator.api.BulbManager generatorBulbManager = darkness.generator.api.BulbManager.getInstance();
         ChannelManager channelManager = ChannelManager.getInstance();
 
-        float offsetX = 0;
-        float offsetY = 0;
-        float scaleX = 1;
-        float scaleY = 1;
+        Point offset = new Point(0, 0);
+        Point scale = new Point(1, 1); // Not really a point, but it consists of one float for x and one for y, so let's reuse the class
 
         int lineNumber = 0;
         for(String line = reader.readLine(); line != null; line = reader.readLine()) {
             lineNumber++;
             try {
-                String[] parts = line.split(" ");
+                if (line.trim().isEmpty()) {
+                    continue;
+                }
+                String[] parts = line.split("[ \\t]+");
                 String maybeInstruction = parts[0].toUpperCase();
                 if (maybeInstruction.equals("OFFSET")) {
-                    offsetX = Float.parseFloat(parts[1]);
-                    offsetY = Float.parseFloat(parts[2]);
+                    offset = new Point(Float.parseFloat(parts[1]), Float.parseFloat(parts[2]));
                     continue;
                 }
                 if (maybeInstruction.equals("SCALE")) {
-                    scaleX = Float.parseFloat(parts[1]);
-                    scaleY = Float.parseFloat(parts[2]);
+                    scale = new Point(Float.parseFloat(parts[1]), Float.parseFloat(parts[2]));
+                    continue;
+                }
+                if (maybeInstruction.equals("ALU") || maybeInstruction.equals("ALUOPEN")) {
+                    List<Point> perimeter = new ArrayList<>();
+                    for (int i = 1; i < parts.length; i += 2) {
+                        perimeter.add(parsePoint(parts[i], parts[i + 1], offset, scale));
+                    }
+                    boolean closed = maybeInstruction.equals("ALU");
+                    parentNode.attachChild(new Aluminum(perimeter, closed, "Aluminum:" + lineNumber));
                     continue;
                 }
                 if (parts.length < 7 || parts.length % 2 != 1) {
-                    System.err.println("Parse error: " + line);
+                    System.err.println("Parse error on line " + lineNumber + ": " + line);
                     continue;
                 }
 
                 int id = Integer.parseInt(parts[0]);
-
-                float positionX = (Float.parseFloat(parts[1]) - offsetX) * RENDER_SCALE * scaleX - RENDER_OFFSET_X;
-                float positionY = RENDER_OFFSET_Y - (Float.parseFloat(parts[2]) - offsetY) * RENDER_SCALE * scaleY;
-
+                Point position = parsePoint(parts[1], parts[2], offset, scale);
                 int channelRed = Integer.parseInt(parts[4]);
                 int channelGreen = Integer.parseInt(parts[5]);
                 int channelBlue = Integer.parseInt(parts[6]);
-
-                List<Float> perimeterX = new ArrayList<>();
-                List<Float> perimeterY = new ArrayList<>();
-                for (int i = 7; i < parts.length; i += 2) {
-                    perimeterX.add(Float.parseFloat(parts[i]) * RENDER_SCALE * scaleX);
-                    perimeterY.add(Float.parseFloat(parts[i + 1]) * RENDER_SCALE * scaleY);
-                }
 
                 BulbRGB bulb = bulbManager.registerBulb(id,
                         channelManager.getChannel(channelRed),
                         channelManager.getChannel(channelGreen),
                         channelManager.getChannel(channelBlue),
-                        positionX, positionY,
-                        perimeterX, perimeterY,
+                        position,
                         parentNode);
                 if (arguments.getScriptClassName() != null) {
                     // If we want to use the generator, its bulb manager must also be populated
-                    generatorBulbManager.registerBulb(id, channelRed, channelGreen, channelBlue, positionX, positionY);
+                    generatorBulbManager.registerBulb(id, channelRed, channelGreen, channelBlue, position.x, position.y);
                 }
 
-                float hue = (positionX * positionX + positionY * positionY) / (10.0f * 10.0f + 1.0f * 1.0f);
+                // Default color in case no sequence or script is supplied
+                float hue = (position.x * position.x + position.y * position.y) / (10.0f * 10.0f + 1.0f * 1.0f);
                 Color color = Color.getHSBColor(hue, 1f, 0.9f);
                 bulb.set(color);
             }
@@ -160,12 +160,18 @@ public class Application extends SimpleApplication {
     }
 
     private PgmReader generatePgmFromScript() throws ClassNotFoundException, IllegalAccessException, InstantiationException, IOException {
-        String qualifiedScriptClassName = (arguments.getScriptClassName().contains(".") ? "" : "darkness.generator.scripts.uka15.") + arguments.getScriptClassName();
+        String qualifiedScriptClassName = (arguments.getScriptClassName().contains(".") ? "" : "darkness.generator.scripts.uka17.") + arguments.getScriptClassName();
         ScriptBase script = (ScriptBase) Class.forName(qualifiedScriptClassName).newInstance();
         File tempFile = new File("sequences/" + arguments.getScriptClassName() + ".pgm");
         ScriptManager scriptManager = ScriptManager.getInstance();
         scriptManager.start(script, new PgmOutput(tempFile.getPath()));
         return new PgmReader(tempFile.getPath());
+    }
+
+    private static Point parsePoint(String xStr, String yStr, Point offset, Point scale) {
+        float x = (Float.parseFloat(xStr.replaceAll("[,;()]", "")) - offset.x) * RENDER_SCALE * scale.x - RENDER_OFFSET_X;
+        float y = RENDER_OFFSET_Y - (Float.parseFloat(yStr.replaceAll("[,;()]", "")) - offset.y) * RENDER_SCALE * scale.y;
+        return new Point(x, y);
     }
 
     private static Arguments parseArguments(String[] args) throws IOException {

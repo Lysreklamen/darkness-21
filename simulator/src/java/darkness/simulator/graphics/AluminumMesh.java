@@ -9,36 +9,24 @@ import java.util.List;
 public class AluminumMesh extends Mesh {
 	private static final float WIDTH = 0.15f;
 	
-	public AluminumMesh(List<Float> perimeterX, List<Float> perimeterY) {
-		if (perimeterX.size() != perimeterY.size()) {
-			throw new IllegalArgumentException("Perimeter lists must have same length");
-		}
-		if (perimeterX.size() == 0) {
-			perimeterX.add(-WIDTH);
-			perimeterX.add(-WIDTH);
-			perimeterX.add(WIDTH);
-			perimeterX.add(WIDTH);
-			perimeterY.add(-WIDTH);
-			perimeterY.add(WIDTH);
-			perimeterY.add(WIDTH);
-			perimeterY.add(-WIDTH);
-		}
-
-		float[] vertexBuffer = new float[perimeterX.size() * 6]; // Each perimeter entry creates an inner and an outer point, each with (x,y,z)
-		for (int i = 0; i < perimeterX.size(); i++) {
+	public AluminumMesh(List<Point> perimeter, boolean closed) {
+		float[] vertexBuffer = new float[perimeter.size() * 6]; // Each perimeter entry creates an inner and an outer point, each with (x,y,z)
+		for (int i = 0; i < perimeter.size(); i++) {
 			int base = i * 6;
-			setVector(vertexBuffer, base, perimeterX.get(i), perimeterY.get(i), 0);        // Inner
-			setVector(vertexBuffer, base + 3, perimeterX.get(i), perimeterY.get(i), WIDTH); // Outer
+			Point point = perimeter.get(i);
+			setVector(vertexBuffer, base, point.x, point.y, 0);        // Inner
+			setVector(vertexBuffer, base + 3, point.x, point.y, WIDTH); // Outer
 		}
 		setBuffer(Type.Position, 3, vertexBuffer);
 
-		int[] indexBuffer = new int[perimeterX.size() * 12]; // Each perimeter entry creates four triangles (one quad facing in and one quad facing out), each with three vertices
-		float[] normalBuffer = new float[perimeterX.size() * 12];
-		for (int i = 0; i < perimeterX.size(); i++) {
+		int quadCount = perimeter.size() - (closed ? 0 : 1);
+		int[] indexBuffer = new int[quadCount * 12]; // Each perimeter entry creates four triangles (one quad facing in and one quad facing out), each with three vertices
+		float[] normalBuffer = new float[quadCount * 12];
+		for (int i = 0; i < quadCount; i++) {
 			int base = i * 12;
 			int currentInner = i * 2;                          // Index of current inner perimeter vertex
 			int currentOuter = currentInner + 1;               // Index of current outer perimeter vertex
-			int nextInner = ((i + 1) % perimeterX.size()) * 2; // Index of next inner perimeter vertex
+			int nextInner = ((i + 1) % perimeter.size()) * 2; // Index of next inner perimeter vertex
 			int nextOuter = nextInner + 1;                     // Index of next outer perimeter vertex
 			setTriangle(indexBuffer, base + 0, currentInner, currentOuter, nextOuter); // Facing in
 			setTriangle(indexBuffer, base + 3, currentInner, nextOuter, nextInner);    // Facing in
