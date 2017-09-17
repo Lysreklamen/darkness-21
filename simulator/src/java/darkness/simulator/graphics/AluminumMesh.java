@@ -4,8 +4,6 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer.Type;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class AluminumMesh extends Mesh {
@@ -60,6 +58,7 @@ public class AluminumMesh extends Mesh {
 			}
 		}
 
+
 		setBuffer(Type.Position, 3, vertexBuffer);
 		setBuffer(Type.Index, 3, indexBuffer);
 		setBuffer(Type.Normal, 3, normalBuffer);
@@ -84,16 +83,16 @@ public class AluminumMesh extends Mesh {
 		}
 	}
 
-	private Vector3f getVector(float[] buffer, int index) {
-		return new Vector3f(buffer[index], buffer[index + 1], buffer[index + 2]);
+	private Vector3f getVector(float[] buffer, int baseIndex) {
+		return new Vector3f(buffer[baseIndex], buffer[baseIndex + 1], buffer[baseIndex + 2]);
 	}
 
 	private Vector3f getNormal(float[] vertexBuffer, int a, int b, int c) {
-		Vector3f va = getVector(vertexBuffer, a);
-		Vector3f vb = getVector(vertexBuffer, b);
-		Vector3f vc = getVector(vertexBuffer, c);
+		Vector3f va = getVector(vertexBuffer, a * 3);
+		Vector3f vb = getVector(vertexBuffer, b * 3);
+		Vector3f vc = getVector(vertexBuffer, c * 3);
 		Vector3f leftSide = vb.subtract(va);
 		Vector3f rightSide = vc.subtract(vb);
-		return leftSide.cross(rightSide);
+		return leftSide.cross(rightSide).normalizeLocal();
 	}
 }
