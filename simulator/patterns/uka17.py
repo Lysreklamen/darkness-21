@@ -113,9 +113,9 @@ def leftBulbArc(startId, centerX, centerY, radius, bulbs, height):
 
 
 def repeatedLetter(startId, shift):
-    leftBulbArc(startId, 2.03 + 5.15 + shift, 1.01, 5.10, 5, 1.32)
-    leftBulbArc(startId + 5, 2.29 + 5.15 + shift, 1.01, 5.10, 3, 0.90)
-    rightBulbArc(startId + 8, 1.70 + shift, 1.01, 1.18, 7, 1.80)
+    leftBulbArc(startId, 2.03 + 5.15 + shift, 1.01, 5.10, 4, 1.32)
+    leftBulbArc(startId + 4, 2.29 + 5.15 + shift, 1.01, 5.10, 4, 1.12)
+    rightBulbArc(startId + 8, 1.70 + shift, 1.01, 1.18, 6, 1.84)
     basePoints = [(2.29, 0.00), (2.18, 0.10), (2.08, 0.22), (1.98, 0.37), (1.98, 1.65), (2.08, 1.80), (2.18, 1.92), (2.29, 2.02), (2.25, 1.77), (2.22, 1.52), (2.21, 1.27), (2.20, 1.01), (2.21, 0.75), (2.22, 0.50), (2.25, 0.25)]
     fullAlu([(p[0] + shift, p[1]) for p in basePoints])
     startAlu()
@@ -133,7 +133,7 @@ print "SCALE 1 -1"
 print
 
 for i in xrange(6):
-    bulbAbs(i, 0.34 if i % 2 == 0 else 0.44, 0.28 * (i + 1))
+    bulbAbs(i, 0.34 if i % 2 == 0 else 0.44, 0.30 * (i + 1) - 0.12)
 bulbAbs(6, 0.14, 1.50)
 for i in xrange(7, 11):
     bulbAbs(i, 0.64, 0.38 * (i - 6))
