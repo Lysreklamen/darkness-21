@@ -115,7 +115,7 @@ def leftBulbArc(startId, centerX, centerY, radius, bulbs, height):
 def repeatedLetter(startId, shift):
     leftBulbArc(startId, 2.03 + 5.15 + shift, 1.01, 5.10, 5, 1.32)
     leftBulbArc(startId + 5, 2.29 + 5.15 + shift, 1.01, 5.10, 3, 0.90)
-    rightBulbArc(startId + 8, 1.70 + shift, 1.01, 1.18, 5, 1.80)
+    rightBulbArc(startId + 8, 1.70 + shift, 1.01, 1.18, 7, 1.80)
     basePoints = [(2.29, 0.00), (2.18, 0.10), (2.08, 0.22), (1.98, 0.37), (1.98, 1.65), (2.08, 1.80), (2.18, 1.92), (2.29, 2.02), (2.25, 1.77), (2.22, 1.52), (2.21, 1.27), (2.20, 1.01), (2.21, 0.75), (2.22, 0.50), (2.25, 0.25)]
     fullAlu([(p[0] + shift, p[1]) for p in basePoints])
     startAlu()
@@ -147,9 +147,9 @@ bulbAbs(15,  0.82, 0.17)
 bulbAbs(16,  1.10, 0.17)
 bulbAbs(17,  0.96, 0.30)
 bulbAbs(18,  0.96, 0.50)
-bulbAbs(19,  1.26, 0.23)
-bulbRel(20, -0.08, 0.22)
-bulbRel(21, -0.08, 0.22)
+bulbAbs(19,  1.29, 0.17)
+bulbRel(20, -0.10, 0.28)
+bulbRel(21, -0.10, 0.28)
 
 fullAlu([(0.73, 0.00), (0.96, 0.68), (1.19, 0.00), (1.10, 0.00), (1.02, 0.19), (0.90, 0.19), (0.82, 0.00)])
 fullAlu([(1.25, 0.00), (0.98, 0.77), (1.07, 1.04), (1.43, 0.00)])
@@ -242,13 +242,13 @@ aluArc(5.62, 0.30, 0.15, 8, 3 * pi / 2, pi)
 endAlu()
 print
 
-bulbAbs(85, 6.16, 0.66)
-for i in range(3):
-    bulbRel(86 + i, -0.015, 0.35)
-bulbAbs(89, 6.34, 0.66)
-for i in range(3):
-    bulbRel(90 + i, 0.005, 0.35)
-bulbAbs(93, 6.25, 0.14)
+bulbAbs(85, 6.17, 0.50)
+for i in range(4):
+    bulbRel(86 + i, -0.013, 0.33)
+bulbAbs(90, 6.32, 0.50)
+for i in range(4):
+    bulbRel(91 + i, 0.003, 0.33)
+bulbAbs(95, 6.25, 0.14)
 
 fullAlu([(6.12, 0.32), (6.04, 2.02), (6.17, 2.02), (6.22, 0.32)])
 fullAlu([(6.28, 0.32), (6.23, 2.02), (6.43, 2.02), (6.38, 0.32)])
