@@ -25,10 +25,10 @@ public class BaseScript extends ScriptBase {
 		B = group(15, 16, 17, 18, 19, 20, 21);
 		C = group(25, 26);
 		D = group(30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44);
-		E = group(45, 46, 47, 48, 49, 50, 51, 52);
+		E = group(45, 46, 47, 48, 49, 50, 51, 52, 53, 54);
 		F = group(55, 56);
 		G = group(60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74);
-		H = group(75, 76, 77, 78, 79, 80, 81, 82, 83);
+		H = group(75, 76, 77, 78, 79, 80, 81, 82, 83, 84);
 		I = group(85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95);
 		letters = new BulbGroup[]{A, B, C, D, E, F, G, H, I};
 		allBulbs = Arrays.stream(letters).flatMap(letter -> letter.getAllBulbs().stream()).toArray(BulbRGB[]::new);

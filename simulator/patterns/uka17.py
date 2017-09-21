@@ -165,14 +165,16 @@ print
 repeatedLetter(30, 0)
 print
 
-bulbAbs(45,  3.14,  0.20)
-bulbRel(46,  0.06,  0.20)
-bulbRel(47, -0.06,  0.20)
-bulbRel(48,  0.06,  0.20)
-bulbAbs(49,  3.47,  0.05)
-bulbAbs(50,  3.36,  0.37)
-bulbAbs(51,  3.36,  0.76)
-bulbAbs(52,  3.47,  0.98)
+bulbAbs(45,  3.17,  0.12)
+bulbRel(46,  0.00,  0.28)
+bulbRel(47,  0.00,  0.28)
+bulbRel(48,  0.00,  0.22)
+bulbAbs(49,  3.55,  0.05)
+bulbAbs(50,  3.36,  0.05)
+bulbAbs(51,  3.36,  0.37)
+bulbAbs(52,  3.36,  0.68)
+bulbAbs(53,  3.36,  0.98)
+bulbAbs(54,  3.55,  0.98)
 
 fullAluRel((3.09, 0.00), [
     ( 0.00,  0.63),
@@ -211,15 +213,16 @@ print
 repeatedLetter(60, 2.27)
 print
 
-bulbAbs(75, 5.37, 0.76)
-bulbAbs(76, 5.37, 0.39)
-bulbAbs(77, 5.48, 0.10)
-bulbAbs(78, 5.76, 0.10)
-bulbAbs(79, 5.87, 0.39)
-bulbAbs(80, 5.87, 0.76)
-bulbAbs(81, 5.545, 0.35)
-bulbRel(82, 0.00, 0.23)
-bulbRel(83, 0.00, 0.23)
+bulbAbs(75, 5.37, 0.86)
+bulbAbs(76, 5.37, 0.49)
+bulbAbs(77, 5.40, 0.18)
+bulbAbs(78, 5.62, 0.06)
+bulbAbs(79, 5.84, 0.18)
+bulbAbs(80, 5.87, 0.49)
+bulbAbs(81, 5.87, 0.86)
+bulbAbs(82, 5.545, 0.33)
+bulbRel(83, 0.00, 0.29)
+bulbRel(84, 0.00, 0.29)
 
 startAlu()
 aluAbs( 5.32,  0.30)
