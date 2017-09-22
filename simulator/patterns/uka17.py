@@ -3,6 +3,8 @@ from math import sin, cos, pi, asin, acos
 
 currentX = 0
 currentY = 0
+shiftX = 0
+shiftY = 0.12
 
 
 def set(x, y):
@@ -18,7 +20,7 @@ def shift(x, y):
 
 
 def bulb(id):
-    print "{0} ({1:.2f}, {2:.2f}) R {3} {4} {5}".format(id, currentX, currentY, 200 + id, 300 + id, 400 + id)
+    print "{0} ({1:.2f}, {2:.2f}) R {3} {4} {5}".format(id, currentX + shiftX, currentY + shiftY, 200 + id, 300 + id, 400 + id)
 
 
 def bulbAbs(id, x, y):
@@ -40,7 +42,7 @@ def startAlu(closed=True):
 
 
 def alu(x, y):
-    print "({0:.3f}, {1:.3f});".format(x, y),
+    print "({0:.3f}, {1:.3f});".format(x + shiftX, y + shiftY),
 
 
 def aluAbs(x, y):
