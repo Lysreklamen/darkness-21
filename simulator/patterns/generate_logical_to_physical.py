@@ -26,5 +26,5 @@ for line in open(boxFile):
 	bulb = int(items[1])
 	rgb = bulbs[bulb]
 	for i in range(len(rgb)):
-		physical = (box - 1) * 18 + (boxLed - 1) * 3 + (i + 1)
+		physical = (box - 1) * 18 + (boxLed - 1) * 3 + (i + 2)
 		print('%d\t%d' % (rgb[i], physical))
