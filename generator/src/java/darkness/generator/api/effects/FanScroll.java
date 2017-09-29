@@ -2,7 +2,7 @@ package darkness.generator.api.effects;
 
 import darkness.generator.api.BulbRGB;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.*;
 
 /**
@@ -10,20 +10,50 @@ import java.util.*;
  */
 public class FanScroll extends EffectBase {
     private boolean cancelled = false;
-    private LinkedList<BulbRGB> bulbs;
+    private List<BulbRGB> bulbs;
     private float centerX = 0.f;
     private float centerY = 0.f;
     private double farLeftAngle = 100.f;
     private double farRightAngle = -100.f;
+    private Color fanColor = Color.BLACK;
+    private boolean rightToLeft = false;
+    private boolean alternate = false;
 
-    private double epsilon = 0.0; // TODO: Angle epsilon
+    private double epsilon = 1.0; // TODO: Angle epsilon
+    private int period = 0;
     private double anglePerFrame = 0.0;
 
-    // TODO: Implement reversing
-    public FanScroll(BulbRGB[] bulbs, int period, boolean reverse) {
-        //this.bulbs = new ArrayList<BulbRGB>(bulbs);
-        this.bulbs = new LinkedList<>(Arrays.asList(bulbs));
+    public FanScroll(Collection<BulbRGB> bulbs, int period, Color fanColor, boolean alternate, boolean rightToLeft, double scaling) {
+        this.bulbs = new ArrayList<BulbRGB>(bulbs);
+        this.fanColor = fanColor;
+        this.period = period;
+        this.alternate = alternate;
+        this.rightToLeft = rightToLeft;
+        this.epsilon = scaling;
 
+        setup();
+    }
+
+    public FanScroll(BulbRGB[] bulbs, int period, Color fanColor, boolean alternate, boolean rightToLeft, double scaling) {
+        this.bulbs = Arrays.asList(bulbs);
+        this.fanColor = fanColor;
+        this.period = period;
+        this.alternate = alternate;
+        this.rightToLeft = rightToLeft;
+        this.epsilon = scaling;
+
+        setup();
+    }
+
+    public FanScroll(Collection<BulbRGB> bulbs, int period, Color fanColor) {
+        this(bulbs, period, fanColor, false, false, 1.0);
+    }
+
+    public FanScroll(BulbRGB[] bulbs, int period, Color fanColor) {
+        this(bulbs, period, fanColor, false, false, 1.0);
+    }
+
+    private void setup() {
         float minX = 100f;
         float maxX = -100f;
 
@@ -44,7 +74,7 @@ public class FanScroll extends EffectBase {
         }
 
         this.centerX = (minX + maxX) / 2;
-        this.centerY -= 3; // Tweak this
+        this.centerY -= 3; // Seems to look alright
 
         for (BulbRGB bulb: bulbs) {
 
@@ -64,7 +94,11 @@ public class FanScroll extends EffectBase {
         anglePerFrame = (farRightAngle - farLeftAngle) / (period - 8);
         farLeftAngle -= 4 * anglePerFrame;
         farRightAngle += 4 * anglePerFrame;
-        epsilon = anglePerFrame * 3;
+        epsilon *= anglePerFrame * 3;
+
+        if (rightToLeft)
+            anglePerFrame *= -1;
+
     }
 
     @Override
@@ -74,10 +108,12 @@ public class FanScroll extends EffectBase {
 
     @Override
     public void run() {
+        double state;
 
-        double state = farLeftAngle;
-        Color colorOn = Color.red;
-        Color colorOff = Color.blue;
+        if (rightToLeft)
+            state = farRightAngle;
+        else
+            state = farLeftAngle;
 
         while (!cancelled) {
             state += anglePerFrame;
@@ -86,18 +122,28 @@ public class FanScroll extends EffectBase {
                 double angle = Math.atan2(bulb.getPosition()[0] - centerX, bulb.getPosition()[1] - centerY);
 
                 if (Math.abs(angle - state) < epsilon) {
-                    set(bulb, colorOn);
+                    set(bulb, fanColor);
                 }
                 else {
-                    set(bulb, colorOff);
+                    relinquish(bulb);
                 }
             }
 
-            if (state >= farRightAngle)
-                state = farLeftAngle;
+            if (alternate) {
+                if ( state >= farRightAngle && anglePerFrame >= 0
+                  || state <= farLeftAngle && anglePerFrame <= 0)
+                    anglePerFrame *= -1;
+            }
+            else {
+                if (rightToLeft) {
+                    if (state <= farLeftAngle)
+                        state = farRightAngle;
+                } else {
+                    if (state >= farRightAngle)
+                        state = farLeftAngle;
+                }
+            }
 
-
-            // Next frame
             next();
         }
 
