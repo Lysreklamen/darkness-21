@@ -1,2 +1,2 @@
-g++ main.cpp ../pgmlib.cpp -o dmx -lola && ./dmx ../sequences/light.pgm
+g++ main.cpp pgmlib.cpp -o dmx -lola -lolacommon && ./dmx ../simulator/sequences/LGBT.pgm
 

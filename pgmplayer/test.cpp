@@ -1,4 +1,4 @@
-#include "../pgmlib.h"
+#include "pgmlib.h"
 #include <cstdlib>
 #include <map>
 #include <vector>
@@ -10,6 +10,7 @@
 #include <ola/StreamingClient.h>
 #include <sys/time.h>
 #include <ctime>
+#include <unistd.h>
 
 #include <iostream>
 

@@ -1,6 +1,7 @@
 build/
 out/
 pgmplayer/dmx
+pgmplayer/test
 .gradle/
 .idea/
 *.swp
