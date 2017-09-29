@@ -80,7 +80,15 @@ public class Application extends SimpleApplication {
     }
 
     public void parsePatternFile(String fileName, Node parentNode) throws IOException {
-        File file = new File(fileName);
+        File file;
+        try {
+            file = new File(fileName);
+        }
+        catch(NullPointerException ex) {
+            System.err.println("Pattern file '" + fileName + "' does not exist!");
+            throw ex; // TODO: Actually handle exception
+        }
+
         FileReader fileReader = new FileReader(file);
         BufferedReader reader = new BufferedReader(fileReader);
 
