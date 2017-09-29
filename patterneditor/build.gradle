@@ -28,5 +28,5 @@ sourceSets {
 }
 
 run {
-    args = ["../simulator/patterns/uka15.txt"]
+    args = ["../simulator/patterns/UKA-17/uka17.txt"]
 }
