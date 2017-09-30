@@ -21,8 +21,15 @@ public class Scene {
 
 		// Move the camera to the crossing, looking up towards gesimsen
 		Camera camera = application.getCamera();
-		camera.setLocation(new Vector3f(-10.450743f, 2.7112355f, 35.287804f));
-		camera.setRotation(new Quaternion(-0.024610115f, 0.9680668f, 0.105350286f, 0.22614653f));
+
+        // From the street, looking up
+        // camera.setLocation(new Vector3f(-10.450743f, 2.7112355f, 35.287804f));
+        // camera.setRotation(new Quaternion(-0.024610115f, 0.9680668f, 0.105350286f, 0.22614653f));
+
+        // Close up, more usable
+        camera.setLocation(new Vector3f(-0.3624857f, 9.472308f, 25.097445f));
+        camera.setRotation(new Quaternion(-0.0001166f, 0.9978704f, 0.06520383f, 0.0017843109f));
+
 		application.getFlyByCamera().setMoveSpeed(10.0f);
 
 		DirectionalLight sun = new DirectionalLight();
