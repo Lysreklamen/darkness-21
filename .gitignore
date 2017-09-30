@@ -16,4 +16,5 @@ pgmplayer/test
 *.dll
 
 # Don't upload pgm files
-*.pgm
+# Upload them anyway
+#*.pgm
