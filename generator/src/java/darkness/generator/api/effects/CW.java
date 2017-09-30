@@ -22,7 +22,6 @@ public class CW extends EffectBase {
     private Color color;
     private int framesPerDit;
     private String str;
-    private boolean cancelled;
 
     private int totalFrames;
     ArrayList<ArrayList<Boolean[]>> sequence = new ArrayList<>();
@@ -144,7 +143,7 @@ public class CW extends EffectBase {
 
         for( ArrayList<Boolean[]> word : sequence) {
             for (Boolean[] c : word) {
-                if (cancelled)
+                if (isCancelled())
                     return;
 
                 for( Boolean ditdah : c) {
@@ -166,11 +165,6 @@ public class CW extends EffectBase {
 
     public int getTotalFrames() {
         return totalFrames;
-    }
-
-    @Override
-    public void cancel() {
-        cancelled = true;
     }
 
     @Override

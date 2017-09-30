@@ -11,13 +11,12 @@ import java.util.Random;
  * Created by knutaldrin on 27.09.2015.
  */
 public class BlinkyPhase extends EffectBase {
-    private boolean cancelled = false;
     // Pseudorandom with fixed seed. Can be changed to get a different, but similar effect
     private Random random = new Random(1337);
     @Override
     public void run() {
         LinkedList<BulbRGB> freeBulbs = new LinkedList<BulbRGB>(BulbManager.getInstance().getAllBulbs());
-        while (!(cancelled || freeBulbs.isEmpty()))
+        while (!isCancelled() && !freeBulbs.isEmpty())
         {
             int bulbIndex = random.nextInt(freeBulbs.size());
             BulbRGB bulb = freeBulbs.get(bulbIndex);
@@ -42,10 +41,4 @@ public class BlinkyPhase extends EffectBase {
     public String toString() {
         return "BlinkyPhase";
     }
-
-    @Override
-    public void cancel() {
-        cancelled = true;
-    }
-
 }

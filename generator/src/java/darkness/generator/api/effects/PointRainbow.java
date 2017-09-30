@@ -10,7 +10,6 @@ import java.util.*;
  * Created by janosa on 27.09.15.
  */
 public class PointRainbow extends EffectBase {
-    private boolean cancelled = false;
     private List<BulbRGB> bulbs;
     private float[] centerPos = {0.f, 0.0f, 0.0f};
     private float radius;
@@ -29,14 +28,8 @@ public class PointRainbow extends EffectBase {
     }
 
     @Override
-    public void cancel() {
-        cancelled = true;
-
-    }
-
-    @Override
     public void run() {
-        while (!cancelled) {
+        while (!isCancelled()) {
             for(BulbRGB bulb: bulbs) {
                 // calculate the distance
                 float[] pos = bulb.getPosition();

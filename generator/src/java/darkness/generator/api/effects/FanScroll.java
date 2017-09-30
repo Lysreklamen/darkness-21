@@ -9,7 +9,6 @@ import java.util.*;
  * Fan scrolling effect
  */
 public class FanScroll extends EffectBase {
-    private boolean cancelled = false;
     private List<BulbRGB> bulbs;
     private float centerX = 0.f;
     private float centerY = 0.f;
@@ -102,11 +101,6 @@ public class FanScroll extends EffectBase {
     }
 
     @Override
-    public void cancel() {
-        cancelled = true;
-    }
-
-    @Override
     public void run() {
         double state;
 
@@ -115,7 +109,7 @@ public class FanScroll extends EffectBase {
         else
             state = farLeftAngle;
 
-        while (!cancelled) {
+        while (!isCancelled()) {
             state += anglePerFrame;
 
             for (BulbRGB bulb: bulbs) {
