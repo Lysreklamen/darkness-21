@@ -3,7 +3,7 @@ package darkness.generator.scripts.uka17;
 import darkness.generator.api.BulbGroup;
 import darkness.generator.api.BulbRGB;
 
-public class Jubileeum extends BaseScript {
+public class Jubileum extends BaseScript {
     @Override
     public void run() {
         super.run();
