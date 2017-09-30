@@ -3,6 +3,8 @@ package darkness.generator.scripts.uka17;
 import darkness.generator.api.BulbGroup;
 import darkness.generator.api.BulbRGB;
 
+import darkness.generator.api.effects.WeightedStrobe;
+
 import java.awt.*;
 
 public class Jubileum extends BaseScript {
@@ -29,17 +31,9 @@ public class Jubileum extends BaseScript {
 	        rgbFade(bulb(90+i), c, t + fade_ext);
 	        skip(t);
         }
-
-	    // flash last \0/
 	    skip(fade_ext);
-	    int repeats = 3;
-	    while (repeats > 0) {
-	        set(I, 0, 0, 0);
-	        skip(t);
-	        set(I, c);
-	        skip(3*t);
-	        repeats -= 1;
-	    }
+	    // flash last \0/
+        effect(new WeightedStrobe(I, 3*t, t, 3));
 	    skip(3*t);
     }
 }
