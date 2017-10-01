@@ -65,12 +65,12 @@ void loadChannelMapping(const char * filename, map<int, vector<int> > & channelM
 	const vector<int> emptyVector;
 	while (true) {
 		if (!(file >> from)) {
-			cout << "Loaded " << count << " channel mappings from " << filename << endl;
+			cerr << "Loaded " << count << " channel mappings from " << filename << endl;
 			return;
 		}
 		if (!(file >> to)) {
 			cerr << "Error: File contained an odd number of integers; the last integer is skipped" << endl;
-			cout << "Loaded " << count << " channel mappings from " << filename << endl;
+			cerr << "Loaded " << count << " channel mappings from " << filename << endl;
 			return;
 		}
 		--from;

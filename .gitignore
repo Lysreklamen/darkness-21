@@ -2,6 +2,7 @@ build/
 out/
 pgmplayer/dmx
 pgmplayer/test
+pgmplayer/generatedefault
 .gradle/
 .idea/
 *.swp
@@ -14,7 +15,3 @@ pgmplayer/test
 *.dylib
 *.o
 *.dll
-
-# Don't upload pgm files
-# Upload them anyway
-#*.pgm
