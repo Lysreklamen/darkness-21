@@ -5,6 +5,7 @@ import darkness.generator.api.BulbRGB;
 import darkness.generator.api.ScriptBase;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class BaseScript extends ScriptBase {
     protected BulbGroup A;
@@ -22,7 +23,21 @@ public class BaseScript extends ScriptBase {
     protected BulbGroup digitC;
     protected BulbGroup[] digits;
     protected BulbGroup[] columns;
-    protected BulbRGB[] allBulbs;
+    protected BulbRGB[] allBulbs; // ...except for the counters
+
+    protected BulbGroup[][] counters;
+    protected static final int[][] counterDigits = {
+        {0, 1, 2, 3, 4, 5}, // 0
+        {4, 5}, // 1
+        {3, 4, 6, 1, 0}, // 2
+        {3, 4, 6, 5, 0}, // 3
+        {2, 6, 4, 5}, // 4
+        {3, 2, 6, 5, 0}, // 5
+        {3, 2, 1, 0, 5, 6}, // 6
+        {3, 4, 5}, // 7
+        {0, 1, 2, 3, 4, 5, 6}, // 8
+        {6, 2, 3, 4, 5, 0}, // 9
+    };
 
     @Override
     public void run() {
@@ -75,5 +90,34 @@ public class BaseScript extends ScriptBase {
         };
 
         allBulbs = Arrays.stream(letters).flatMap(letter -> letter.getAllBulbs().stream()).toArray(BulbRGB[]::new);
+
+        counters = new BulbGroup[][]{
+            new BulbGroup[]{
+                group(101, 102, 103, 104, 105, 106, 107),
+                group(108, 109, 110, 111, 112, 113, 114),
+            },
+            new BulbGroup[]{
+                group(115, 116, 117, 118, 119, 120, 121),
+                group(122, 123, 124, 125, 126, 127, 128),
+            },
+        };
+    }
+
+    protected void setCounters(int number) {
+        for (int i = 0; i < 2; i++) {
+            setDigit(i, 0, number / 10);
+            setDigit(i, 1, number % 10);
+        }
+    }
+
+    private void setDigit(int counterIndex, int digitIndex, int digit) {
+        List<BulbRGB> bulbs = counters[counterIndex][digitIndex].getAllBulbs();
+        int[] bulbIndices = counterDigits[digit];
+        for (BulbRGB bulb : bulbs) {
+            set(bulb, 0, 0, 0);
+        }
+        for (int i : bulbIndices) {
+            set(bulbs.get(i), 255, 0, 0);
+        }
     }
 }
