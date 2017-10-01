@@ -18,7 +18,8 @@ public class AuroraDemo extends BaseScript {
         super.run();
 	
     Color c = new Color(57, 255, 20); // neon green
-    effect(new Aurora(c, 10, 4, 30, 0.0f));
+
+    effect(new Aurora(mergedAllBulbs, c, 10, 4, 30, 0.0f));
 
     }
 }
