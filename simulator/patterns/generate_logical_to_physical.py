@@ -28,3 +28,10 @@ for line in open(boxFile):
 	for i in range(len(rgb)):
 		physical = (box - 1) * 18 + (boxLed - 1) * 3 + (i + 2)
 		print('%d\t%d' % (rgb[i], physical))
+
+# Counter
+for i in range(2):
+	for j in range(7):
+		logical = i * 7 + j + 1
+		physical = i * 9 + j + 488
+		print('%d\t%d' % (logical, physical))

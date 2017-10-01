@@ -5,7 +5,7 @@ public class CountUp extends BaseScript {
     public void run() {
         super.run();
         for (int i = 0; i < 100; i++) {
-            setCounters(i);
+            setCounter(i, true);
             skip(10);
         }
     }
