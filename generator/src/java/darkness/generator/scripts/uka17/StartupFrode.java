@@ -12,10 +12,10 @@ public class StartupFrode extends BaseScript {
 	public void run() {
 		super.run();
 		allon(new Color(210, 200, 0), 1);
-		sparkleFade(240, 100, new Color(224, 192, 16), new Color(32, 32, 16), 0, 55, 45);
+		sparkleFade(240, 100, new Color(224, 170, 16), new Color(32, 32, 16), 0, 60, 40);
 		for(int i=0; i<100; i=i+20)
-			sparkleFade(20, 100, new Color(224, 192, 16), new Color(32, 32, 16), i, 60, 40);
-		sparkleFade(240, 100, new Color(224, 192, 16), new Color(32, 32, 16), 100, 80, 20);
+			sparkleFade(20, 100, new Color(224, 170, 16), new Color(32, 32, 16), i, 80, 20);
+		sparkleFade(240, 100, new Color(224, 170, 16), new Color(32, 32, 16), 100, 80, 20);
 	}
 
 	private void allon(Color c, int time)
