@@ -27,9 +27,9 @@ public class Genesis extends BaseScript {
         };
 
         glitter(mergedAllBulbs, goldenrod);
-        glitter(mergeBulbGroups(digits), goldenrod);
         effect(new RGBFade(mergeBulbGroups(nonDigits), Color.BLACK, 5 * 20));
-        rgbFade(mergeBulbGroups(nonDigits), Color.BLACK, 5 * 20);
+        glitter(mergeBulbGroups(digits), goldenrod);
+        skip(3 * 20);
     }
 
     private void glitter(BulbGroup bulbGroup, Color baseColor) {
