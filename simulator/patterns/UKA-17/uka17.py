@@ -275,10 +275,10 @@ for d in xrange(2): # Two digits per counter
     baseX = 3 + 0.8 * d
     baseY = 2.5
     dist = 0.2
-    counterBulb(baseId + 0, baseX + 0 * dist, baseY + 0 * dist, baseChannel + 0)
-    counterBulb(baseId + 1, baseX - 1 * dist, baseY + 1 * dist, baseChannel + 1)
-    counterBulb(baseId + 2, baseX - 1 * dist, baseY + 3 * dist, baseChannel + 2)
-    counterBulb(baseId + 3, baseX + 0 * dist, baseY + 4 * dist, baseChannel + 3)
-    counterBulb(baseId + 4, baseX + 1 * dist, baseY + 3 * dist, baseChannel + 4)
-    counterBulb(baseId + 5, baseX + 1 * dist, baseY + 1 * dist, baseChannel + 5)
+    counterBulb(baseId + 0, baseX + 0 * dist, baseY + 4 * dist, baseChannel + 0)
+    counterBulb(baseId + 1, baseX + 1 * dist, baseY + 3 * dist, baseChannel + 1)
+    counterBulb(baseId + 2, baseX + 1 * dist, baseY + 1 * dist, baseChannel + 2)
+    counterBulb(baseId + 3, baseX + 0 * dist, baseY + 0 * dist, baseChannel + 3)
+    counterBulb(baseId + 4, baseX - 1 * dist, baseY + 1 * dist, baseChannel + 4)
+    counterBulb(baseId + 5, baseX - 1 * dist, baseY + 3 * dist, baseChannel + 5)
     counterBulb(baseId + 6, baseX + 0 * dist, baseY + 2 * dist, baseChannel + 6)
