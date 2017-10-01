@@ -44,7 +44,7 @@ public class Vegas extends BaseScript {
         // TODO: The colours used are for demonstration purposes, and should probably be changed by someone more visual than me.
 
         // Initial sign colour
-        for (BulbRGB bulb: allBulbs)
+        for (BulbRGB bulb: allBulbsRGB)
             set(bulb, Color.RED);
 
         // Vegas casino neon sign effect
@@ -52,11 +52,11 @@ public class Vegas extends BaseScript {
         effect(cycle);
 
         // Scrolling fan, nice background indeed
-        FanScroll fan = new FanScroll(allBulbs, 30, Color.GREEN);
+        FanScroll fan = new FanScroll(allBulbsRGB, 30, Color.GREEN);
         effect(fan);
 
         // Fade background to another colour while all the other shit is running
-        for (BulbRGB bulb: allBulbs)
+        for (BulbRGB bulb: allBulbsRGB)
             rgbFade(bulb, Color.BLUE, 90);
 
         // Yep yep yep

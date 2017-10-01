@@ -1,6 +1,5 @@
 package darkness.generator.scripts.uka17;
 
-import darkness.generator.api.BulbGroup;
 import darkness.generator.api.BulbRGB;
 
 import darkness.generator.api.effects.WeightedStrobe;
@@ -17,8 +16,8 @@ public class HauptsacheStrobo extends BaseScript {
 	int t_on = 3;
 	int t_off = 1;
 	int n_flash = 5;
-	
-	for (BulbRGB bulb : allBulbs) {
+
+	for (BulbRGB bulb : allBulbsRGB) {
 		rgbFade(bulb, bg, t_base * (t_on + t_off) * n_flash);
 	}
 	skip(t_base * (t_on + t_off) * n_flash);
@@ -37,7 +36,7 @@ public class HauptsacheStrobo extends BaseScript {
 	rgbFade(D, Color.YELLOW, t_base * (t_on + t_off) * n_flash);
 	rgbFade(E, Color.YELLOW, t_base * (t_on + t_off) * n_flash);
 	skip(t_base * (t_on + t_off) * n_flash);
-	
+
 	rgbFade(F, Color.GREEN, t_base * (t_on + t_off) * n_flash);
 	skip(t_base * (t_on + t_off));
 
@@ -48,8 +47,8 @@ public class HauptsacheStrobo extends BaseScript {
 	rgbFade(H, Color.BLUE, t_base * (t_on + t_off) * n_flash);
 	rgbFade(I, Color.MAGENTA, t_base * (t_on + t_off) * n_flash);
 	skip(t_base * (t_on + t_off) * n_flash);
-	
-	for (BulbRGB bulb : allBulbs) {
+
+	for (BulbRGB bulb : allBulbsRGB) {
 		rgbFade(bulb, Color.BLACK, t_base * (t_on + t_off) * n_flash);
 	}
 	skip(t_base * (t_on + t_off) * n_flash);

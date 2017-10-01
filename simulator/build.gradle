@@ -47,5 +47,5 @@ processResources {
 }
 
 run {
-    args = ["--pattern", "./patterns/UKA-17/uka17.txt", "--script", "RGBTest"]
+    args = ["--pattern", "./patterns/UKA-17/uka17.txt", "--script", "YellowBang"]
 }
