@@ -39,6 +39,11 @@ public class BaseScript extends ScriptBase {
         {6, 5, 0, 1, 2, 3}, // 9
     };
 
+    protected static final double LETTER_HEIGHT = 2.05;
+    protected static final double LEFT = 0.14;
+    protected static final double RIGHT = 6.33;
+    protected static final double WIDTH = RIGHT - LEFT;
+
     @Override
     public void run() {
         A = group(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
