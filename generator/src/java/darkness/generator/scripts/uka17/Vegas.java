@@ -45,22 +45,22 @@ public class Vegas extends BaseScript {
 
         // Initial sign colour
         for (BulbRGB bulb: allBulbsRGB)
-            set(bulb, Color.RED);
+            set(bulb, new Color(153, 0, 0));
 
         // Vegas casino neon sign effect
-        Cycle cycle = new Cycle(Color.WHITE, Color.BLACK, 10, groupA, groupB);
+        Cycle cycle = new Cycle(Color.WHITE, Color.DARK_GRAY, 10, groupA, groupB);
         effect(cycle);
 
         // Scrolling fan, nice background indeed
-        FanScroll fan = new FanScroll(allBulbsRGB, 30, Color.GREEN);
+        FanScroll fan = new FanScroll(allBulbsRGB, 60, new Color(64, 128, 0), true, false, 1.0);
         effect(fan);
 
         // Fade background to another colour while all the other shit is running
         for (BulbRGB bulb: allBulbsRGB)
-            rgbFade(bulb, Color.BLUE, 90);
+            rgbFade(bulb, new Color(139, 0, 139), 120);
 
         // Yep yep yep
-        skip(90);
+        skip(120);
 
         // Cleanup
         fan.cancel();
