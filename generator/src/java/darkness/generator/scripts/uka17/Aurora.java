@@ -28,9 +28,9 @@ public class Aurora extends BaseScript {
 				nextBulb = rnd.nextInt(96);
 			}
 			Color c = Color.getHSBColor(hsb_vals[0], hsb_vals[1], rnd.nextFloat());
-			set(bulb(nextBulb), c);
+			rgbFade(bulb(nextBulb), c, 5);
 		}
-		skip(2);
+		skip(5);
 	}
 	//fadeHSB(bulb10(10), c_hsb[0], c_hsb[1], 0, 100);
     }
