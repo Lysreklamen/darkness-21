@@ -21,7 +21,7 @@ public class Aurora extends BaseScript {
 
 	Random rnd = new Random(1337);
 	float[] hsb_vals = Color.RGBtoHSB(57, 255, 20, null); // neon green
-	for (int j = 0; j < 1000; j++) {
+	for (int j = 0; j < 40; j++) {
 		for (int i = 0; i < 30; i++) {
 			int nextBulb = rnd.nextInt(96);
 			while (notAssignedBulbs.contains(nextBulb)) { // java ass
