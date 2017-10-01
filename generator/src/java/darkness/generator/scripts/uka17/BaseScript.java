@@ -23,9 +23,9 @@ public class BaseScript extends ScriptBase {
     protected BulbGroup digitC;
     protected BulbGroup[] digits;
     protected BulbGroup[] columns;
-    protected BulbRGB[] allBulbs; // ...except for the counters
+    protected BulbRGB[] allBulbs; // ...except for the counter
 
-    protected BulbGroup[][] counters;
+    protected BulbGroup[] counter;
     protected static final int[][] counterDigits = {
         {0, 1, 2, 3, 4, 5}, // 0
         {4, 5}, // 1
@@ -91,33 +91,27 @@ public class BaseScript extends ScriptBase {
 
         allBulbs = Arrays.stream(letters).flatMap(letter -> letter.getAllBulbs().stream()).toArray(BulbRGB[]::new);
 
-        counters = new BulbGroup[][]{
-            new BulbGroup[]{
-                group(101, 102, 103, 104, 105, 106, 107),
-                group(108, 109, 110, 111, 112, 113, 114),
-            },
-            new BulbGroup[]{
-                group(115, 116, 117, 118, 119, 120, 121),
-                group(122, 123, 124, 125, 126, 127, 128),
-            },
+        counter = new BulbGroup[]{
+            group(101, 102, 103, 104, 105, 106, 107),
+            group(108, 109, 110, 111, 112, 113, 114),
         };
     }
 
-    protected void setCounters(int number) {
-        for (int i = 0; i < 2; i++) {
-            setDigit(i, 0, number / 10);
-            setDigit(i, 1, number % 10);
-        }
+    protected void setCounter(int number, boolean leadingZero) {
+        setDigit(0, number / 10, leadingZero);
+        setDigit(1, number % 10, true);
     }
 
-    private void setDigit(int counterIndex, int digitIndex, int digit) {
-        List<BulbRGB> bulbs = counters[counterIndex][digitIndex].getAllBulbs();
+    private void setDigit(int digitIndex, int digit, boolean showZero) {
+        List<BulbRGB> bulbs = counter[digitIndex].getAllBulbs();
         int[] bulbIndices = counterDigits[digit];
         for (BulbRGB bulb : bulbs) {
             set(bulb, 0, 0, 0);
         }
-        for (int i : bulbIndices) {
-            set(bulbs.get(i), 255, 0, 0);
+        if (digit != 0 || showZero) {
+            for (int i : bulbIndices) {
+                set(bulbs.get(i), 255, 0, 0);
+            }
         }
     }
 }
