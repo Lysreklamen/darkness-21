@@ -2,22 +2,13 @@ package darkness.generator.api;
 
 import darkness.generator.api.effects.EffectBase;
 import darkness.generator.output.BaseOutput;
-import darkness.generator.output.ConsoleOutput;
-import darkness.generator.output.FileOutput;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 public class ScriptManager {
     private static ScriptManager instance = new ScriptManager();
@@ -39,18 +30,17 @@ public class ScriptManager {
             output.beginScript();
 
             // Make all scripts generate a single frame.
-            // We do it in the reverse order to make sure its the main script that will always win the channel value if multiple scripts are working on a channel
-            Iterator<ScriptContext> contextIterator = scriptContextList.descendingIterator();
-            Set<ScriptContext> contextsToRemove = new HashSet<>();
-            while (contextIterator.hasNext()) {
-                ScriptContext context = contextIterator.next();
+            // We do it in the reverse order to make sure its the main script that will always win the channel value if multiple scripts are working on a channel.
+            // We make a copy of the script list in order to avoid ConcurrentModificationException (in case the script itself adds another script and because we might remove the script if it's finished).
+            List<ScriptContext> contextsReversed = new ArrayList<>(scriptContextList);
+            Collections.reverse(contextsReversed);
+            for (ScriptContext context : contextsReversed) {
                 if (!context.doFrame()) {
-                    // The script is done executing. Remove it (but this must be done afterwards because doFrame() might cause scriptContextList to be modified)
-                    contextsToRemove.add(context);
+                    // The script is done executing, so we'll remove it
+                    scriptContextList.remove(context);
                     output.endScript(context.script.getClass().getSimpleName());
                 }
             }
-            scriptContextList.removeAll(contextsToRemove);
 
             output.beginFrame();
 
@@ -99,7 +89,6 @@ public class ScriptManager {
             else {
                 return false;
             }
-
         }
     }
 }
