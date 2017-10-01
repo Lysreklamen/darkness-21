@@ -28,6 +28,7 @@ public class Vift extends BaseScript {
 
 		skip(40);
 		fan_l2r.cancel();
+		skip(10);
 		fan_r2l.cancel();
 	}
 
