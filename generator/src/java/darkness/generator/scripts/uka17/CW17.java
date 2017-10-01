@@ -28,24 +28,22 @@ public class CW17 extends BaseScript {
         //rgbFade(F, restColor, 10);
         rgbFade(G, restColor, 10);
         rgbFade(H, restColor, 10);
-        //rgbFade(I, restColor, 10);
+        rgbFade(I, restColor, 10);
         skip(10);
 
         skip(20);
 
         int framesPerDit = 3;
 
-
-        // TODO: Change letters to actual UKA name
-        CW cwA = new CW(A, "a", morseColor, framesPerDit);
-        CW cwB = new CW(B, "b", morseColor, framesPerDit);
+        CW cwA = new CW(A, "t", morseColor, framesPerDit);
+        CW cwB = new CW(B, "a", morseColor, framesPerDit);
         //CW cwC = new CW(C, "c", morseColor, framesPerDit);
         CW cwD = new CW(D, "d", morseColor, framesPerDit);
         CW cwE = new CW(E, "e", morseColor, framesPerDit);
         //CW cwF = new CW(F, "f", morseColor, framesPerDit);
-        CW cwG = new CW(G, "g", morseColor, framesPerDit);
-        CW cwH = new CW(H, "h", morseColor, framesPerDit);
-        //CW cwI = new CW(I, "i", morseColor, framesPerDit);
+        CW cwG = new CW(G, "d", morseColor, framesPerDit);
+        CW cwH = new CW(H, "u", morseColor, framesPerDit);
+        CW cwI = new CW(I, "!", morseColor, framesPerDit);
 
         effect(cwA);
         skip(cwA.getTotalFrames());
@@ -91,12 +89,11 @@ public class CW17 extends BaseScript {
         skip(framesPerDit * 2);
         cwH.cancel();
 
-        /*
         effect(cwI);
         skip(cwI.getTotalFrames());
         skip(framesPerDit * 2);
         cwI.cancel();
-        */
+        
 
         skip(20);
 
