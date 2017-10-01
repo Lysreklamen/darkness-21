@@ -32,9 +32,10 @@ public class Vift extends BaseScript {
         	FanScroll fan_r2l = new FanScroll(allBulbs, 50, c, false, true, 1.2);
 
         	effect(fan_l2r);
+		skip(10);
         	effect(fan_r2l);
         
-		skip(50);
+		skip(40);
 		fan_l2r.cancel();
 		fan_r2l.cancel();
 	}
