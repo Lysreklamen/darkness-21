@@ -19,7 +19,7 @@ public class YellowBang extends BaseScript{
         for(int j=0; j<nScroll; j++) {
 
             skip(10);
-            for (BulbGroup letters : allBulbsBG) {
+            for (BulbGroup letters : allBulbs) {
 			    set(letters, 0, 0, 0);
 		    }
             for (int i = 0; i < columns.length - 3; i++) {

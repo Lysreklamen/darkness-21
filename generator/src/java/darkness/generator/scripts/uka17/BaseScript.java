@@ -23,9 +23,9 @@ public class BaseScript extends ScriptBase {
     protected BulbGroup digitC;
     protected BulbGroup[] digits;
     protected BulbGroup[] columns;
-    protected BulbGroup[] allBulbsBG;
+    protected BulbGroup[] allBulbs;
 
-    protected BulbRGB[] allBulbs; // ...except for the counter
+    protected BulbRGB[] allBulbsRGB; // ...except for the counter
 
     protected BulbGroup[] counter;
     protected static final int[][] counterDigits = {
@@ -64,7 +64,7 @@ public class BaseScript extends ScriptBase {
         digitC = group(60, 61, 62, 63, 68, 69, 70, 71, 72, 73);
         digits = new BulbGroup[]{digitA, digitB, digitC};
 
-        allBulbsBG = new BulbGroup[]{
+        allBulbs = new BulbGroup[]{
             group(0,1,2,3,4,5,6,7,8,9,10,11),
             group(15,16,17,18,19,20,21),
             group(25,26),
@@ -108,7 +108,7 @@ public class BaseScript extends ScriptBase {
             group(90, 91, 92, 93, 94),
         };
 
-        allBulbs = Arrays.stream(letters).flatMap(letter -> letter.getAllBulbs().stream()).toArray(BulbRGB[]::new);
+        allBulbsRGB = Arrays.stream(letters).flatMap(letter -> letter.getAllBulbs().stream()).toArray(BulbRGB[]::new);
 
         counter = new BulbGroup[]{
             group(101, 102, 103, 104, 105, 106, 107),
