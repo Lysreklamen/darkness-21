@@ -6,16 +6,14 @@ import java.awt.Color;
 
 public class StartupFrode extends BaseScript {
 
-	private int[] rainbow48 = {255, 255, 255, 255, 255, 255, 255, 255, 255, 223, 191, 159, 128, 96, 64, 32, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 32, 64, 96, 128, 159, 191, 223, 255, 255, 255, 255, 255, 255, 255, 255};
-
 	@Override
 	public void run() {
 		super.run();
 		allon(new Color(218, 165, 32), 1);
-		sparkleFade(240, 100, new Color(218, 165, 32), new Color(32, 20, 16), 0, 55, 45);
+		sparkleFade(240, 100, new Color(218, 165, 32), new Color(32, 10, 16), new Color(218, 165, 32), 0, 55, 45);
 		for(int i=0; i<100; i=i+20)
-			sparkleFade(20, 100, new Color(218, 165, 32), new Color(32, 20, 16), i, 80, 20);
-		sparkleFade(240, 100, new Color(218, 100, 32), new Color(32, 20, 16), 100, 50, 50);
+			sparkleFade(20, 100, new Color(218, 165, 32), new Color(32, 10, 16), new Color(218, 165, 32), i, 70, 30);
+		sparkleFade(240, 100, new Color(218, 165, 32), new Color(32, 10, 16), new Color(218, 165, 32), 100, 50, 50);
 	}
 
 	private void allon(Color c, int time)
@@ -25,7 +23,7 @@ public class StartupFrode extends BaseScript {
 		skip(20*time);
 	}
 
-	private void sparkleFade(int time, int probability, Color mid, Color var, int fade, int intensmid, int intensvar)
+	private void sparkleFade(int time, int probability, Color mid, Color var, Color feat, int fade, int intensmid, int intensvar)
 	{
 		boolean flag = false;
 		if(time>=20)
@@ -50,7 +48,7 @@ public class StartupFrode extends BaseScript {
 						for(BulbGroup digit : digits)
 							for(BulbRGB dbulb : digit)
 								if(bulb == dbulb)
-									c = new Color(c.getRed()+255*fade/100, c.getGreen()+255*fade/100, c.getBlue()+0*fade/100);
+									c = new Color(c.getRed()+feat.getRed()*fade/100, c.getGreen()+feat.getGreen()*fade/100, c.getBlue()+feat.getBlue()*fade/100);
 						rgbFade(bulb, c, 20);
 					}
 				}
@@ -58,38 +56,6 @@ public class StartupFrode extends BaseScript {
 				skip(20);
 			else
 				skip(1);
-		}
-	}
-
-	private void sparkle(int time, int saturation, int probability, int desatR, int desatG, int desatB, int fade, int blkval)
-	{
-		for(int i=0; i<time; i++)
-		{
-			for(BulbGroup letter : letters)
-				for(BulbRGB bulb : letter)
-				{
-					double val = Math.random();
-					if(randint(100) < probability)
-					{
-						int rb = randint(48);
-						int Rval = desatR*(100-saturation)/100 + rainbow48[rb]*saturation/100;
-						int Gval = desatG*(100-saturation)/100 + rainbow48[(rb+16)%48]*saturation/100;
-						int Bval = desatB*(100-saturation)/100 + rainbow48[(rb+32)%48]*saturation/100;
-						if(letter == A || letter == D || letter == G)
-						{
-							Rval = 255*(100-fade)/100 + Rval*fade/100;
-							Gval = 255*(100-fade)/100 + Gval*fade/100;
-							Bval = 64*(100-fade)/100 + Bval*fade/100;
-						}
-						set(bulb, Rval, Gval, Bval);
-					}
-					else
-					{
-						int val2 = 255*fade*blkval/10000;
-						set(bulb, val2, val2, val2);
-					}
-				}
-			skip(1);
 		}
 	}
 
