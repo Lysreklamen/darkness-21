@@ -154,7 +154,7 @@ public class BulbGroup implements BulbSet, Iterable<BulbRGB> {
 		return bulbs.spliterator();
 	}
 
-	public Collection<BulbRGB> getAllBulbs() {
+	public List<BulbRGB> getAllBulbs() {
 		return bulbs;
 	}
 }

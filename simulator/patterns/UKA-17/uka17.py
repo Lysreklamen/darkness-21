@@ -37,6 +37,13 @@ def bulbRel(id, x, y):
     bulb(id)
 
 
+def counterBulb(id, x, y, channel):
+    global currentX, currentY
+    currentX = x
+    currentY = y
+    print "{0} ({1:.2f}, {2:.2f}) R {3} {4} {5}".format(id, currentX + shiftX, currentY + shiftY, channel, channel + 50, channel + 50)
+
+
 def startAlu(closed=True):
     print "ALU" if closed else "ALUOPEN",
 
@@ -260,3 +267,19 @@ fullAlu([(6.28, 0.32), (6.23, 2.02), (6.43, 2.02), (6.38, 0.32)])
 startAlu()
 aluArc(6.25, 0.14, 0.14, 32, 0, 2 * pi * 31 / 32)
 endAlu()
+print
+
+for c in xrange(2): # Two counters
+    for d in xrange(2): # Two digits per counter
+        baseId = 101 + 14 * c + 7 * d
+        baseChannel = 1 + 14 * c + 7 * d
+        baseX = 2 + 2 * c + 0.8 * d
+        baseY = 2.5
+        dist = 0.2
+        counterBulb(baseId + 0, baseX + 0 * dist, baseY + 0 * dist, baseChannel + 0)
+        counterBulb(baseId + 1, baseX - 1 * dist, baseY + 1 * dist, baseChannel + 1)
+        counterBulb(baseId + 2, baseX - 1 * dist, baseY + 3 * dist, baseChannel + 2)
+        counterBulb(baseId + 3, baseX + 0 * dist, baseY + 4 * dist, baseChannel + 3)
+        counterBulb(baseId + 4, baseX + 1 * dist, baseY + 3 * dist, baseChannel + 4)
+        counterBulb(baseId + 5, baseX + 1 * dist, baseY + 1 * dist, baseChannel + 5)
+        counterBulb(baseId + 6, baseX + 0 * dist, baseY + 2 * dist, baseChannel + 6)
