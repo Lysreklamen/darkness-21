@@ -15,11 +15,17 @@ public class StartupFrode extends BaseScript {
 		for(int i=0; i<timeoutfade.length; i++)
 			timeoutfade[i] = 0;
 
-		allon(new Color(218, 165, 32), 3);
-		sparkleFade(10*20, 500, new Color(218, 165, 32), new Color(32, 10, 16), new Color(218, 165, 32), 0, 55, 45);
+		allon(new Color(218, 165, 32), 60);
+		for(int i=0; i<20; i++)
+		{
+			for(int j=10; j>5; j--)
+				sparkleFade(6, 500, new Color(218, 165, 32), new Color(64, 10, 32), new Color(218, 165, 32), 0, j*10, 100-(j*10));
+			for(int j=5; j<10; j++)
+				sparkleFade(6, 500, new Color(218, 165, 32), new Color(64, 10, 32), new Color(218, 165, 32), 0, j*10, 100-(j*10));
+		}
 		for(int i=0; i<100; i++)
-			sparkleFade(1, 500, new Color(218, 165, 32), new Color(32, 10, 16), new Color(218, 165, 32), i, 40, 40);
-		sparkleFade(10*20, 500, new Color(218, 165, 32), new Color(32, 10, 16), new Color(218, 165, 32), 100, 50, 50);
+			sparkleFade(2, 500, new Color(218, 165, 32), new Color(32, 10, 16), new Color(218, 165, 32), i, 60, 40);
+		sparkleFade(60*20, 500, new Color(218, 165, 32), new Color(32, 10, 16), new Color(218, 155, 32), 100, 50, 50);
 	}
 
 	private void allon(Color c, int time)
@@ -40,16 +46,32 @@ public class StartupFrode extends BaseScript {
 					if(randint(1000) < probability)
 					{
 						int intens = (randint(intensvar*2)-intensvar)+intensmid;
+						if(intens>100)
+							intens = 100;
 						int randR = randint(var.getRed()*2)-var.getRed();
 						int randG = randint(var.getGreen()*2)-var.getGreen();
 						int randB = randint(var.getBlue()*2)-var.getBlue();
+						int valR = ((mid.getRed()+randR)*(100-fade)/100)*intens/100;
+						int valG = ((mid.getGreen()+randG)*(100-fade)/100)*intens/100;
+						int valB = ((mid.getBlue()+randB)*(100-fade)/100)*intens/100;
 
-						Color c = new Color(((mid.getRed()+randR)*(100-fade)/100)*intens/100, ((mid.getGreen()+randG)*(100-fade)/100)*intens/100, ((mid.getBlue()+randB)*(100-fade)/100)*intens/100);
 						for(BulbGroup digit : digits)
 							for(BulbRGB dbulb : digit)
 								if(bulb == dbulb)
-									c = new Color(c.getRed()+feat.getRed()*fade/100, c.getGreen()+feat.getGreen()*fade/100, c.getBlue()+feat.getBlue()*fade/100);
-						
+								{
+									valR = valR+feat.getRed()*fade/100;
+									valG = valG+feat.getGreen()*fade/100;
+									valB = valB+feat.getBlue()*fade/100;
+								}
+						if(valR>255)
+							valR = 255;
+						if(valG>255)
+							valG = 255;
+						if(valB>255)
+							valB = 255;
+
+						Color c = new Color(valR, valG, valB);						
+
 						if(timeoutfade[bulb.getId()]==0)
 						{
 							rgbFade(bulb, c, 15);
