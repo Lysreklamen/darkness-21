@@ -138,9 +138,7 @@ int initializeOla() {
 		cerr << "Send DMX failed" << endl;
 		return 4;
 	}
-	cout << "Cleared; waiting" << endl;
-	//usleep(8000000);
-	cout << "Done waiting" << endl;
+	cout << "Cleared" << endl;
 }
 
 string getNextFrameFilenameFromPlaylist(string playlistFilename, string currentFrameFilename) {
@@ -150,17 +148,25 @@ string getNextFrameFilenameFromPlaylist(string playlistFilename, string currentF
 	else
 		cout << " (current frame file is " << currentFrameFilename << ")" << endl;
 	
-	string line;
 	vector<string> filenames;
-	ifstream playlistFile(playlistFilename.c_str());
-	while (getline(playlistFile, line)) {
-		if (line.find_first_not_of(" \t") != string::npos) {
-			filenames.push_back(line);
+	while (true) {
+		string line;
+		ifstream playlistFile(playlistFilename.c_str());
+		while (getline(playlistFile, line)) {
+			if (line.find_first_not_of(" \t") != string::npos) {
+				filenames.push_back(line);
+			}
 		}
-	}
-	if (filenames.size() == 0) {
-		cout << "Playlist file is empty or nonexistent" << endl;
-		return "";
+		if (filenames.size()) {
+			break;
+		} else {
+			cout << "Playlist file '" << playlistFilename << "' is empty or nonexistent; checking again in one second" << endl;
+			buffer.Blackout();
+			if (!ola_client.SendDmx(universe, buffer)) {
+				cout << "Failed to clear frame" << endl;
+			}
+			usleep(1000000);
+		}
 	}
 	vector<string>::iterator found = find(filenames.begin(), filenames.end(), currentFrameFilename);
 	if (found == filenames.end()) {
