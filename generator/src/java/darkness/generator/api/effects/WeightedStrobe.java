@@ -6,13 +6,13 @@ import java.awt.Color;
 
 public class WeightedStrobe extends EffectBase {
     private final BulbSet bulbSet;
-    private final Color color;
+    //private final Color color;
     private final int tOn;
     private final int tOff;
     private final int repeat;
 
     public WeightedStrobe(BulbSet bulbSet, int tOn, int tOff, int repeat) {
-        this.color = bulbSet.getColor();
+        //this.color = bulbSet.getColor();
         this.bulbSet = bulbSet;
 	this.tOn = tOn;
 	this.tOff = tOff;
@@ -22,6 +22,7 @@ public class WeightedStrobe extends EffectBase {
     @Override
     public void run() {
         for (int i = 0; i < repeat; i++) {
+	    Color color = bulbSet.getColor();
             set(bulbSet, 0, 0, 0);
             skip(tOff);
             set(bulbSet, color);
