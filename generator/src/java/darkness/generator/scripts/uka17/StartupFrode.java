@@ -6,14 +6,20 @@ import java.awt.Color;
 
 public class StartupFrode extends BaseScript {
 
+	int[] timeoutfade = new int[150];
+
 	@Override
 	public void run() {
 		super.run();
-		allon(new Color(218, 165, 32), 1);
-		sparkleFade(240, 100, new Color(218, 165, 32), new Color(32, 10, 16), new Color(218, 165, 32), 0, 55, 45);
-		for(int i=0; i<100; i=i+20)
-			sparkleFade(20, 100, new Color(218, 165, 32), new Color(32, 10, 16), new Color(218, 165, 32), i, 70, 30);
-		sparkleFade(240, 100, new Color(218, 165, 32), new Color(32, 10, 16), new Color(218, 165, 32), 100, 50, 50);
+
+		for(int i=0; i<timeoutfade.length; i++)
+			timeoutfade[i] = 0;
+
+		allon(new Color(218, 165, 32), 3);
+		sparkleFade(10, 100, new Color(218, 165, 32), new Color(32, 10, 16), new Color(218, 165, 32), 0, 55, 45);
+		for(int i=0; i<100; i++)
+			sparkleFade(1, 100, new Color(218, 165, 32), new Color(32, 10, 16), new Color(218, 165, 32), i, 70, 30);
+		sparkleFade(10, 100, new Color(218, 165, 32), new Color(32, 10, 16), new Color(218, 165, 32), 100, 50, 50);
 	}
 
 	private void allon(Color c, int time)
@@ -25,20 +31,13 @@ public class StartupFrode extends BaseScript {
 
 	private void sparkleFade(int time, int probability, Color mid, Color var, Color feat, int fade, int intensmid, int intensvar)
 	{
-		boolean flag = false;
-		if(time>=20)
-		{
-			flag = true;
-			time = time/20;
-		}
-
-		for(int i=0; i<time; i++)
+		for(int i=0; i<time*20; i++)
 		{
 			for(BulbGroup letter : letters)
 				for(BulbRGB bulb : letter)
 				{
 					double val = Math.random();
-					if(randint(1000) < probability || flag)
+					if(randint(1000) < probability)
 					{
 						int intens = (randint(intensvar*2)-intensvar)+intensmid;
 						int randR = randint(var.getRed()*2)-var.getRed();
@@ -49,13 +48,18 @@ public class StartupFrode extends BaseScript {
 							for(BulbRGB dbulb : digit)
 								if(bulb == dbulb)
 									c = new Color(c.getRed()+feat.getRed()*fade/100, c.getGreen()+feat.getGreen()*fade/100, c.getBlue()+feat.getBlue()*fade/100);
-						rgbFade(bulb, c, 20);
+						
+						if(timeoutfade[bulb.getId()]==0)
+						{
+							rgbFade(bulb, c, 20);
+							timeoutfade[bulb.getId()]=20;
+						}
 					}
 				}
-			if(flag)
-				skip(20);
-			else
-				skip(1);
+			skip(1);
+			for(int j=0; j<timeoutfade.length; j++)
+				if(timeoutfade[j] != 0)
+					timeoutfade[j]--;
 		}
 	}
 
