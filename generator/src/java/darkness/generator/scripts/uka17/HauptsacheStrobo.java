@@ -14,7 +14,7 @@ public class HauptsacheStrobo extends BaseScript {
 
         Color bg = new Color(255, 255, 255);
         int t_base = 3;
-	int t_on = 2;
+	int t_on = 3;
 	int t_off = 1;
 	int n_flash = 5;
 	
