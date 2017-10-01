@@ -16,10 +16,10 @@ public class StartupFrode extends BaseScript {
 			timeoutfade[i] = 0;
 
 		allon(new Color(218, 165, 32), 3);
-		sparkleFade(10, 100, new Color(218, 165, 32), new Color(32, 10, 16), new Color(218, 165, 32), 0, 55, 45);
+		sparkleFade(10*20, 500, new Color(218, 165, 32), new Color(32, 10, 16), new Color(218, 165, 32), 0, 55, 45);
 		for(int i=0; i<100; i++)
-			sparkleFade(1, 100, new Color(218, 165, 32), new Color(32, 10, 16), new Color(218, 165, 32), i, 70, 30);
-		sparkleFade(10, 100, new Color(218, 165, 32), new Color(32, 10, 16), new Color(218, 165, 32), 100, 50, 50);
+			sparkleFade(1, 500, new Color(218, 165, 32), new Color(32, 10, 16), new Color(218, 165, 32), i, 40, 40);
+		sparkleFade(10*20, 500, new Color(218, 165, 32), new Color(32, 10, 16), new Color(218, 165, 32), 100, 50, 50);
 	}
 
 	private void allon(Color c, int time)
@@ -31,7 +31,7 @@ public class StartupFrode extends BaseScript {
 
 	private void sparkleFade(int time, int probability, Color mid, Color var, Color feat, int fade, int intensmid, int intensvar)
 	{
-		for(int i=0; i<time*20; i++)
+		for(int i=0; i<time; i++)
 		{
 			for(BulbGroup letter : letters)
 				for(BulbRGB bulb : letter)
@@ -43,6 +43,7 @@ public class StartupFrode extends BaseScript {
 						int randR = randint(var.getRed()*2)-var.getRed();
 						int randG = randint(var.getGreen()*2)-var.getGreen();
 						int randB = randint(var.getBlue()*2)-var.getBlue();
+
 						Color c = new Color(((mid.getRed()+randR)*(100-fade)/100)*intens/100, ((mid.getGreen()+randG)*(100-fade)/100)*intens/100, ((mid.getBlue()+randB)*(100-fade)/100)*intens/100);
 						for(BulbGroup digit : digits)
 							for(BulbRGB dbulb : digit)
@@ -51,8 +52,8 @@ public class StartupFrode extends BaseScript {
 						
 						if(timeoutfade[bulb.getId()]==0)
 						{
-							rgbFade(bulb, c, 20);
-							timeoutfade[bulb.getId()]=20;
+							rgbFade(bulb, c, 15);
+							timeoutfade[bulb.getId()]=15;
 						}
 					}
 				}
