@@ -120,6 +120,10 @@ public class BaseScript extends ScriptBase {
         };
     }
 
+    protected BulbGroup mergeBulbGroups(BulbGroup... groups) {
+        return new BulbGroup(Arrays.stream(groups).flatMap(g -> g.getAllBulbs().stream()).toArray(BulbRGB[]::new));
+    }
+
     protected void setCounter(int number, boolean leadingZero) {
         setDigit(0, number / 10, leadingZero);
         setDigit(1, number % 10, true);
