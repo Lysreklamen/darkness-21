@@ -1,4 +1,3 @@
-../simulator/sequences/uka17/Unveiling.pgm
 ../simulator/sequences/uka17/HorizontalLight.pgm
 ../simulator/sequences/uka17/Jubileum.pgm
 ../simulator/sequences/uka17/HorizontalRainbow.pgm
