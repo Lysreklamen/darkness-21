@@ -62,7 +62,7 @@ public class PgmPlayer implements Runnable {
             if (currentFrameIndex < currentReader.getFrameCount()) {
                 Frame currentFrame = currentReader.getFrame(currentFrameIndex);
                 if (currentFrame == null) {
-                    System.err.println(String.format("Waiting for frame %d of PGM file '%d' to be loaded", currentFrameIndex, currentReader.getFileName()));
+                    System.err.println(String.format("Waiting for frame %d of PGM file '%s' to be loaded", currentFrameIndex, currentReader.getFileName()));
                     break;
                 } else {
                     display(currentFrame);
