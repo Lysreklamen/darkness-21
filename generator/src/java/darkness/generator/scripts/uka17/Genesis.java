@@ -35,22 +35,31 @@ public class Genesis extends BaseScript {
         );
 
         final int FRAMES_PER_SECOND = 20;
-        int glitterFrames = FRAMES_PER_SECOND * 30;
+        int glitterFrames = FRAMES_PER_SECOND * 20; // TODO change to actual frame number
         int fadeFrames = FRAMES_PER_SECOND * 5;
 
-        glitter(everything, GOLDENROD, glitterFrames);
-        for (BulbRGB bulb : nonDigits) {
+        glitter(everything, GOLDENROD, glitterFrames, 0.1f, 0.8f);
+
+        // Make sure that each bulb fade from its current color
+        for (BulbRGB bulb: nonDigits) {
             effect(new RGBFade(bulb, Color.BLACK, fadeFrames));
         }
-        glitter(onlyDigits, GOLDENROD, glitterFrames);
+        glitter(onlyDigits, GOLDENROD, glitterFrames / 2, 0.1f, 0.8f);
+
+        // Make sure that each bulb fade from its current color
+        for (BulbRGB bulb: onlyDigits) {
+            effect(new RGBFade(bulb, GOLDENROD, fadeFrames / 2));
+        }
+        skip(fadeFrames);
+        glitter(onlyDigits, GOLDENROD, glitterFrames / 2, 0.2f, 1.0f);
     }
 
     private float randomFloat(float left, float right) {
         return left + RANDOM.nextFloat() * (right - left);
     }
 
-    private void glitter(BulbGroup bulbGroups, Color color, int frames) {
-        glitter(bulbGroups, color, frames, 4, bulbGroups.numBulbs / 2);
+    private void glitter(BulbGroup bulbGroups, Color color, int frames, float min, float max) {
+        glitter(bulbGroups, color, frames, 4, bulbGroups.numBulbs / 2, min, max);
     }
 
     /**
@@ -61,11 +70,11 @@ public class Genesis extends BaseScript {
      * @param frames Glitter duration in frames.
      * @param fade Fade time in frames.
      * @param glitteringBulbs Number of bulbs that change brightness during glittering.
+     * @param min Minimum brightness.
+     * @param max Maximum brightness.
      */
-    private void glitter(BulbGroup bulbGroup, Color color, int frames, int fade, int glitteringBulbs) {
+    private void glitter(BulbGroup bulbGroup, Color color, int frames, int fade, int glitteringBulbs, float min, float max) {
         int loops = frames / fade;
-        float min = 0.3f; // Minimum brightness
-        float max = 1.0f; // Maximum brightness
         float[] hsbValues = new float[3];
         Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), hsbValues);
 
