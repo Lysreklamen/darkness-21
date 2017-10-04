@@ -8,7 +8,7 @@ public class CountDown extends BaseScript {
             setCounter(i, true);
             skip(60 * 20);
         }
-        for (int i = 59; i >= 0; i--) {
+        for (int i = 60; i >= 0; i--) {
             setCounter(i, false);
             skip(20);
         }

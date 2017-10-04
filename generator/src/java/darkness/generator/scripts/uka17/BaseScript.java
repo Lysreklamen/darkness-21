@@ -111,7 +111,7 @@ public class BaseScript extends ScriptBase {
         };
 
         allBulbsRGB = Arrays.stream(letters).flatMap(letter -> letter.getAllBulbs().stream()).toArray(BulbRGB[]::new);
-	
+
 	    mergedAllBulbs = new BulbGroup(allBulbsRGB);
 
         counter = new BulbGroup[]{
@@ -127,6 +127,14 @@ public class BaseScript extends ScriptBase {
     protected void setCounter(int number, boolean leadingZero) {
         setDigit(0, number / 10, leadingZero);
         setDigit(1, number % 10, true);
+    }
+
+    protected void turnOffCounter() {
+        for (BulbGroup digit : counter) {
+            for (BulbRGB bulb : digit) {
+                set(bulb, 0, 0, 0);
+            }
+        }
     }
 
     private void setDigit(int digitIndex, int digit, boolean showZero) {
