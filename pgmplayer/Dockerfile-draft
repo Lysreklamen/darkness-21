@@ -1,0 +1,28 @@
+FROM ubuntu:16.04
+
+RUN apt-get update
+RUN apt-get install curl
+
+#RUN curl https://github.com/google/protobuf/releases/download/v2.6.1/protobuf-2.6.1.tar.gz --output protobuf-2.6.1.tar.gz
+COPY ~/Downloads/protobuf-2.6.1.tar.gz /
+RUN tar xzvf /protobuf-2.6.1.tar.gz
+RUN cd /protobuf-2.6.1
+RUN apt-get install autoconf automake libtool curl make g++ unzip
+RUN ./configure
+RUN make -j 4
+RUN make install
+RUN ldconfig
+
+COPY ~/ola-ovdmx /
+RUN cd /ola-ovdmx
+RUN apt-get install libcppunit-dev libcppunit-1.13-0v5 uuid-dev pkg-config libncurses5-dev libtool autoconf automake g++ libmicrohttpd-dev libmicrohttpd10 zlib1g-dev bison flex make libftdi-dev libftdi1 libusb-1.0-0-dev liblo-dev libavahi-client-dev python-numpy
+RUN autoreconf -i
+RUN ./configure
+RUN make -j 4
+RUN make install
+RUN ldconfig
+
+RUN useradd -r -m -u 1000 -g uucp lysreklamen
+COPY ~/.ola /home/lysreklamen
+RUN chown -R lysreklamen:uucp /home/lysreklamen/.ola
+USER lysreklamen
