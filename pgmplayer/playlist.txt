@@ -7,6 +7,7 @@
 ../simulator/sequences/uka17/Spinner.pgm
 ../simulator/sequences/uka17/Pride.pgm
 ../simulator/sequences/uka17/CW17.pgm
+../simulator/sequences/uka17/HorizontalWave.pgm
 ../simulator/sequences/uka17/WaterFill.pgm
 ../simulator/sequences/uka17/Vift.pgm
 ../simulator/sequences/uka17/IntroAurora.pgm
