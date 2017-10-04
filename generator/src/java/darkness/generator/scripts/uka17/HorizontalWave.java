@@ -19,8 +19,8 @@ public class HorizontalWave extends BaseScript {
 		for (int k=0; k<loops*rainbow48.length; k++) {
 			for (int j=0; j<columns.length; j++) {
 				int valR = (int)(rainbow48[(k)%rainbow48.length]*(1.5+Math.sin(phase+j*2.0*Math.PI/40))/2.5);
-				int valG = (int)(rainbow48[(k+16)%rainbow48.length]*(1.5+Math.sin(phase+j*2.0*Math.PI/40))/2.5);
-				int valB = (int)(rainbow48[(k+32)%rainbow48.length]*(1.5+Math.sin(phase+j*2.0*Math.PI/40))/2.5);
+				int valG = (int)(rainbow48[(k+12)%rainbow48.length]*(1.5+Math.sin(phase+j*2.0*Math.PI/40))/2.5);
+				int valB = (int)(rainbow48[(k+24)%rainbow48.length]*(1.5+Math.sin(phase+j*2.0*Math.PI/40))/2.5);
 				set(columns[j], valR, valG, valB);
 			}
 			skip(1);
