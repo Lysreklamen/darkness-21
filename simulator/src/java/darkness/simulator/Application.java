@@ -100,7 +100,7 @@ public class Application extends SimpleApplication {
         Point scale = new Point(1, 1); // Not really a point, but it consists of one float for x and one for y, so let's reuse the class
 
         int lineNumber = 0;
-        for(String line = reader.readLine(); line != null; line = reader.readLine()) {
+        for (String line = reader.readLine(); line != null; line = reader.readLine()) {
             lineNumber++;
             try {
                 if (line.trim().isEmpty()) {
