@@ -1,4 +1,5 @@
 apply plugin: 'java'
+apply plugin: 'kotlin'
 apply plugin: 'application'
 apply plugin: 'idea'
 
@@ -25,12 +26,13 @@ dependencies {
     compile "org.jmonkeyengine:jme3-plugins:$jmonkeyengine_version"
     compile files('libs/jME3-testdata.jar')
     compile project(":generator")
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 }
 
 sourceSets {
     main {
         java {
-            srcDir 'src/java'
+            srcDir 'src/kotlin'
         }
         resources {
             srcDir 'src/resources'
@@ -48,4 +50,23 @@ processResources {
 
 run {
     args = ["--pattern", "./patterns/UKA-17/uka17.txt", "--playlist", "../pgmplayer/playlist.txt"]
+}
+buildscript {
+    ext.kotlin_version = '1.2.71'
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 }
