@@ -90,7 +90,7 @@ class PgmPlayer(private val readers: List<PgmReader>) : Runnable {
 
     private fun display(frame: Frame) {
         for (i in 1..Frame.size) {
-            val channel = ChannelManager.instance.getChannel(i)
+            val channel = ChannelManager.getChannel(i)
             val channelValue = frame.getChannelValue(i)
             if (channelValue != Frame.transparent) {
                 channel.value = frame.getChannelValue(i)

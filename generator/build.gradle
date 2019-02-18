@@ -22,6 +22,7 @@ sourceSets {
     main {
         java {
             srcDir 'src/java'
+            srcDir 'src/kotlin'
         }
         resources {
             srcDir 'src/resources'

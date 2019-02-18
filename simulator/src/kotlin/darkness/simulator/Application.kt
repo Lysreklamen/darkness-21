@@ -20,6 +20,7 @@ import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.*
+import darkness.generator.api.BulbManager as GeneratorBulbManager
 
 /**
  * The simulator's main class.
@@ -71,10 +72,6 @@ class Application(private val arguments: Arguments) : SimpleApplication() {
         val fileReader = FileReader(file)
         val reader = BufferedReader(fileReader)
 
-        val bulbManager = BulbManager.instance
-        val generatorBulbManager = darkness.generator.api.BulbManager.getInstance()
-        val channelManager = ChannelManager.instance
-
         var offset = Point(0f, 0f)
         var scale = Point(1f, 1f) // Not really a point, but it consists of one float for x and one for y, so let's reuse the class
 
@@ -123,15 +120,15 @@ class Application(private val arguments: Arguments) : SimpleApplication() {
                 val channelGreen = Integer.parseInt(parts[5])
                 val channelBlue = Integer.parseInt(parts[6])
 
-                val bulb = bulbManager.registerBulb(id,
-                        channelManager.getChannel(channelRed),
-                        channelManager.getChannel(channelGreen),
-                        channelManager.getChannel(channelBlue),
+                val bulb = BulbManager.registerBulb(id,
+                        ChannelManager.getChannel(channelRed),
+                        ChannelManager.getChannel(channelGreen),
+                        ChannelManager.getChannel(channelBlue),
                         position,
                         parentNode)
                 if (arguments.scriptClassName != null) {
                     // If we want to use the generator, its bulb manager must also be populated
-                    generatorBulbManager.registerBulb(id, channelRed, channelGreen, channelBlue, position.x, position.y)
+                    GeneratorBulbManager.registerBulb(id, channelRed, channelGreen, channelBlue, position.x, position.y)
                 }
 
                 // Default color in case no sequence or script is supplied
@@ -162,10 +159,9 @@ class Application(private val arguments: Arguments) : SimpleApplication() {
 
     private fun generatePgmFromScript(scriptClassName: String): PgmReader {
         val qualifiedScriptClassName = if (scriptClassName.contains(".")) scriptClassName else "darkness.generator.scripts.uka17.$scriptClassName"
-        val script = Class.forName(qualifiedScriptClassName).newInstance() as ScriptBase
+        val script = Class.forName(qualifiedScriptClassName).getConstructor().newInstance() as ScriptBase
         val tempFile = File("sequences/uka17/${arguments.scriptClassName}.pgm")
-        val scriptManager = ScriptManager.getInstance()
-        scriptManager.start(script, PgmOutput(tempFile.path))
+        ScriptManager.start(script, PgmOutput(tempFile.path))
         return PgmReader(tempFile.path)
     }
 

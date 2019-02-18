@@ -16,17 +16,16 @@ repositories {
     }
 }
 
-def jmonkeyengine_version = '3.2.2-stable'
+def jmeVersion = '3.2.2-stable'
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.11'
-    compile "org.jmonkeyengine:jme3-core:$jmonkeyengine_version"
-    compile "org.jmonkeyengine:jme3-desktop:$jmonkeyengine_version"
-    compile "org.jmonkeyengine:jme3-lwjgl:$jmonkeyengine_version"
-    compile "org.jmonkeyengine:jme3-plugins:$jmonkeyengine_version"
-    compile files('libs/jME3-testdata.jar')
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
+    compile "org.jmonkeyengine:jme3-core:$jmeVersion"
+    compile "org.jmonkeyengine:jme3-desktop:$jmeVersion"
+    compile "org.jmonkeyengine:jme3-lwjgl:$jmeVersion"
+    compile "org.jmonkeyengine:jme3-plugins:$jmeVersion"
     compile project(":generator")
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    testCompile group: 'junit', name: 'junit', version: '4.11'
 }
 
 sourceSets {
@@ -52,12 +51,12 @@ run {
     args = ["--pattern", "./patterns/UKA-17/uka17.txt", "--playlist", "../pgmplayer/playlist.txt"]
 }
 buildscript {
-    ext.kotlin_version = '1.2.71'
+    ext.kotlinVersion = '1.2.71'
     repositories {
         mavenCentral()
     }
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     }
 }
 compileKotlin {

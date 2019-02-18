@@ -4,7 +4,7 @@ import com.jme3.scene.Node
 import darkness.simulator.graphics.Point
 import java.util.NoSuchElementException
 
-class BulbManager private constructor() {
+object BulbManager {
     private val bulbMap = mutableMapOf<Int, BulbRGB>()
     private val bulbNameMap = mutableMapOf<String, BulbRGB>()
 
@@ -47,9 +47,5 @@ class BulbManager private constructor() {
             throw NoSuchElementException("There is no bulb with the ID: $id")
         }
         return nameBulb(getBulb(id), name)
-    }
-
-    companion object {
-        val instance = BulbManager()
     }
 }
