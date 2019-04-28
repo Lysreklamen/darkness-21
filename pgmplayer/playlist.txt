@@ -1,1 +1,2 @@
 ../simulator/sequences/uka19/FlashLetters.pgm
+../simulator/sequences/uka19/SphericalRainbow.pgm

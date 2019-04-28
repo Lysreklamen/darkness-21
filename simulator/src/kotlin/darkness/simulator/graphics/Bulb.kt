@@ -33,7 +33,7 @@ class Bulb(position: Point, parentNode: Node, name: String) : Node(name) {
         this.light = PointLight()
         this.light.color = color
         this.light.radius = 0.5f
-        this.light.position = worldTranslation
+        this.light.position = worldTranslation.add(Vector3f(0.0f, 0.0f, 0.05f))
         Application.instance.rootNode.addLight(this.light)
     }
 

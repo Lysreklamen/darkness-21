@@ -9,6 +9,7 @@ import darkness.generator.output.PgmOutput
 import darkness.simulator.dmx.BulbManager
 import darkness.simulator.dmx.ChannelManager
 import darkness.simulator.graphics.Aluminum
+import darkness.simulator.graphics.Background
 import darkness.simulator.graphics.Point
 import darkness.simulator.graphics.Scene
 import java.awt.Color
@@ -19,7 +20,7 @@ import java.lang.Float.parseFloat
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Paths
-import java.util.*
+import kotlin.collections.ArrayList
 import darkness.generator.api.BulbManager as GeneratorBulbManager
 
 /**
@@ -28,9 +29,6 @@ import darkness.generator.api.BulbManager as GeneratorBulbManager
 class Application(private val arguments: Arguments) : SimpleApplication() {
     // These constants are rather uninteresting with their current values,
     // but we'll keep them in case we need to shift things around at some point
-    private val renderScale = 10f / 10f // Render size: 10 x 2 graphics units; real size: 10 x 2 m(?)
-    private val renderOffsetX = 0f
-    private val renderOffsetY = 0f
 
     private lateinit var player: PgmPlayer
 
@@ -47,7 +45,7 @@ class Application(private val arguments: Arguments) : SimpleApplication() {
 
     override fun simpleInitApp() {
         val scene = Scene()
-        parsePatternFile(arguments.patternFileName, scene.parentNodeForBulbs)
+        parsePatternFile(arguments.patternFileName, scene.parentNodeForBulbs, scene.signNode)
         val pgmReaders = ArrayList<PgmReader>()
         if (arguments.scriptClassName != null) {
             pgmReaders.add(generatePgmFromScript(arguments.scriptClassName))
@@ -60,7 +58,7 @@ class Application(private val arguments: Arguments) : SimpleApplication() {
         CommandSocket(player).start()
     }
 
-    private fun parsePatternFile(fileName: String?, parentNode: Node) {
+    private fun parsePatternFile(fileName: String?, lightNode: Node, signNode: Node) {
         val file: File
         try {
             file = File(fileName)
@@ -96,15 +94,68 @@ class Application(private val arguments: Arguments) : SimpleApplication() {
                     line = reader.readLine()
                     continue
                 }
-                if (maybeInstruction == "ALU" || maybeInstruction == "ALUOPEN") {
-                    val perimeter = ArrayList<Point>()
-                    var i = 1
-                    while (i < parts.size) {
-                        perimeter.add(parsePoint(parts[i], parts[i + 1], offset, scale))
-                        i += 2
+                if (maybeInstruction == "BACKGROUND") {
+                    val spec = line.substring(maybeInstruction.length+1)
+                    /*
+                   The format of the BACKGROUND looks like this
+                   (X.xx, Y.yy, W.idth, H.eight); path/to/background.png
+                   The background image is optional. Default background is a black square
+                    */
+
+                    val elements = spec.split(";")
+                    if (elements.size > 2) {
+                        System.err.println("Could not parse BACKGROUND on line $lineNumber: $line")
+                        line = reader.readLine()
+                        continue
                     }
+                    val background : String
+                    if (elements.size == 2) {
+                        background = elements[1].trim()
+                    } else {
+                        background = ""
+                    }
+
+                    val coords = elements[0].split(',')
+                    val topLeft = parsePoint(coords[0], coords[1], offset, scale)
+                    val size = parsePoint(coords[2], coords[3], offset, scale)
+
+                    signNode.attachChild(Background(topLeft.x, topLeft.y, size.x, size.y, background))
+                }
+                if (maybeInstruction == "ALU" || maybeInstruction == "ALUOPEN") {
                     val closed = maybeInstruction == "ALU"
-                    parentNode.attachChild(Aluminum(perimeter, closed, "Aluminum:$lineNumber"))
+                    val spec = line.substring(maybeInstruction.length+1)
+
+                    /*
+                    The format of the ALU looks like this
+                    (X.xx, Y.yy); (X.xx, Y.yy); (X.xx, Y.yy); (X.xx, Y.yy); -; (X.xx, Y.yy); (X.xx, Y.yy); -; (X.xx, Y.yy); (X.xx, Y.yy);
+                    The dash separates polygons within the same letter. This is done to support letters with holes in them
+                     */
+
+                    val polygons = ArrayList<ArrayList<Point>>()
+                    var activePolygon = ArrayList<Point>()
+                    polygons.add(activePolygon)
+
+                    val elements = spec.replace(" ", "").split(';')
+                    for (elem in elements) {
+                        if (elem.isBlank()) {
+                            continue
+                        }
+                        if (elem == "-") {
+                            // New polygon within the same shape
+                            activePolygon = ArrayList()
+                            polygons.add(activePolygon)
+                            continue
+                        }
+                        val coords = elem.split(',')
+                        if (coords.size != 2) {
+                            System.err.println("Could not parse ALU profile on line $lineNumber: $line")
+                            break
+                        }
+
+                        activePolygon.add(parsePoint(coords[0], coords[1], offset, scale))
+                    }
+
+                    lightNode.attachChild(Aluminum(polygons[0], polygons.subList(1, polygons.size), closed, "Aluminum:$lineNumber"))
                     line = reader.readLine()
                     continue
                 }
@@ -125,7 +176,7 @@ class Application(private val arguments: Arguments) : SimpleApplication() {
                         ChannelManager.getChannel(channelGreen),
                         ChannelManager.getChannel(channelBlue),
                         position,
-                        parentNode)
+                        lightNode)
                 if (arguments.scriptClassName != null) {
                     // If we want to use the generator, its bulb manager must also be populated
                     GeneratorBulbManager.registerBulb(id, channelRed, channelGreen, channelBlue, position.x, position.y)
@@ -148,8 +199,8 @@ class Application(private val arguments: Arguments) : SimpleApplication() {
     }
 
     private fun parsePoint(xStr: String, yStr: String, offset: Point, scale: Point): Point {
-        val x = (parseFloat(xStr.replace("[,;()]".toRegex(), "")) - offset.x) * renderScale * scale.x - renderOffsetX
-        val y = renderOffsetY - (parseFloat(yStr.replace("[,;()]".toRegex(), "")) - offset.y) * renderScale * scale.y
+        val x = (parseFloat(xStr.replace("[,;()]".toRegex(), "")) - offset.x) * scale.x
+        val y = (parseFloat(yStr.replace("[,;()]".toRegex(), "")) - offset.y) * -scale.y
         return Point(x, y)
     }
 
@@ -158,9 +209,9 @@ class Application(private val arguments: Arguments) : SimpleApplication() {
     }
 
     private fun generatePgmFromScript(scriptClassName: String): PgmReader {
-        val qualifiedScriptClassName = if (scriptClassName.contains(".")) scriptClassName else "darkness.generator.scripts.uka17.$scriptClassName"
+        val qualifiedScriptClassName = if (scriptClassName.contains(".")) scriptClassName else "darkness.generator.scripts.uka19.$scriptClassName"
         val script = Class.forName(qualifiedScriptClassName).getConstructor().newInstance() as ScriptBase
-        val tempFile = File("sequences/uka17/${arguments.scriptClassName}.pgm")
+        val tempFile = File("sequences/uka19/${arguments.scriptClassName}.pgm")
         ScriptManager.start(script, PgmOutput(tempFile.path))
         return PgmReader(tempFile.path)
     }

@@ -1,3 +1,3 @@
 package darkness.simulator.graphics
 
-class Point(val x: Float, val y: Float)
+class Point(var x: Float, var y: Float)

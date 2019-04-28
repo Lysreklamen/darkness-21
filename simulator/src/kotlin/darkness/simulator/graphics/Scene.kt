@@ -2,19 +2,28 @@ package darkness.simulator.graphics
 
 import com.jme3.light.AmbientLight
 import com.jme3.light.DirectionalLight
+import com.jme3.material.Material
+import com.jme3.material.RenderState
 import com.jme3.math.ColorRGBA
 import com.jme3.math.Quaternion
 import com.jme3.math.Vector3f
+import com.jme3.renderer.queue.RenderQueue
+import com.jme3.scene.Geometry
 import com.jme3.scene.Node
+import com.jme3.scene.shape.Quad
 import darkness.simulator.Application
+
 
 class Scene {
     private val rootNode: Node
 
+    val signNode : Node
+        get() = rootNode.getChild("skilt") as Node
+
     val parentNodeForBulbs: Node
         get() {
-            val skiltNode = rootNode.getChild("skilt") as Node
-            return skiltNode.getChild("top_left") as Node
+            val lightWorld = signNode.getChild("affected_by_light") as Node
+            return lightWorld.getChild("bottom_center") as Node
         }
 
     init {
@@ -23,6 +32,7 @@ class Scene {
         this.rootNode = application.rootNode
         this.rootNode.attachChild(scene)
         this.rootNode.addLight(AmbientLight())
+
 
         // Move the camera to the crossing, looking up towards gesimsen
         val camera = application.camera

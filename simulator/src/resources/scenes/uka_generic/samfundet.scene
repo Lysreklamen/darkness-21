@@ -30,7 +30,7 @@
             <position x="0.792704" y="8.61685e-007" z="19.7131"/>
             <scale x="1.50584" y="0.92816" z="1.50584"/>
             <rotation qx="0" qy="0.819152" qz="-3.58063e-008" qw="0.573576"/>
-            <entity name="bakke" castShadows="true" receiveShadows="true" meshFile="bakke.mesh">
+            <entity name="bakke" castShadows="false" receiveShadows="true" meshFile="bakke.mesh">
                 <subentities>
                     <subentity index="0" materialName="Material#15"/>
                 </subentities>
@@ -40,20 +40,12 @@
             <position x="0" y="10" z="16"/>
             <scale x="1" y="1" z="1"/>
             <rotation qx="0" qy="0" qz="0" qw="1"/>
-            <node name="skilt_base">
-                <position x="0" y="0" z="0"/>
-                <scale x="1" y="1" z="1"/>
-                <rotation qx="0" qy="0" qz="0" qw="1"/>
-                <entity name="skilt_base" castShadows="true" receiveShadows="true" meshFile="skilt_base.mesh">
-                    <subentities>
-                        <subentity index="0" materialName="skilt_base"/>
-                    </subentities>
-                </entity>
-            </node>
-            <node name="top_left">
-                <position x="-5" y="2" z="0.05"/>
-                <scale x="1" y="1" z="1"/>
-                <rotation qx="0" qy="0" qz="0" qw="1"/>
+            <node name="affected_by_light">
+                <node name="bottom_center">
+                    <position x="0" y="0" z="0.05"/>
+                    <scale x="1" y="1" z="1"/>
+                    <rotation qx="0" qy="0" qz="0" qw="1"/>
+                </node>
             </node>
         </node>
     </nodes>
