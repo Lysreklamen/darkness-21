@@ -5,12 +5,12 @@ import java.awt.Color
 class SequentialTrace : BaseScript() {
     private var warmWhite = Color(255, 197, 143)
 
-    override fun run() {
+    override suspend fun run() {
         super.run()
         turnOnSequentially()
     }
 
-    private fun turnOnSequentially() {
+    private suspend fun turnOnSequentially() {
         // Turn each bulb on one by one
         for (letter in letters) {
             for (bulb in letter) {

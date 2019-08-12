@@ -3,7 +3,7 @@ package darkness.generator.scripts.uka17
 import java.awt.Color
 
 class Spinner : BaseScript() {
-    override fun run() {
+    override suspend fun run() {
         super.run()
 
         val center = mergedAllBulbs.position

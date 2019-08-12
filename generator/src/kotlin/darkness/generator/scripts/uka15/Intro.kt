@@ -9,7 +9,7 @@ import java.util.LinkedList
 import java.util.Random
 
 class Intro : BaseScript() {
-    override fun run() {
+    override suspend fun run() {
         super.run()
 
         /* MiniLysreklamen
@@ -65,7 +65,7 @@ class Intro : BaseScript() {
 
     }
 
-    private fun glow() {
+    private suspend fun glow() {
         for (frameCount in 0 until 10 * 20) {
             for (bulb in BulbManager.allBulbs) {
                 val colors = Color.RGBtoHSB(bulb.red, bulb.green, bulb.blue, null)
@@ -77,7 +77,7 @@ class Intro : BaseScript() {
         }
     }
 
-    private fun bloomToRainbow() {
+    private suspend fun bloomToRainbow() {
         // Via white to 3d rainbow
         for (bulb in BulbManager.allBulbs) {
             rgbFade(bulb, 255, 255, 255, 10)
@@ -119,7 +119,7 @@ class Intro : BaseScript() {
         pointRainbow.cancel()
     }
 
-    private fun scrollOut() {
+    private suspend fun scrollOut() {
         for (iteration in columns.indices) {
             for (column in columns.indices.reversed()) {
                 val preColumn = column - 1
@@ -136,7 +136,7 @@ class Intro : BaseScript() {
         }
     }
 
-    private fun fadeIn() {
+    private suspend fun fadeIn() {
         val random = Random(1)
         val fadeInOrder = listOf(C, F, B, D, A, E, G)
 

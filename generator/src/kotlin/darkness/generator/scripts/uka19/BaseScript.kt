@@ -15,7 +15,7 @@ open class BaseScript : ScriptBase() {
     protected lateinit var letters: List<BulbGroup>
     protected lateinit var allBulbs: List<BulbRGB>
 
-    override fun run() {
+    override suspend fun run() {
         A = group(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
         B = group(10, 11, 12, 13, 14)
         C = group(20, 21, 22, 23, 24, 25, 26, 27)

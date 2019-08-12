@@ -5,7 +5,7 @@ import darkness.generator.api.effects.WeightedStrobe
 import java.awt.Color
 
 class IntroAurora : BaseScript() {
-    override fun run() {
+    override suspend fun run() {
         super.run()
 
         val green = Color(57, 255, 20) // neon green

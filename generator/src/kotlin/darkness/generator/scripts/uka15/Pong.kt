@@ -3,7 +3,7 @@ package darkness.generator.scripts.uka15
 import darkness.generator.api.BulbGroup
 
 class Pong : BaseScript() {
-    override fun run() {
+    override suspend fun run() {
         super.run()
 
         for (letter in letters) {

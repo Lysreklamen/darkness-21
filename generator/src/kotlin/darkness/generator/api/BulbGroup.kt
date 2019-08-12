@@ -1,8 +1,6 @@
 package darkness.generator.api
 
 import java.awt.Color
-import java.util.*
-import java.util.function.Consumer
 import java.lang.IllegalArgumentException
 
 /**
@@ -10,26 +8,10 @@ import java.lang.IllegalArgumentException
  *
  * Constructor creates a bulb group that consists of the given bulbs.
  */
-class BulbGroup(val allBulbs: List<BulbRGB>) : BulbSet, Iterable<BulbRGB> {
+class BulbGroup(val allBulbs: List<BulbRGB>) : BulbSet {
     val numBulbs: Int
 
     constructor(vararg bulbs: BulbRGB) : this(bulbs.toList())
-
-    /** The red component of the first bulb in the group. */
-    override val red: Int
-        get() = allBulbs[0].red
-
-    /** The green component of the first bulb in the group. */
-    override val green: Int
-        get() = allBulbs[0].green
-
-    /** The blue component of the first bulb in the group. */
-    override val blue: Int
-        get() = allBulbs[0].blue
-
-    /** The RGB color of the first bulb in the group. */
-    override val color: Color
-        get() = allBulbs[0].color
 
     override val position: FloatArray
         get() {
@@ -58,7 +40,7 @@ class BulbGroup(val allBulbs: List<BulbRGB>) : BulbSet, Iterable<BulbRGB> {
     }
 
     /**
-     * Get a single bulb
+     * Get a single bulb.
      * @param idx Bulb index
      * @return
      */
@@ -66,61 +48,44 @@ class BulbGroup(val allBulbs: List<BulbRGB>) : BulbSet, Iterable<BulbRGB> {
         return allBulbs[idx]
     }
 
-    /**
-     * Set all bulbs in the group to the given RGB color.
-     */
-    override fun set(red: Int, green: Int, blue: Int, setter: ScriptBase) {
+    /** The RGB color that is indicated by the values of the first bulb's channels in the given frame. */
+    override fun colorIn(frame: Frame) = Color(redIn(frame), greenIn(frame), blueIn(frame))
+
+    /** The red component that is indicated by the current values of the first bulb's red channel in the given frame. */
+    override fun redIn(frame: Frame) = frame.getValue(allBulbs[0].channelRed)
+
+    /** The green component that is indicated by the current values of the first bulb's green channel in the given frame. */
+    override fun greenIn(frame: Frame) = frame.getValue(allBulbs[0].channelGreen)
+
+    /** The blue component that is indicated by the current values of the first bulb's blue channel in the given frame. */
+    override fun blueIn(frame: Frame) = frame.getValue(allBulbs[0].channelBlue)
+
+    /** Set all bulbs in the group to the given RGB color in the given frame. */
+    override fun set(red: Int, green: Int, blue: Int, frame: MutableFrame) {
         for (bulb in allBulbs) {
-            bulb[red, green, blue] = setter
+            bulb.set(red, green, blue, frame)
         }
     }
 
-    /**
-     * Set all bulbs in the group to the given RGB color.
-     */
-    override fun set(color: Color, setter: ScriptBase) {
+    /** Set all bulbs in the group to the given RGB color in the given frame. */
+    override fun set(color: Color, frame: MutableFrame) {
         for (bulb in allBulbs) {
-            bulb[color] = setter
+            bulb.set(color, frame)
         }
     }
 
-    /**
-     * Set all bulbs in the group to the given HSB color.
-     */
-    override fun setHSB(hue: Float, saturation: Float, brightness: Float, setter: ScriptBase) {
+    /** Set all bulbs in the group to the given HSB color in the given frame. */
+    override fun setHSB(hue: Float, saturation: Float, brightness: Float, frame: MutableFrame) {
         for (bulb in allBulbs) {
-            bulb.setHSB(hue, saturation, brightness, setter)
+            bulb.setHSB(hue, saturation, brightness, frame)
         }
     }
 
-    override fun relinquish(setter: ScriptBase) {
-        for (bulb in allBulbs) {
-            bulb.relinquish(setter)
-        }
-    }
+    /** @return A string describing the channels of the bulbs in this group. */
+    override fun toString() = allBulbs.joinToString(",", "BulbSet{", "}")
 
-    /**
-     * @return A string describing the channels and current values of the bulbs in this group.
-     */
-    override fun toString(): String {
-        val sb = StringBuilder("BulbSet{")
-        for (bulb in allBulbs) {
-            sb.append(bulb)
-            sb.append(',')
-        }
-        sb.setCharAt(sb.length - 1, '}') // Overwrite trailing comma
-        return sb.toString()
-    }
-
+    /** Iterate over all the bulbs in this group. */
     override fun iterator(): Iterator<BulbRGB> {
         return allBulbs.iterator()
-    }
-
-    override fun forEach(action: Consumer<in BulbRGB>) {
-        allBulbs.forEach(action)
-    }
-
-    override fun spliterator(): Spliterator<BulbRGB> {
-        return allBulbs.spliterator()
     }
 }

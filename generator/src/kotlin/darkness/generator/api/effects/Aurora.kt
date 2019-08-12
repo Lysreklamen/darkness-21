@@ -2,7 +2,7 @@ package darkness.generator.api.effects
 
 import darkness.generator.api.BulbGroup
 
-import java.awt.*
+import java.awt.Color
 import java.util.Random
 
 class Aurora(
@@ -18,21 +18,28 @@ class Aurora(
 ) : EffectBase() {
     private val rnd: Random = Random(1337)
 
-    override fun run() {
-        val hsbValues = Color.RGBtoHSB(color.red, color.green, color.blue, null)
-
+    override suspend fun run() {
+        val (hue, saturation, _) = Color.RGBtoHSB(color.red, color.green, color.blue, null)
         val nRepeats = time * 20 / fade
+        val previousTargetBrightness = mutableMapOf<Int, Float>()
 
         for (j in 0 until nRepeats) {
+            val bulbIndexesUsedThisRound = mutableSetOf<Int>()
             for (i in 0 until nChangeBulbs) {
-                val nextBulbIdx = rnd.nextInt(bulbGroup.numBulbs)
-                val nextBulb = bulbGroup.getBulb(nextBulbIdx)
+                val bulbIndex = rnd.nextInt(bulbGroup.numBulbs)
+                val bulb = bulbGroup.getBulb(bulbIndex)
                 var nextBrightness = rnd.nextFloat()
                 while (nextBrightness <= minBrightness) {
                     nextBrightness = rnd.nextFloat()
                 }
-                val c = Color.getHSBColor(hsbValues[0], hsbValues[1], nextBrightness)
-                rgbFade(nextBulb, c, fade)
+                // Don't skip until here, so that the random generator stays in sync with the old version
+                if (!bulbIndexesUsedThisRound.add(bulbIndex)) {
+                    continue
+                }
+                val previousColor = Color.getHSBColor(hue, saturation, previousTargetBrightness.getOrDefault(bulbIndex, 0f))
+                val nextColor = Color.getHSBColor(hue, saturation, nextBrightness)
+                rgbFade(bulb, previousColor, nextColor, fade)
+                previousTargetBrightness[bulbIndex] = nextBrightness
             }
             skip(fade)
         }

@@ -5,7 +5,7 @@ import darkness.generator.api.BulbRGB
 import java.awt.*
 
 class LGBT : BaseScript() {
-    override fun run() {
+    override suspend fun run() {
         super.run()
         val fallFrames = 30
         for (i in 0 until fallFrames) {

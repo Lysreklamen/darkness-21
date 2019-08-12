@@ -5,7 +5,7 @@ import java.awt.Color
 class StartupFrode : BaseScript() {
     internal var timeoutfade = IntArray(150)
 
-    override fun run() {
+    override suspend fun run() {
         super.run()
 
         for (i in timeoutfade.indices)
@@ -23,13 +23,13 @@ class StartupFrode : BaseScript() {
         sparkleFade(60 * 20, 500, Color(218, 165, 32), Color(32, 10, 16), Color(218, 155, 32), 100, 50, 50)
     }
 
-    private fun allon(c: Color, time: Int) {
+    private suspend fun allon(c: Color, time: Int) {
         for (bulb in allBulbs)
             set(bulb, c)
         skip(20 * time)
     }
 
-    private fun sparkleFade(time: Int, probability: Int, mid: Color, `var`: Color, feat: Color, fade: Int, intensmid: Int, intensvar: Int) {
+    private suspend fun sparkleFade(time: Int, probability: Int, mid: Color, `var`: Color, feat: Color, fade: Int, intensmid: Int, intensvar: Int) {
         for (i in 0 until time) {
             for (letter in letters)
                 for (bulb in letter) {

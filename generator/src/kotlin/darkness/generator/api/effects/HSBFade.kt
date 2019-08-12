@@ -14,7 +14,7 @@ class HSBFade(
 ) : EffectBase() {
     private val startHSB: FloatArray = Color.RGBtoHSB(bulbSet.red, bulbSet.green, bulbSet.blue, null)
 
-    override fun run() {
+    override suspend fun run() {
         var frame = 1
         while (frame <= frames && !isCancelled) {
             val h = startHSB[0] + (endHSB[0] - startHSB[0]) * frame / frames

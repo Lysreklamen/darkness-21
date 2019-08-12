@@ -5,7 +5,7 @@ import darkness.generator.api.effects.CW
 import java.awt.*
 
 class CW15 : BaseScript() {
-    override fun run() {
+    override suspend fun run() {
         super.run()
 
         val warmWhite = Color(255, 197, 143)

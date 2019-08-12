@@ -8,7 +8,7 @@ import java.awt.Color
 import java.util.*
 
 class Vegas : BaseScript() {
-    override fun run() {
+    override suspend fun run() {
         super.run()
 
         ////// CAUTION //////

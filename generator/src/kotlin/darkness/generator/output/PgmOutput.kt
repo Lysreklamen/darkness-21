@@ -27,9 +27,9 @@ class PgmOutput(private val fileName: String) : BaseOutput(BufferedWriter(FileWr
         frames.add(MutableList(numChannels) { 0 })
     }
 
-    override fun writeChannelValue(channel: Channel) {
-        frames[frames.size - 1][channel.channel - 1] = channel.value
-        if (channel.value == 256) {
+    override fun writeChannelValue(channel: Channel, value: Int) {
+        frames[frames.size - 1][channel.channel - 1] = value
+        if (value == 256) {
             hasTransparency = true
         }
     }

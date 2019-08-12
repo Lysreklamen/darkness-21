@@ -3,7 +3,7 @@ package darkness.generator.scripts.uka15
 import darkness.generator.api.effects.PointRainbow
 
 class SphericalRainbow : BaseScript() {
-    override fun run() {
+    override suspend fun run() {
         super.run()
 
         val pointRainbow = PointRainbow(allBulbs, floatArrayOf(5.0f, 0.7f), 4f)

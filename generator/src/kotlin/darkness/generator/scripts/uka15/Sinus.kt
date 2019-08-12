@@ -1,7 +1,7 @@
 package darkness.generator.scripts.uka15
 
 class Sinus : BaseScript() {
-    override fun run() {
+    override suspend fun run() {
         super.run()
         val middleBottom = 0.5
         val blurRadius = 0.2

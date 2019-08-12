@@ -45,7 +45,7 @@ class CW @JvmOverloads constructor(private val bulbSet: BulbSet, str: String, pr
         }
     }
 
-    override fun run() {
+    override suspend fun run() {
         // Pump out morse
         //
         // Dit = one period

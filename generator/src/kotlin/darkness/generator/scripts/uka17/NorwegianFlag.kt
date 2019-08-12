@@ -1,11 +1,10 @@
 package darkness.generator.scripts.uka17
 
 import darkness.generator.api.effects.Aurora
-import darkness.generator.api.effects.RGBFade
 import java.awt.Color
 
 class NorwegianFlag : BaseScript() {
-    override fun run() {
+    override suspend fun run() {
         super.run()
 
         val groups = listOf(group(
@@ -35,9 +34,9 @@ class NorwegianFlag : BaseScript() {
         fadeOut(20)
     }
 
-    private fun fadeOut(frames: Int) {
+    private suspend fun fadeOut(frames: Int) {
         for (bulb in allBulbsRGB) {
-            effect(RGBFade(bulb, Color.BLACK, frames))
+            rgbFade(bulb, Color.BLACK, frames)
         }
     }
 }

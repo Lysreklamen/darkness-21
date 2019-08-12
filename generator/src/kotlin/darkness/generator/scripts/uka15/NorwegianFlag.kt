@@ -3,7 +3,7 @@ package darkness.generator.scripts.uka15
 import java.awt.Color
 
 class NorwegianFlag : BaseScript() {
-    override fun run() {
+    override suspend fun run() {
         super.run()
         var y = LETTER_HEIGHT
         while (y >= -0.05) {

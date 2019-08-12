@@ -3,7 +3,7 @@ package darkness.generator.scripts.uka17
 import darkness.generator.api.BulbRGB
 
 class SingleFill : BaseScript() {
-    override fun run() {
+    override suspend fun run() {
         super.run()
         var previousBulb: BulbRGB? = null
         var lastLetter = letters.last()

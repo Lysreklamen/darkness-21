@@ -3,7 +3,7 @@ package darkness.generator.scripts.uka13
 import java.awt.Color
 
 class DemoScript : DemoBaseScript() {
-    override fun run() {
+    override suspend fun run() {
         super.run() // Must call super if extending a custom base script
 
         val rainbowColors = listOf(Color.RED, Color.ORANGE, Color.YELLOW, Color.GREEN, Color(0, 255, 127), Color.BLUE, Color(127, 0, 255), Color(255, 0, 255))

@@ -1,7 +1,7 @@
 package darkness.generator.scripts.uka15
 
 class SimenIntro : BaseScript() {
-    override fun run() {
+    override suspend fun run() {
         super.run()
 
         // start with white

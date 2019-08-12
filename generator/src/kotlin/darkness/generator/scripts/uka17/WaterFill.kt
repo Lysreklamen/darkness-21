@@ -5,7 +5,7 @@ import java.awt.Color
 import java.util.*
 
 class WaterFill : BaseScript() {
-    override fun run() {
+    override suspend fun run() {
         super.run()
 
         val c = Color(0, 127, 255)

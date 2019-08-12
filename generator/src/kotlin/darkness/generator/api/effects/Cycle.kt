@@ -10,7 +10,7 @@ class Cycle(
     private val period: Int,
     private val bulbSets: List<BulbSet>
 ) : EffectBase() {
-    override fun run() {
+    override suspend fun run() {
         var currentSet = 0
 
         while (!isCancelled) {

@@ -1,34 +1,37 @@
 package darkness.generator.api
 
 import java.awt.Color
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.roundToInt
 
 /**
  * Either an individual bulb ([BulbRGB]), or a set of bulbs ([BulbGroup]).
  */
-interface BulbSet {
+interface BulbSet : Iterable<BulbRGB> {
     /**
-     * If this is a single bulb, return the red component of that bulb.
-     * Otherwise, return the red component of the first bulb in the group.
+     * If this is a single bulb, return the red component of that bulb in the given frame.
+     * Otherwise, return the red component of the first bulb in the group in the given frame.
      */
-    val red: Int
+    fun redIn(frame: Frame): Int
 
     /**
-     * If this is a single bulb, return the green component of that bulb.
-     * Otherwise, return the green component of the first bulb in the group.
+     * If this is a single bulb, return the green component of that bulb in the given frame.
+     * Otherwise, return the green component of the first bulb in the group in the given frame.
      */
-    val green: Int
+    fun greenIn(frame: Frame): Int
 
     /**
-     * If this is a single bulb, return the blue component of that bulb.
-     * Otherwise, return the blue component of the first bulb in the group.
+     * If this is a single bulb, return the blue component of that bulb in the given frame.
+     * Otherwise, return the blue component of the first bulb in the group in the given frame.
      */
-    val blue: Int
+    fun blueIn(frame: Frame): Int
 
     /**
-     * If this is a single bulb, return the RGB color of that bulb.
-     * Otherwise, return the RGB color of the first bulb in the group.
+     * If this is a single bulb, return the RGB color of that bulb in the given frame.
+     * Otherwise, return the RGB color of the first bulb in the group in the given frame.
      */
-    val color: Color
+    fun colorIn(frame: Frame): Color
 
     /**
      * Gets the position (or average of positions of multiple bulbs).
@@ -36,35 +39,24 @@ interface BulbSet {
      */
     val position: FloatArray
 
-    /**
-     * Set the bulb(s) to the given RGB color.
-     */
-    operator fun set(red: Int, green: Int, blue: Int, setter: ScriptBase)
+    /** Set the bulb(s) to the given RGB color in the given frame. */
+    fun set(red: Int, green: Int, blue: Int, frame: MutableFrame)
+
+    /** Set the bulb(s) to the given RGB color in the given frame. */
+    fun set(color: Color, frame: MutableFrame)
+
+    /** Set the bulb(s) to the given HSB color in the given frame. */
+    fun setHSB(hue: Float, saturation: Float, brightness: Float, frame: MutableFrame)
 
     /**
-     * Set the bulb(s) to the given RGB color.
+     * Set the bulb(s) to the given RGB color in the given frame.
+     * Out-of-range values will be coerced to [0-255].
      */
-    operator fun set(color: Color, setter: ScriptBase)
-
-    /**
-     * Set the bulb(s) to the given HSB color.
-     */
-    fun setHSB(hue: Float, saturation: Float, brightness: Float, setter: ScriptBase)
-
-    /**
-     * Set the bulb(s) to the given RGB color. Out-of-range values will be coerced to [0-255].
-     */
-    fun setCoerced(red: Double, green: Double, blue: Double, setter: ScriptBase) {
+    fun setCoerced(red: Double, green: Double, blue: Double, frame: MutableFrame) {
         set(
-                Math.max(0, Math.min(255, Math.round(red))).toInt(),
-                Math.max(0, Math.min(255, Math.round(green))).toInt(),
-                Math.max(0, Math.min(255, Math.round(blue))).toInt(),
-                setter)
+            max(0, min(255, red.roundToInt())),
+            max(0, min(255, green.roundToInt())),
+            max(0, min(255, blue.roundToInt())),
+            frame)
     }
-
-    /**
-     * Relinquish control over the bulb(s). If no other script(s) in the same frame set the bulb(s),
-     * it/they will turn black; otherwise, the other script(s) will win.
-     */
-    fun relinquish(setter: ScriptBase)
 }

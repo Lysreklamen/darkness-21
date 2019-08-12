@@ -9,7 +9,7 @@ class SnowEffect(private val allBulbs: List<BulbRGB>, private val xTarget: Doubl
     private val RIGHT = 8.62
     private val WIDTH = RIGHT - LEFT
 
-    override fun run() {
+    override suspend fun run() {
         val radius = LETTER_HEIGHT / 5
         val extraDepth = radius * 1.5
         val duration = 40

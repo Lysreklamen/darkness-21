@@ -4,7 +4,7 @@ import java.awt.Color
 import java.util.*
 
 class MiniLysreklamen : BaseScript() {
-    override fun run() {
+    override suspend fun run() {
         super.run()
 
         randomBulbs()
@@ -68,7 +68,7 @@ class MiniLysreklamen : BaseScript() {
 		*/
     }
 
-    private fun randomBulbs() {
+    private suspend fun randomBulbs() {
         // Show some (semi)random bulbs in each letter
         val r = Random()
 
@@ -88,7 +88,7 @@ class MiniLysreklamen : BaseScript() {
         }
     }
 
-    private fun fadeIn() {
+    private suspend fun fadeIn() {
         val kindaRandom = listOf(C, F, A, D, G, E, B)
 
         var i = 0
@@ -105,7 +105,7 @@ class MiniLysreklamen : BaseScript() {
         }
     }
 
-    private fun rainbow(frames: Int) {
+    private suspend fun rainbow(frames: Int) {
         // Horizontal rainbow
         val numColors = columns.size
         val colors = mutableListOf<Color>()
@@ -124,7 +124,7 @@ class MiniLysreklamen : BaseScript() {
         }
     }
 
-    private fun turnOnSequentially() {
+    private suspend fun turnOnSequentially() {
         for (letter in letters) {
             set(letter, 0, 0, 0)
         }

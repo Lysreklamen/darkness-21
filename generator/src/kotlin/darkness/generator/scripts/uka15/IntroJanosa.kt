@@ -6,7 +6,7 @@ import java.awt.Color
 import java.util.*
 
 class IntroJanosa : BaseScript() {
-    override fun run() {
+    override suspend fun run() {
         super.run()
 
         /*MiniLysreklamen
@@ -58,7 +58,7 @@ class IntroJanosa : BaseScript() {
         skip(40)
     }
 
-    private fun glow() {
+    private suspend fun glow() {
         for (frameCount in 0 until 9 * 20) {
             for (bulb in BulbManager.allBulbs) {
                 val colors = Color.RGBtoHSB(bulb.red, bulb.green, bulb.blue, null)
@@ -70,7 +70,7 @@ class IntroJanosa : BaseScript() {
         }
     }
 
-    private fun scrollOut() {
+    private suspend fun scrollOut() {
         for (iteration in columns.indices) {
             for (column in columns.indices.reversed()) {
                 val preColumn = column - 1
@@ -87,7 +87,7 @@ class IntroJanosa : BaseScript() {
         }
     }
 
-    private fun fadeIn() {
+    private suspend fun fadeIn() {
         val random = Random(1)
 
         val fadeInOrder = listOf(C, F, A, D, G, E, B)

@@ -69,7 +69,7 @@ class FanScroll(
         }
     }
 
-    override fun run() {
+    override suspend fun run() {
         var state: Double
 
         if (rightToLeft)

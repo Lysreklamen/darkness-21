@@ -1,7 +1,7 @@
 package darkness.generator.scripts.uka15
 
 class DefaultFrame : BaseScript() {
-    override fun run() {
+    override suspend fun run() {
         super.run()
 
         val fadeInOrder = listOf(C, F, A, D, G, E, B)

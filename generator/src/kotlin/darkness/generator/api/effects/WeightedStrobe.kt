@@ -8,7 +8,7 @@ class WeightedStrobe(
     private val tOff: Int,
     private val repeat: Int
 ) : EffectBase() {
-    override fun run() {
+    override suspend fun run() {
         for (i in 0 until repeat) {
             val color = bulbSet.color
             set(bulbSet, 0, 0, 0)

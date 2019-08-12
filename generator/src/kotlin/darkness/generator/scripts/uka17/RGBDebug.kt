@@ -3,7 +3,7 @@ package darkness.generator.scripts.uka17
 import java.awt.*
 
 class RGBDebug : BaseScript() {
-    override fun run() {
+    override suspend fun run() {
         super.run()
         val colors = listOf(Color.RED, Color.GREEN, Color.BLUE)
         for (color in colors) {

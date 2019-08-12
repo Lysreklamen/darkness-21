@@ -4,6 +4,7 @@ import darkness.generator.api.BulbManager
 import darkness.generator.api.ScriptManager
 import darkness.generator.output.PgmOutput
 import darkness.generator.scripts.uka13.DemoScript
+import kotlinx.coroutines.runBlocking
 
 object Main {
     @JvmStatic
@@ -15,7 +16,9 @@ object Main {
         }
 
         PgmOutput("demo.pgm").use { output ->
-            ScriptManager.start(DemoScript(), output)
+            runBlocking {
+                ScriptManager.start(DemoScript(), output)
+            }
         }
     }
 }

@@ -12,6 +12,7 @@ import darkness.simulator.graphics.Aluminum
 import darkness.simulator.graphics.Background
 import darkness.simulator.graphics.Point
 import darkness.simulator.graphics.Scene
+import kotlinx.coroutines.runBlocking
 import java.awt.Color
 import java.io.BufferedReader
 import java.io.File
@@ -212,7 +213,7 @@ class Application(private val arguments: Arguments) : SimpleApplication() {
         val qualifiedScriptClassName = if (scriptClassName.contains(".")) scriptClassName else "darkness.generator.scripts.uka19.$scriptClassName"
         val script = Class.forName(qualifiedScriptClassName).getConstructor().newInstance() as ScriptBase
         val tempFile = File("sequences/uka19/${arguments.scriptClassName}.pgm")
-        ScriptManager.start(script, PgmOutput(tempFile.path))
+        runBlocking { ScriptManager.start(script, PgmOutput(tempFile.path)) }
         return PgmReader(tempFile.path)
     }
 

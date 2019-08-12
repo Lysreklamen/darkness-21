@@ -3,7 +3,7 @@ package darkness.generator.scripts.uka15
 import darkness.generator.api.BulbRGB
 
 class DemoSubScript : BaseScript() {
-    override fun run() {
+    override suspend fun run() {
         super.run()
         var previous: BulbRGB? = null
         for (letter in letters) {

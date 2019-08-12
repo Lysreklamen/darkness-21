@@ -5,7 +5,7 @@ import darkness.generator.api.BulbRGB
 import java.awt.*
 
 class DemoSubScript : DemoBaseScript() {
-    override fun run() {
+    override suspend fun run() {
         super.run()
         var previous: BulbRGB? = null
         for (bulb in O) {

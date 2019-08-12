@@ -4,7 +4,7 @@ import darkness.generator.api.effects.WeightedStrobe
 import java.awt.Color
 
 class Jubileum : BaseScript() {
-    override fun run() {
+    override suspend fun run() {
         super.run()
 
         val c = Color(255, 255, 255)

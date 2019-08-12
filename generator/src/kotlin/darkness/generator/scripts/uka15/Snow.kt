@@ -7,7 +7,7 @@ import java.awt.Color
 import java.util.*
 
 class Snow : BaseScript() {
-    override fun run() {
+    override suspend fun run() {
         super.run()
         val random = Random(42)
         val xes = columns
@@ -36,7 +36,7 @@ class Snow : BaseScript() {
         }
         skip(60)
         for (bulb in allBulbs) {
-            val fade = RGBFade(bulb, Color.BLACK, 40)
+            val fade = RGBFade(bulb, bulb.color, Color.BLACK, 40)
             fade.priority = 2
             effect(fade)
             effects.add(fade)

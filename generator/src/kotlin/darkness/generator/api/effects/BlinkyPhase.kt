@@ -10,7 +10,7 @@ class BlinkyPhase : EffectBase() {
     // Pseudorandom with fixed seed. Can be changed to get a different, but similar effect
     private val random = Random(1337)
 
-    override fun run() {
+    override suspend fun run() {
         val freeBulbs = LinkedList<BulbRGB>(BulbManager.allBulbs)
         while (!isCancelled && !freeBulbs.isEmpty()) {
             val bulbIndex = random.nextInt(freeBulbs.size)

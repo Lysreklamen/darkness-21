@@ -3,7 +3,7 @@ package darkness.generator.scripts.uka19
 import darkness.generator.api.BulbGroup
 
 class FlashLetters: BaseScript() {
-    override fun run() {
+    override suspend fun run() {
         super.run()
         var previousLetter : BulbGroup? = null
 

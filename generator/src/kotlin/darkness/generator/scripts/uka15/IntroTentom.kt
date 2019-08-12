@@ -5,7 +5,7 @@ import darkness.generator.api.effects.EffectBase
 import java.util.*
 
 class IntroTentom : BaseScript() {
-    override fun run() {
+    override suspend fun run() {
         super.run()
 
         // phase1: neon sign start up
@@ -56,7 +56,7 @@ class IntroTentom : BaseScript() {
         private val timeOutTime = 100
         private val random = Random(System.currentTimeMillis())
 
-        override fun run() {
+        override suspend fun run() {
             while (!(cancelled || timeOut)) {
                 set(Letter!!, 255, 147, 41)
                 next()

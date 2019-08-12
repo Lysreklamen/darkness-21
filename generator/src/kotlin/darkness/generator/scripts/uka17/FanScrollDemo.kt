@@ -4,7 +4,7 @@ import darkness.generator.api.effects.FanScroll
 import java.awt.Color
 
 class FanScrollDemo : BaseScript() {
-    override fun run() {
+    override suspend fun run() {
         super.run()
 
         for (bulb in allBulbsRGB)

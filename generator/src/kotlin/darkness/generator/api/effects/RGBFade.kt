@@ -1,26 +1,21 @@
 package darkness.generator.api.effects
 
+import darkness.generator.api.BulbRGB
 import darkness.generator.api.BulbSet
 
 import java.awt.Color
 
 class RGBFade(
     private val bulbSet: BulbSet,
+    private val startColor: Color,
     private val endColor: Color,
     private val frames: Int
 ) : EffectBase() {
-    private val startColor = bulbSet.color
-    private val delta_r: Float
-    private val delta_g: Float
-    private val delta_b: Float
+    override suspend fun run() {
+        val delta_r = (endColor.red - startColor.red).toFloat() / frames.toFloat()
+        val delta_g = (endColor.green - startColor.green).toFloat() / frames.toFloat()
+        val delta_b = (endColor.blue - startColor.blue).toFloat() / frames.toFloat()
 
-    init {
-        this.delta_r = (endColor.red - startColor.red).toFloat() / frames.toFloat()
-        this.delta_g = (endColor.green - startColor.green).toFloat() / frames.toFloat()
-        this.delta_b = (endColor.blue - startColor.blue).toFloat() / frames.toFloat()
-    }
-
-    override fun run() {
         var frame = 1
         while (frame <= frames && !isCancelled) {
             val red = startColor.red + (delta_r * frame).toInt()

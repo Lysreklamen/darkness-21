@@ -16,7 +16,7 @@ abstract class DemoBaseScript : ScriptBase() {
     protected lateinit var G: BulbGroup
     protected lateinit var letters: List<BulbGroup>
 
-    override fun run() {
+    override suspend fun run() {
         topOfJ = bulb(6)
         J = group(0, 1, 2, 3, 4, 5, 6)
         U = group(10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20)

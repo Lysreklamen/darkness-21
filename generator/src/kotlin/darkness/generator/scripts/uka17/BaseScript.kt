@@ -28,7 +28,7 @@ open class BaseScript : ScriptBase() {
 
     protected lateinit var counter: List<BulbGroup>
 
-    override fun run() {
+    override suspend fun run() {
         A = group(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
         B = group(15, 16, 17, 18, 19, 20, 21)
         C = group(25, 26)

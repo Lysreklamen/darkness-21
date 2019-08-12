@@ -1,7 +1,7 @@
 package darkness.generator.scripts.uka17
 
 class Default : BaseScript() {
-    override fun run() {
+    override suspend fun run() {
         super.run()
         yellow()
     }

@@ -1,7 +1,7 @@
 package darkness.generator.scripts.uka17
 
 class HorizontalLight : BaseScript() {
-    override fun run() {
+    override suspend fun run() {
         super.run()
 
         whiteover()
@@ -9,7 +9,7 @@ class HorizontalLight : BaseScript() {
         whiteover()
     }
 
-    private fun whiteover() {
+    private suspend fun whiteover() {
         for (column in columns) {
             set(column, 255, 255, 255)
             skip(1)

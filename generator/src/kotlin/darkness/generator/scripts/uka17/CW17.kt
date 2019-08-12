@@ -5,7 +5,7 @@ import java.awt.Color
 
 class CW17 : BaseScript() {
 
-    override fun run() {
+    override suspend fun run() {
         super.run()
 
         // Change up colours

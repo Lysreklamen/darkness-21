@@ -17,8 +17,8 @@ abstract class BaseOutput(protected val writer: BufferedWriter) : AutoCloseable 
      * Is called once per channel per frame; however, it might not be called in the sequence of the channel index.
      * TODO: This essentially means that [ConsoleOutput] and [FileOutput] are useless, and should be fixed.
      */
-    open fun writeChannelValue(channel: Channel) {
-        writer.write(Integer.toString(channel.value))
+    open fun writeChannelValue(channel: Channel, value: Int) {
+        writer.write(value.toString())
         writer.write(" ")
     }
 

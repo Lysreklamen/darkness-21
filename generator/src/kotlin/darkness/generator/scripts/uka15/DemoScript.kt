@@ -3,7 +3,7 @@ package darkness.generator.scripts.uka15
 import java.awt.Color
 
 class DemoScript : BaseScript() {
-    override fun run() {
+    override suspend fun run() {
         super.run()
 
         for (letter in letters) {

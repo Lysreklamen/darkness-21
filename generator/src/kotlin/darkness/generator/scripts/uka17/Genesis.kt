@@ -1,7 +1,6 @@
 package darkness.generator.scripts.uka17
 
 import darkness.generator.api.BulbGroup
-import darkness.generator.api.effects.RGBFade
 import java.awt.Color
 import java.util.*
 
@@ -18,7 +17,7 @@ class Genesis : BaseScript() {
     private val RANDOM = Random(1337)
     private val GOLDENROD = Color(218, 165, 32)
 
-    override fun run() {
+    override suspend fun run() {
         super.run()
 
         val everything = mergeBulbGroups(letters)
@@ -38,13 +37,13 @@ class Genesis : BaseScript() {
 
         // Make sure that each bulb fade from its current color
         for (bulb in nonDigits) {
-            effect(RGBFade(bulb, Color.BLACK, fadeFrames))
+            rgbFade(bulb, Color.BLACK, fadeFrames)
         }
         glitter(onlyDigits, GOLDENROD, glitterFrames / 2, 0.1f, 0.8f)
 
         // Make sure that each bulb fade from its current color
         for (bulb in onlyDigits) {
-            effect(RGBFade(bulb, GOLDENROD, fadeFrames / 2))
+            rgbFade(bulb, GOLDENROD, fadeFrames / 2)
         }
         skip(fadeFrames)
         glitter(onlyDigits, GOLDENROD, glitterFrames / 2, 0.2f, 1.0f)
@@ -54,7 +53,7 @@ class Genesis : BaseScript() {
         return left + RANDOM.nextFloat() * (right - left)
     }
 
-    private fun glitter(bulbGroups: BulbGroup, color: Color, frames: Int, min: Float, max: Float) {
+    private suspend fun glitter(bulbGroups: BulbGroup, color: Color, frames: Int, min: Float, max: Float) {
         glitter(bulbGroups, color, frames, 4, bulbGroups.numBulbs / 2, min, max)
     }
 
@@ -69,7 +68,7 @@ class Genesis : BaseScript() {
      * @param min Minimum brightness.
      * @param max Maximum brightness.
      */
-    private fun glitter(bulbGroup: BulbGroup, color: Color, frames: Int, fade: Int, glitteringBulbs: Int, min: Float, max: Float) {
+    private suspend fun glitter(bulbGroup: BulbGroup, color: Color, frames: Int, fade: Int, glitteringBulbs: Int, min: Float, max: Float) {
         var loops = frames / fade
         val hsbValues = FloatArray(3)
         Color.RGBtoHSB(color.red, color.green, color.blue, hsbValues)

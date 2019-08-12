@@ -16,7 +16,7 @@ class PointRainbow(
     var saturation = 1.0f
     var brightness = 1.0f
 
-    override fun run() {
+    override suspend fun run() {
         while (!isCancelled) {
             for (bulb in bulbs) {
                 // calculate the distance

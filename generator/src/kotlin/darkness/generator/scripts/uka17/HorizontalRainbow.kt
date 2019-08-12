@@ -3,12 +3,12 @@ package darkness.generator.scripts.uka17
 class HorizontalRainbow : BaseScript() {
     private val rainbow48 = intArrayOf(255, 255, 255, 255, 255, 255, 255, 255, 255, 223, 191, 159, 128, 96, 64, 32, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 32, 64, 96, 128, 159, 191, 223, 255, 255, 255, 255, 255, 255, 255, 255)
 
-    override fun run() {
+    override suspend fun run() {
         super.run()
         scrollrainbow(5)
     }
 
-    private fun scrollrainbow(loops: Int) {
+    private suspend fun scrollrainbow(loops: Int) {
         for (k in 0 until loops) {
             for (i in rainbow48.indices) {
                 for (j in 0 until columns.size) {

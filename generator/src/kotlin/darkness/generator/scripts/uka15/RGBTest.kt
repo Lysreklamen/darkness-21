@@ -1,7 +1,7 @@
 package darkness.generator.scripts.uka15
 
 class RGBTest : BaseScript() {
-    override fun run() {
+    override suspend fun run() {
         super.run()
 
         for (letter in letters) {

@@ -9,7 +9,7 @@ class Hold(
     private val color: Color,
     private val frames: Int
 ) : EffectBase() {
-    override fun run() {
+    override suspend fun run() {
         var f = 0
         while (f < frames && !isCancelled) {
             set(bulbSet, color)

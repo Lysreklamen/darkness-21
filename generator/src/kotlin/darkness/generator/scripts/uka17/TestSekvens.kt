@@ -4,7 +4,7 @@ import darkness.generator.api.BulbGroup
 import java.awt.Color
 
 class TestSekvens : BaseScript() {
-    override fun run() {
+    override suspend fun run() {
         super.run()
 
         //BulbGroup[] bunnGroups = {

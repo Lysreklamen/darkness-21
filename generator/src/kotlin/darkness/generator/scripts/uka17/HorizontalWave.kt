@@ -5,12 +5,12 @@ class HorizontalWave : BaseScript() {
 
     private var phase = 0.0
 
-    override fun run() {
+    override suspend fun run() {
         super.run()
         waveover(5)
     }
 
-    private fun waveover(loops: Int) {
+    private suspend fun waveover(loops: Int) {
         for (k in 0 until loops * rainbow48.size) {
             for (j in 0 until columns.size) {
                 val valR = (rainbow48[k % rainbow48.size] * (2 + Math.sin(phase + j.toDouble() * 2.0 * Math.PI / 40)) / 3.0).toInt()

@@ -4,7 +4,7 @@ import darkness.generator.api.effects.FanScroll
 import java.awt.Color
 
 class Vift : BaseScript() {
-    override fun run() {
+    override suspend fun run() {
         super.run()
 
         val c = Color(218, 165, 32)

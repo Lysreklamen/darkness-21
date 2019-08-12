@@ -13,7 +13,7 @@ class RandomFade : BaseScript() {
     private val shuffledBulbs: List<BulbRGB>
         get() = allBulbsRGB.shuffled().toList()
 
-    override fun run() {
+    override suspend fun run() {
         super.run()
 
         var loops = 10
@@ -24,14 +24,14 @@ class RandomFade : BaseScript() {
         fadeOut(10)
     }
 
-    private fun fade(duration: Int, color: Color) {
+    private suspend fun fade(duration: Int, color: Color) {
         for (bulb in shuffledBulbs) {
             rgbFade(bulb, color, duration)
             skip(1)
         }
     }
 
-    private fun fadeOut(duration: Int) {
+    private suspend fun fadeOut(duration: Int) {
         fade(duration, Color.BLACK)
     }
 }
