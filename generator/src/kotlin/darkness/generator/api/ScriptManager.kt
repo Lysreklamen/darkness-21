@@ -6,6 +6,7 @@ import kotlinx.coroutines.GlobalScope
 import java.util.LinkedList
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
+import kotlinx.coroutines.channels.ClosedSendChannelException
 import kotlinx.coroutines.launch
 
 /**
@@ -28,37 +29,47 @@ object ScriptManager {
     suspend fun start(mainScript: ScriptBase, output: BaseOutput) {
         this.output = output
         var currentFrame = Frame(ChannelManager.createBlankFrame())
-        // Add
+        // Start the main script
         registerScript(mainScript)
 
         while (true) {
-            // Make a copy of the channel list in order to avoid `ConcurrentModificationException`
-            // (in case the script itself adds another script, and because we will remove the script if it's finished).
-            // Copying also makes sure that we won't start processing sub-scripts
-            // and effects that are added in this frame until the next frame starts.
-            val scriptContextsCopy = synchronized(scriptContexts) {
-                scriptContexts.toList()
-            }
             // If there are no active scripts/effects, we're done
-            if (scriptContextsCopy.isEmpty()) {
+            if (synchronized(scriptContexts) { scriptContexts.isEmpty() }) {
                 break
             }
 
+            // We make a copy of the script context list in order to avoid `ConcurrentModificationException`
+            // (in case the script itself adds another script, and because we will remove the script if it's finished).
+            // Copying also makes sure that we won't start processing sub-scripts
+            // and effects that are added in this frame until the next frame starts.
+            // It is particularly important that both loops below see the same list - if the second loop
+            // sees scripts that are added by the first one, a deadlock will result (we will wait for the script
+            // to send a frame to us, but it won't do that until we have sent a frame to it).
+            val scriptContextsCopy = synchronized(scriptContexts) { scriptContexts.toList() }
+
             // Send the current frame to every script/effect, which will make each of them generate a single frame.
             // Each one receives their own `MutableFrame`, so that they won't step on each other's toes.
-            scriptContextsCopy.forEach { it.coroutineChannel.send(MutableFrame(currentFrame)) }
+            // Doing this in a separate loop lets them execute in parallel instead of us waiting
+            // for each one to generate the next frame before asking the next one to do so.
+            for (scriptContext in scriptContextsCopy) {
+                try {
+                    scriptContext.coroutineChannel.send(MutableFrame(currentFrame))
+                } catch (e: ClosedSendChannelException) {
+                    // When a script/effect is cancelled, it will close its coroutine channel,
+                    // which will cause an exception to be thrown when we try to send to the channel.
+                    // At that point, we remove the script/effect.
+                    removeScriptContext(scriptContext)
+                }
+            }
 
             // Collect the resulting frame from each script/effect, and overlay them on top of each other.
             // We look at the scripts/effects in the order they were added, and if a later script/effect tries to set
             // a channel that has already been set by an earlier script/effect, their relative priorities determine which one wins.
             // `priorityOfDmxChannelSetter` keeps track of the priority of the most recent setter of each channel in this frame.
-
-
-            //
-            // Collect the result from each frame by waiting to receive
-            // If a script doesn't execute `next()`, it will close the channel instead of sending a message.
-            // That's our signal that the script has stopped.
-
+            // We collect the result from each frame by calling `receive()` on the coroutine channel, which will wait until
+            // the script has computed the frame and sent it to the coroutine channel.
+            // If a script doesn't execute `next()` but returns from `run()` instead, `ScriptBase` will close the channel
+            // instead of sending a message. That's our signal that the script is done.
             val nextFrame = currentFrame.channelValues.toMutableMap()
             val priorityOfDmxChannelSetter = mutableMapOf<darkness.generator.api.Channel, Int>()
             for (scriptContext in scriptContextsCopy) {
@@ -74,9 +85,7 @@ object ScriptManager {
                 } catch (e: ClosedReceiveChannelException) {
                     // When a script/effect is done, it will return from `run()`, at which point `start()` will close the communication channel,
                     // which will cause an exception to be thrown when we try to receive from the channel. At that point, we remove the script/effect.
-                    synchronized(scriptContexts) {
-                        scriptContexts.remove(scriptContext)
-                    }
+                    removeScriptContext(scriptContext)
                     output.endScript(scriptContext.script.toString())
                 }
             }
@@ -115,6 +124,12 @@ object ScriptManager {
      */
     suspend fun registerEffect(effect: EffectBase) {
         registerScript(effect)
+    }
+
+    private fun removeScriptContext(scriptContext: ScriptContext) {
+        synchronized(scriptContexts) {
+            scriptContexts.remove(scriptContext)
+        }
     }
 }
 

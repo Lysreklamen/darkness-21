@@ -1,6 +1,8 @@
 package darkness.generator.api.effects
 
 import darkness.generator.api.BulbRGB
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 /**
  * A rainbow effect that sources out from a single point with a given radius.
@@ -19,16 +21,15 @@ class PointRainbow(
     override suspend fun run() {
         while (!isCancelled) {
             for (bulb in bulbs) {
-                // calculate the distance
+                // Calculate the distance between the bulb and the center
                 val pos = bulb.position
+                val distance = sqrt(
+                    (centerPos[0] - pos[0]).pow(2) +
+                    (centerPos[1] - pos[1]).pow(2) +
+                    (centerPos[2] - pos[2]).pow(2))
 
-                val distance = Math.sqrt(((this.centerPos[0] - pos[0]) * (this.centerPos[0] - pos[0])
-                        + (this.centerPos[1] - pos[1]) * (this.centerPos[1] - pos[1])
-                        + (this.centerPos[2] - pos[2]) * (this.centerPos[2] - pos[2])).toDouble()).toFloat()
-
-                val colorAngle = distance / radius % 1.0f // It's actually possible to do modulus on floating points in java :o
+                val colorAngle = distance / radius % 1.0f
                 setHSB(bulb, colorAngle, saturation, brightness)
-
             }
             next()
         }

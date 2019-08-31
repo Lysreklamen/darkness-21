@@ -5,6 +5,8 @@ import darkness.generator.api.effects.Hold
 import darkness.generator.api.effects.RGBFade
 import darkness.generator.api.effects.HSBFade
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.ClosedReceiveChannelException
+import kotlinx.coroutines.channels.ClosedSendChannelException
 
 import java.awt.*
 
@@ -74,10 +76,18 @@ abstract class ScriptBase {
      * has merged all the frames. Afterwards,
      */
     protected suspend fun next() {
-        // Send our result to the script manager
-        coroutineChannel.send(currentFrame)
-        // Wait for the script manager to send us the next frame
-        currentFrame = coroutineChannel.receive()
+        try {
+            // Send our result to the script manager
+            coroutineChannel.send(currentFrame)
+            // Wait for the script manager to send us the next frame
+            currentFrame = coroutineChannel.receive()
+        } catch (e: Exception) {
+            // This is hopefully because we've been cancelled, in which case we just return
+            // and hope that the script's `run()` function knows to exit when cancelled
+            if (!(e is ClosedSendChannelException || e is ClosedReceiveChannelException) || !isCancelled) {
+                throw e
+            }
+        }
     }
 
     /**

@@ -14,6 +14,9 @@ open class BaseScript : ScriptBase() {
     protected lateinit var G: BulbGroup
     protected lateinit var letters: List<BulbGroup>
     protected lateinit var allBulbs: List<BulbRGB>
+    protected lateinit var allBulbsGroup: BulbGroup
+    protected lateinit var accents: BulbGroup
+    protected lateinit var counter: List<BulbGroup>
 
     override suspend fun run() {
         A = group(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
@@ -26,5 +29,50 @@ open class BaseScript : ScriptBase() {
         letters = listOf(A, B, C, D, E, F, G)
 
         allBulbs = letters.flatMap { letter -> letter.allBulbs }
+        allBulbsGroup = BulbGroup(allBulbs)
+
+        accents = group(14, 34, 68, 69)
+        counter = listOf(group(101, 102, 103, 104, 105, 106, 107), group(108, 109, 110, 111, 112, 113, 114))
+    }
+
+    protected fun setCounter(number: Int, leadingZero: Boolean) {
+        setDigit(0, number / 10, leadingZero)
+        setDigit(1, number % 10, true)
+    }
+
+    protected fun turnOffCounter() {
+        for (digit in counter) {
+            for (bulb in digit) {
+                set(bulb, 0, 0, 0)
+            }
+        }
+    }
+
+    private fun setDigit(digitIndex: Int, digit: Int, showZero: Boolean) {
+        val bulbs = counter[digitIndex].allBulbs
+        val bulbIndices = counterDigits[digit]
+        for (bulb in bulbs) {
+            set(bulb, 0, 0, 0)
+        }
+        if (digit != 0 || showZero) {
+            for (i in bulbIndices) {
+                set(bulbs[i], 255, 0, 0)
+            }
+        }
+    }
+
+    companion object {
+        private val counterDigits = listOf(
+            listOf(0, 1, 2, 3, 4, 5),    // 0
+            listOf(1, 2),                // 1
+            listOf(0, 1, 6, 4, 3),       // 2
+            listOf(0, 1, 6, 2, 3),       // 3
+            listOf(5, 6, 1, 2),          // 4
+            listOf(0, 5, 6, 2, 3),       // 5
+            listOf(0, 5, 4, 3, 2, 6),    // 6
+            listOf(0, 1, 2),             // 7
+            listOf(0, 1, 2, 3, 4, 5, 6), // 8
+            listOf(6, 5, 0, 1, 2, 3)     // 9
+        )
     }
 }

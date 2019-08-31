@@ -2,6 +2,8 @@ package darkness.generator.api.effects
 
 import darkness.generator.api.BulbRGB
 import java.awt.Color
+import kotlin.math.abs
+import kotlin.math.atan2
 
 /**
  * Fan scrolling effect
@@ -70,20 +72,14 @@ class FanScroll(
     }
 
     override suspend fun run() {
-        var state: Double
-
-        if (rightToLeft)
-            state = farRightAngle
-        else
-            state = farLeftAngle
+        var state = if (rightToLeft) farRightAngle else farLeftAngle
 
         while (!isCancelled) {
             state += anglePerFrame
 
             for (bulb in bulbs) {
-                val angle = Math.atan2((bulb.position[0] - centerX).toDouble(), (bulb.position[1] - centerY).toDouble())
-
-                if (Math.abs(angle - state) < epsilon) {
+                val angle = atan2((bulb.position[0] - centerX).toDouble(), (bulb.position[1] - centerY).toDouble())
+                if (abs(angle - state) < epsilon) {
                     set(bulb, fanColor)
                 } else {
                     relinquish(bulb)
@@ -91,15 +87,21 @@ class FanScroll(
             }
 
             if (alternate) {
-                if (state >= farRightAngle && anglePerFrame >= 0 || state <= farLeftAngle && anglePerFrame <= 0)
+                if (
+                    state >= farRightAngle && anglePerFrame >= 0 ||
+                    state <= farLeftAngle && anglePerFrame <= 0
+                ) {
                     anglePerFrame *= -1.0
+                }
             } else {
                 if (rightToLeft) {
-                    if (state <= farLeftAngle)
+                    if (state <= farLeftAngle) {
                         state = farRightAngle
+                    }
                 } else {
-                    if (state >= farRightAngle)
+                    if (state >= farRightAngle) {
                         state = farLeftAngle
+                    }
                 }
             }
 

@@ -36,8 +36,15 @@ class SVGParser(val svgFile: File, val flatness: Float, val maxLineLength: Float
     var backgroundTexture = ""
 
     fun parse() {
+        if (!svgFile.exists()) {
+            throw IOException("File $svgFile does not exist")
+        }
+        // Windows path hacks
+        val extraSlash = if (svgFile.absolutePath.contains(":")) "/" else ""
+        val path = svgFile.absolutePath.replace("\\", "/")
+
         val sax = SAXSVGDocumentFactory(XMLResourceDescriptor.getXMLParserClassName())
-        val doc = sax.createSVGDocument("file://${svgFile.absolutePath}")
+        val doc = sax.createSVGDocument("file://$extraSlash$path")
 
         // Create a context to make transforms work
         val userAgent = UserAgentAdapter()
@@ -54,7 +61,7 @@ class SVGParser(val svgFile: File, val flatness: Float, val maxLineLength: Float
         // Search for a node named group_text which will contain
         // all graphical elements related to the text outline of the sign
         val textGroup = root.getElementById("group_text")
-            ?: throw IOException("SVG does not contain a group with the name 'group_text'")
+            ?: throw IOException("SVG does not contain a group with the id 'group_text'")
 
 
         // The letters outline will consist of a series of closed polygons
@@ -225,13 +232,19 @@ class SVGParser(val svgFile: File, val flatness: Float, val maxLineLength: Float
         var maxX = letters.map { it.boundingBox[0] + it.boundingBox[2] }.max()!!
         var maxY = letters.map { it.boundingBox[1] + it.boundingBox[3] }.max()!!
 
+        for (bulb in bulbs.values) {
+            minX = min(minX, bulb.x)
+            minY = min(minY, bulb.y)
+            maxX = max(maxX, bulb.x)
+            maxY = max(maxY, bulb.y)
+        }
+
         if (!backgroundOutline.isEmpty) {
             minX = min(minX, backgroundOutline.x)
             minY = min(minY, backgroundOutline.y)
             maxX = max(maxX, backgroundOutline.x + backgroundOutline.width)
             maxY = max(maxY, backgroundOutline.y + backgroundOutline.height)
         }
-
 
         // Use center of x axis
         var cx = minX + (maxX - minX) / 2.0f

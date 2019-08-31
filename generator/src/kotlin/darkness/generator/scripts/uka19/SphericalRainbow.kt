@@ -1,6 +1,7 @@
 package darkness.generator.scripts.uka19
 
 import darkness.generator.api.effects.PointRainbow
+import kotlin.math.sin
 
 class SphericalRainbow : BaseScript() {
     override suspend fun run() {
@@ -19,9 +20,9 @@ class SphericalRainbow : BaseScript() {
 
         // Start moving the center point around
         for (frame in 0 until 30 * 20) {
-            val y = 0.7f + 0.5f * Math.sin(frame * 0.03)
-            val x = 5.0f + 6f * Math.sin(frame * 0.002)
-            pointRainbow.setCenterPos(x.toFloat(), y.toFloat())
+            val y = 0.7f + 0.5f * sin(frame * 0.03).toFloat()
+            val x = 5.0f + 6f * sin(frame * 0.002).toFloat()
+            pointRainbow.setCenterPos(x, y)
             next()
         }
         skip(40)
