@@ -1,13 +1,1 @@
-../simulator/sequences/uka17/Unveiling.pgm
-../simulator/sequences/uka17/HorizontalLight.pgm
-../simulator/sequences/uka17/Jubileum.pgm
-../simulator/sequences/uka17/HorizontalRainbow.pgm
-../simulator/sequences/uka17/FanScrollDemo.pgm
-../simulator/sequences/uka17/RandomFade.pgm
-../simulator/sequences/uka17/Spinner.pgm
-../simulator/sequences/uka17/Pride.pgm
-../simulator/sequences/uka17/CW17.pgm
-../simulator/sequences/uka17/HorizontalWave.pgm
-../simulator/sequences/uka17/WaterFill.pgm
-../simulator/sequences/uka17/Vift.pgm
-../simulator/sequences/uka17/IntroAurora.pgm
+../simulator/sequences/uka19/FlashLetters.pgm

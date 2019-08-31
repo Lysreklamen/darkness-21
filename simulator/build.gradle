@@ -48,7 +48,7 @@ processResources {
 }
 
 run {
-    args = ["--pattern", "./patterns/UKA-17/uka17.txt", "--playlist", "../pgmplayer/playlist.txt"]
+    args = ["--pattern", "./patterns/UKA-19/uka19.txt", "--playlist", "../pgmplayer/playlist.txt"]
 }
 buildscript {
     ext.kotlinVersion = '1.2.71'
