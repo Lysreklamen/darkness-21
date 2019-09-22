@@ -1,8 +1,6 @@
 package darkness.generator.scripts.uka19
 
 import darkness.generator.api.BulbGroup
-import darkness.generator.api.effects.Aurora
-import java.awt.Color
 
 class Heart : BaseScript() {
     override suspend fun run() {
