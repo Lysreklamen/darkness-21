@@ -49,9 +49,16 @@ run {
 }
 ```
 
-to ie:
+to ie: (will automatically generate a sequence from the given script.kt file)
 ```
 run {
     args = ["--pattern", "./patterns/UKA-19/uka19.txt", "--script", "SphericalRainbow"]
+}
+```
+
+or if you want to play a specific pgm file
+```
+run {
+    args = ["--pattern", "./patterns/UKA-19/uka19.txt", "--sequence", "/path/to/SphericalRainbow.pgm"]
 }
 ```

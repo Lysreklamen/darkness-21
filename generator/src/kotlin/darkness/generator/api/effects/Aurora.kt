@@ -20,7 +20,7 @@ class Aurora(
 	private var alt_color: Color = Color(0,0,0)
 	private var alt_amount: Float = 0.0f
 
-    override fun run() {
+    override suspend fun run() {
         val nRepeats = time * 20 / fade
 
         for (j in 0 until nRepeats) {
