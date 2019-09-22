@@ -15,6 +15,7 @@ This is an example on how to get started running the simulator on Ubuntu 18.04 L
 # apt-get update -y 
 # apt-get install -y git openjdk-11-jdk gradle
 ```
+On alternative distros like arch there have been compile errors with jdk-11 and -12 due to library dependency problems, so jdk-8 has been used as seems to work fine.
 ### Fetching the code
 
 ```bash
