@@ -2,7 +2,7 @@ package darkness.generator.api.effects
 
 import darkness.generator.api.BulbGroup
 
-import java.awt.Color
+import java.awt.*
 import java.util.Random
 
 class Aurora(
@@ -17,33 +17,37 @@ class Aurora(
     private val minBrightness: Float
 ) : EffectBase() {
     private val rnd: Random = Random(1337)
+	private var alt_color: Color = Color(0,0,0)
+	private var alt_amount: Float = 0.0f
 
-    override suspend fun run() {
-        val (hue, saturation, _) = Color.RGBtoHSB(color.red, color.green, color.blue, null)
+    override fun run() {
         val nRepeats = time * 20 / fade
-        val previousTargetBrightness = mutableMapOf<Int, Float>()
 
         for (j in 0 until nRepeats) {
-            val bulbIndexesUsedThisRound = mutableSetOf<Int>()
             for (i in 0 until nChangeBulbs) {
-                val bulbIndex = rnd.nextInt(bulbGroup.numBulbs)
-                val bulb = bulbGroup.getBulb(bulbIndex)
+                val hsbValues = Color.RGBtoHSB(Math.round(color.red*(1.0f-alt_amount) + alt_color.red*alt_amount), Math.round(color.green*(1.0f-alt_amount) + alt_color.green*alt_amount), Math.round(color.blue*(1.0f-alt_amount) + alt_color.blue*alt_amount), null)
+		val nextBulbIdx = rnd.nextInt(bulbGroup.numBulbs)
+                val nextBulb = bulbGroup.getBulb(nextBulbIdx)
                 var nextBrightness = rnd.nextFloat()
                 while (nextBrightness <= minBrightness) {
                     nextBrightness = rnd.nextFloat()
                 }
-                // Don't skip until here, so that the random generator stays in sync with the old version
-                if (!bulbIndexesUsedThisRound.add(bulbIndex)) {
-                    continue
-                }
-                val previousColor = Color.getHSBColor(hue, saturation, previousTargetBrightness.getOrDefault(bulbIndex, 0f))
-                val nextColor = Color.getHSBColor(hue, saturation, nextBrightness)
-                rgbFade(bulb, previousColor, nextColor, fade)
-                previousTargetBrightness[bulbIndex] = nextBrightness
+                val c = Color.getHSBColor(hsbValues[0], hsbValues[1], nextBrightness)
+                rgbFade(nextBulb, c, fade)
             }
             skip(fade)
         }
     }
+
+	fun setAlternateColor(alternate: Color)
+	{
+		alt_color = alternate;
+	}
+
+	fun setAlternateColorAmount(amount: Float)
+	{
+		alt_amount = amount;
+	}
 
     override fun toString() = "Effect Aurora"
 }
