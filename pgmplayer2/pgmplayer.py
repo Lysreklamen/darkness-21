@@ -41,7 +41,7 @@ class ChannelMap:
 
     def __init__(self, path_or_file: typing.Union[typing.TextIO, str, Path]):
         if isinstance(path_or_file, (str, Path)):
-            file = open(path_or_file, 'r')
+            file = open(str(path_or_file), 'r')
         else:
             file = path_or_file
 
@@ -87,7 +87,7 @@ class Playlist:
                  base_dir: typing.Optional[Path] = None,
                  repeating: bool = True):
         if isinstance(path_or_file, (str, Path)):
-            self.file = open(path_or_file, 'r')
+            self.file = open(str(path_or_file), 'r')
         else:
             self.file = path_or_file
 
@@ -131,7 +131,7 @@ class PGMReader:
     def __init__(self, path_or_file: typing.Union[typing.TextIO, str, Path], *,
                  channel_map: typing.Optional[ChannelMap] = None):
         if isinstance(path_or_file, (str, Path)):
-            self.file = open(path_or_file, 'r')
+            self.file = open(str(path_or_file), 'r')
         else:
             self.file = path_or_file
 
