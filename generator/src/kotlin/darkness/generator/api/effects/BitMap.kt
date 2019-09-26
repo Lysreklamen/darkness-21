@@ -85,7 +85,9 @@ class BitMap(
 			{
 				val pixelX: Int = ((resolution_x*(posX-physical_x))/physical_w).toInt()
 				val pixelY: Int = ((resolution_y*(posY-physical_y))/physical_h).toInt()
-				val c: Color = bitMapPlane[((resolution_y-(pixelY+1))+offset_y).rem(resolution_y)][(pixelX+offset_x).rem(resolution_x)]
+				var actual_pixelX: Int = (offset_x+pixelX).rem(resolution_x)
+				var actual_pixelY: Int = (offset_y+resolution_y-(pixelY+1)).rem(resolution_y)
+				val c: Color = bitMapPlane[actual_pixelY][actual_pixelX]
 				val hsbValues = Color.RGBtoHSB(c.red, c.green, c.blue, null)
 				set(bulb, Color.getHSBColor(hsbValues[0], hsbValues[1], hsbValues[2]*brightness))
 			}
@@ -102,6 +104,14 @@ class BitMap(
     fun setOffset(ox: Int, oy: Int) {
 	offset_x = ox
 	offset_y = oy
+	while(offset_x < 0)
+	{
+		offset_x = offset_x + resolution_x
+	}
+	while(offset_y < 0)
+	{
+		offset_y = offset_y + resolution_y
+	}
     }
 
     fun setBrightness(b: Float) {
