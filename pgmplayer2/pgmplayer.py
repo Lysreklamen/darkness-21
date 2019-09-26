@@ -55,8 +55,8 @@ class ChannelMap:
             if len(parts) != 2 or any(not x.isnumeric() for x in parts):
                 raise IOError('The channel mapping file {} is malformated on line {}'.format(file, line_number))
 
-            map_from = int(parts[0])
-            map_to = int(parts[1])
+            map_from = int(parts[0]) - 1  # Convert from 1-indexing to 0-indexing
+            map_to = int(parts[1]) - 1  # Convert from 1-indexing to 0-indexing
 
             if map_from in self._map.keys():
                 raise IOError('The channel mapping file {} contains duplicate mapping for the channel {}'
