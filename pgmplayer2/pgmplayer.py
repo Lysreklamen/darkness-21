@@ -53,7 +53,7 @@ class ChannelMap:
                 parts = line.split('\t')
 
             if len(parts) != 2 or any(not x.isnumeric() for x in parts):
-                raise IOError('The channel mapping file {} is malformated on line {}'.format(file, line_number))
+                raise IOError('The channel mapping file {} is malformed on line {}'.format(file, line_number))
 
             map_from = int(parts[0]) - 1  # Convert from 1-indexing to 0-indexing
             map_to = int(parts[1]) - 1  # Convert from 1-indexing to 0-indexing
@@ -80,6 +80,7 @@ class Playlist:
     A playlist file is simply a list of relative paths to the .pgm files to play.
     The default directory can be overwritten as an argument to the constructor.
     """
+
     def __init__(self, path_or_file: typing.Union[typing.TextIO, str, Path], *,
                  base_dir: typing.Optional[Path] = None,
                  repeating: bool = True):
@@ -197,12 +198,14 @@ class PGMReader:
 
 class DMXOutput:
     """ A DMX output device interface """
+
     def push_frame(self, frame: bytes):
         raise NotImplementedError('This is an abstract function and must be overridden')
 
 
 class DummyDMXOutput(DMXOutput):
     """ A dummy DMX device which just discards all frames """
+
     def push_frame(self, frame: bytes):
         return
 
@@ -256,23 +259,24 @@ class OVDMXOutput(DMXOutput):
             termios.tcsetattr(self.dev.fileno(), termios.TCSANOW, attr)
 
         # Preallocate the packet and set static values
-        self.usb_packet = bytearray(2+1+2+512+2)
-        self.usb_packet[self.OFFSET_MAGIC:self.OFFSET_MAGIC+2] = b'OV'
+        self.usb_packet = bytearray(2 + 1 + 2 + 512 + 2)
+        self.usb_packet[self.OFFSET_MAGIC:self.OFFSET_MAGIC + 2] = b'OV'
         self.usb_packet[self.OFFSET_TYPE] = ord('D')
-        self.usb_packet[self.OFFSET_DATA_LENGTH:self.OFFSET_DATA_LENGTH+2] = struct.pack('!H', 512)
-        self.usb_packet[self.OFFSET_CRC:self.OFFSET_CRC+2] = b'\0\0'
+        self.usb_packet[self.OFFSET_DATA_LENGTH:self.OFFSET_DATA_LENGTH + 2] = struct.pack('!H', 512)
+        self.usb_packet[self.OFFSET_CRC:self.OFFSET_CRC + 2] = b'\0\0'
 
     def push_frame(self, frame: bytes):
-        self.usb_packet[self.OFFSET_DATA:self.OFFSET_DATA+self.DATA_LENGTH] = frame[0:self.DATA_LENGTH]
+        self.usb_packet[self.OFFSET_DATA:self.OFFSET_DATA + self.DATA_LENGTH] = frame[0:self.DATA_LENGTH]
         self.dev.write(self.usb_packet)
         self.dev.flush()
 
 
 class FrameRateController:
     """ A helper class to keep us at a given frame rate """
+
     def __init__(self, frame_rate: int):
         self.frame_rate = frame_rate
-        self.frame_period = 1.0/float(frame_rate)
+        self.frame_period = 1.0 / float(frame_rate)
         self.last_frame_time = time.time()
 
     def reset(self):
@@ -282,9 +286,10 @@ class FrameRateController:
         next_frame_time = self.last_frame_time + self.frame_period
         time_now = time.time()
         if next_frame_time < time_now:
-            print("WARNING! Can not keep up frame rate! Lagging behind {:.2f} seconds".format(time_now-next_frame_time))
+            print(
+                "WARNING! Can not keep up frame rate! Lagging behind {:.2f} seconds".format(time_now - next_frame_time))
         else:
-            time.sleep(next_frame_time-time_now)
+            time.sleep(next_frame_time - time_now)
         self.last_frame_time = time.time()
 
 
@@ -292,6 +297,7 @@ def main():
     parser = argparse.ArgumentParser(description='pgmplayer version 2')
     parser.add_argument('--channel-mapping', type=argparse.FileType(mode='r'), help='A channel mapping file')
     parser.add_argument('--playlist', type=argparse.FileType(mode='r'), help='A list of pgm files to play')
+    parser.add_argument('--playlist-dir', help='Override the folder the playlist files are relative to')
     parser.add_argument('--single-cycle', action='store_true', help='Only play the playlist once and exit')
     parser.add_argument('--pgm', type=argparse.FileType(mode='r'), help='The PGM file to play')
     parser.add_argument('--device', help='The OVDMX device to play to. I.e. /dev/ttyAMA0')
@@ -320,7 +326,10 @@ def main():
         # Create a playlist with a single item
         playlist = Playlist(StringIO(str(Path(args.pgm.name).absolute())), repeating=repeating)
     else:
-        playlist = Playlist(args.playlist, repeating=repeating)
+        base_dir = None
+        if args.playlist_dir:
+            base_dir = args.playlist_dir
+        playlist = Playlist(args.playlist, base_dir=base_dir, repeating=repeating)
 
     frame_rate = args.fps
     if args.verify:
