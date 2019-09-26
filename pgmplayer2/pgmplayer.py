@@ -70,6 +70,8 @@ class ChannelMap:
     def __getitem__(self, item):
         if type(item) is not int:
             raise ValueError('The channel mapping must be indexed with ints')
+        if item in self._map:
+            return self._map[item]
         return -1  # Not found
 
 
@@ -173,14 +175,14 @@ class PGMReader:
                 raise IOError('The PGM file {} has more than {} channels in frame {}'.format(self.file,
                                                                                              self.channel_count,
                                                                                              self.current_frame_index))
+            channel_value = int(channel_value)
             if self.channel_map:
                 mapped_channel = self.channel_map[channel_index]
-                if mapped_channel < 0:
-                    # Skip invalid channels
-                    frame[mapped_channel] = int(channel_value)
+                if mapped_channel >= 0: # Only map valid channels
+                    frame[mapped_channel] = channel_value
             else:
                 # No channel map. Copy everything raw
-                frame[channel_index] = int(channel_value)
+                frame[channel_index] = channel_value
 
         return frame
 
