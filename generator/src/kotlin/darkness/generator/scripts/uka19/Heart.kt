@@ -12,27 +12,29 @@ class Heart : BaseScript() {
 
         set(C, 100, 0, 0)
         for (i in 1..10) {
-            rgbFade(C, 255, 0, 0, 4)
-            skip(5)
-            
+            rgbFade(C, 255, 0, 0, 2)
+            skip(3)
 	    rgbFade(C, 140, 0, 0, 4)
             rgbFade(B, 255, 0, 0, 6)
             rgbFade(D, 255, 0, 0, 6)
-            skip(5)
+	    skip(2)
             
-	    rgbFade(C, 220, 0, 0, 4)
+            skip(2)
+	    rgbFade(C, 220, 0, 0, 2)
+            skip(3)
+            
+            rgbFade(C, 170, 0, 0, 4)
             rgbFade(E, 255, 0, 0, 6)
             skip(5)
             
 	    rgbFade(D, 255, 196, 0, 6)
-            rgbFade(C, 170, 0, 0, 4)
             rgbFade(A, 255, 0, 0, 6)
             rgbFade(F, 255, 0, 0, 6)
+	    rgbFade(C, 100, 0, 0, 20)
             skip(5)
             
 	    rgbFade(B, 255, 196, 0, 6)
             rgbFade(E, 255, 196, 0, 6)
-	    rgbFade(C, 100, 0, 0, 15)
             rgbFade(G, 255, 0, 0, 6)
             skip(5)
             
