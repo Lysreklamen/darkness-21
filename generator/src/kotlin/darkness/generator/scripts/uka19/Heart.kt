@@ -15,34 +15,43 @@ class Heart : BaseScript() {
             rgbFade(C, 255, 0, 0, 2)
             skip(3)
 	    rgbFade(C, 140, 0, 0, 4)
-            rgbFade(B, 255, 0, 0, 6)
-            rgbFade(D, 255, 0, 0, 6)
 	    skip(2)
-            
+
             skip(2)
 	    rgbFade(C, 220, 0, 0, 2)
-            skip(3)
+            skip(1)
+            rgbFade(B, 255, 0, 0, 4)
+            rgbFade(D, 255, 0, 0, 4)
+	    skip(2)
             
             rgbFade(C, 170, 0, 0, 4)
-            rgbFade(E, 255, 0, 0, 6)
-            skip(5)
-            
-	    rgbFade(D, 255, 196, 0, 6)
-            rgbFade(A, 255, 0, 0, 6)
-            rgbFade(F, 255, 0, 0, 6)
+            skip(1)
 	    rgbFade(C, 100, 0, 0, 20)
-            skip(5)
-            
-	    rgbFade(B, 255, 196, 0, 6)
-            rgbFade(E, 255, 196, 0, 6)
-            rgbFade(G, 255, 0, 0, 6)
-            skip(5)
-            
-            rgbFade(F, 255, 196, 0, 6)
-            skip(5)
+	    skip(1)
+	    rgbFade(A, 255, 0, 0, 4)
+            rgbFade(E, 255, 0, 0, 4)
+	    skip(3)
 
+            skip(1)
+            rgbFade(B, 255, 196, 0, 6)
+	    rgbFade(D, 255, 196, 0, 6)
+            rgbFade(F, 255, 0, 0, 4)
+            skip(3)
+            skip(1)
+            
+            rgbFade(G, 255, 0, 0, 4)
+            rgbFade(A, 255, 196, 0, 6)            
+            rgbFade(E, 255, 196, 0, 6)
+            skip(3)
+            skip(1)
+            rgbFade(F, 255, 196, 0, 6)
+	    skip(1)
+            
+            skip(2)
+            skip(1)
 	    rgbFade(G, 255, 196, 0, 6)
-            rgbFade(A, 255, 196, 0, 6)
+            skip(2)
+
             skip(5)
         }
     }
