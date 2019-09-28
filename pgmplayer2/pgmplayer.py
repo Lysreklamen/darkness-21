@@ -212,7 +212,7 @@ class CountdownGenerator(DMXFrameSource):
     """
     A class for generating the countdown DMX frames automatically.
 
-    The countdown is a 2 digit 7-segment display
+    The countdown is a 2-digit 7-segment display
     Each digit has the following segments
 
      A A A A
@@ -233,6 +233,26 @@ class CountdownGenerator(DMXFrameSource):
     {"A": 8, "B": 9, "C": 10, "D": 11, "E": 12, "F": 13, "G": 14}, // Most significant digit.
     ]
     """
+    PHYSICAL_CHANNELS = [
+	{
+	    "A": 497,
+	    "B": 498,
+	    "C": 499,
+	    "D": 500,
+	    "E": 501,
+	    "F": 502,
+	    "G": 503
+	},
+	{
+	    "A": 488,
+	    "B": 489,
+	    "C": 490,
+	    "D": 491,
+	    "E": 492,
+	    "F": 493,
+	    "G": 494
+	},
+    ]
 
     NUMBER_SEGMENTS = {
         '0': 'ABCDEF',
@@ -247,42 +267,21 @@ class CountdownGenerator(DMXFrameSource):
         '9': 'ABCDGF'
     }
 
-    def __init__(self, target_dt: datetime, segments_def_file_or_path: typing.Union[typing.TextIO, str, Path]):
+    def __init__(self, target_dt: datetime):
         self.target_dt = target_dt
         self.frame_counter = 0
         self.frame_buffer = bytearray(512)  # Preallocate a buffer for all our DMX data
         self.current_displaying_number = None
 
-        if isinstance(segments_def_file_or_path, (str, Path)):
-            seg_def_file = open(segments_def_file_or_path, 'r')
-        else:
-            seg_def_file = segments_def_file_or_path
 
-        self.segments_def = json.load(seg_def_file)  # type: list[dict[str, int]]
-        if not isinstance(self.segments_def, list):
-            raise IOError("The segment definition file must be a json list")
-
-        if len(self.segments_def) != 2:
-            raise IOError("The segment definition file must have 2 entries")
-
-        for digit_index, segments in enumerate(self.segments_def):
-            if not isinstance(segments, dict) or len(segments) != 7:
-                raise IOError("The segment definition for digit {} must have 7 segments defines".format(digit_index))
-
+        for digit_index, segments in enumerate(self.PHYSICAL_CHANNELS):
             for segment_name in "ABCDEFG":
-                try:
-                    segment_channel = int(segments[segment_name])
-                    segment_channel -= 1  # Convert to 0-indexing
-                    segments[segment_name] = segment_channel
-                    if segment_channel < 0 or segment_channel >= 512:
-                        raise IOError("The segment channel digit {} segment {} "
-                                      "is not in the DMX universe range".format(digit_index, segment_name))
-                except KeyError:
-                    raise IOError("The segment definition for digit {}"
-                                  " does not have the segment {} defined".format(digit_index, segment_name))
+                segment_channel = int(segments[segment_name])
+                segment_channel -= 1  # Convert to 0-indexing
+                segments[segment_name] = segment_channel
 
     def zero_all_segments(self):
-        for digit_index, segments in enumerate(self.segments_def):
+        for digit_index, segments in enumerate(self.PHYSICAL_CHANNELS):
             for segment_name, segment_channel in segments.items():
                 self.frame_buffer[segment_channel] = 0
 
@@ -296,7 +295,7 @@ class CountdownGenerator(DMXFrameSource):
         number_string.reverse()  # Lets handle the least significant digits first
         for digit_index, digit in enumerate(number_string):
             for seg in self.NUMBER_SEGMENTS[digit]:
-                self.frame_buffer[self.segments_def[digit_index][seg]] = 255
+                self.frame_buffer[self.PHYSICAL_CHANNELS[digit_index][seg]] = 255
 
     def frames(self) -> typing.Generator[typing.Tuple[int, bytes], None, None]:
         while True:
@@ -442,8 +441,6 @@ def main():
     parser.add_argument('--verify', action='store_true', help='Scan the playlist/pgm file and check for errors')
     parser.add_argument('--countdown', help='Start a countdown to the given datetime in ISO format.'
                                             ' IE 2019-09-27T00:00:00+02:00')
-    parser.add_argument('--countdown-segdef', type=argparse.FileType(mode='r'),
-                        help='A json definition of the countdown sign channels for each segment.')
 
     args = parser.parse_args()
     if not args.playlist and not args.pgm:
@@ -460,9 +457,6 @@ def main():
 
     if args.countdown:
         countdown_to = datetime.fromisoformat(args.countdown)
-
-        if not args.countdown_segdef:
-            print('A countdown sign segment defintion file must be specified')
     else:
         countdown_to = None
 
@@ -492,9 +486,9 @@ def main():
     else:
         raise ValueError('Unknown DMX ouput')
 
-    # If the countdown is activated. run that first
+    # If the countdown is activated, run that first
     if countdown_to:
-        countdown_gen = CountdownGenerator(countdown_to, args.countdown_segdef)
+        countdown_gen = CountdownGenerator(countdown_to)
         for frame_index, frame in countdown_gen.frames():
             if frame_index % frame_rate == 0:
                 print("frame #{:3d} in {}".format(frame_index, countdown_gen))
