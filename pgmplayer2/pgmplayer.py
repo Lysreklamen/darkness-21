@@ -241,10 +241,10 @@ class CountdownGenerator(DMXFrameSource):
         '3': 'ABGCD',
         '4': 'FGBC',
         '5': 'AFGCD',
-        '6': 'FEDCG',
+        '6': 'AFEDCG',
         '7': 'ABC',
         '8': 'ABCDEFG',
-        '9': 'ABCDG'
+        '9': 'ABCDGF'
     }
 
     def __init__(self, target_dt: datetime, segments_def_file_or_path: typing.Union[typing.TextIO, str, Path]):
