@@ -33,7 +33,7 @@ import sys
 import termios
 import time
 import typing
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 from io import StringIO
 import argparse
@@ -205,7 +205,7 @@ class PGMReader(DMXFrameSource):
                 return
 
     def __str__(self):
-        return "pgm_file: {}".format(self.file.name)
+        return "pgm file {}".format(self.file.name)
 
 
 class CountdownGenerator(DMXFrameSource):
@@ -328,7 +328,7 @@ class CountdownGenerator(DMXFrameSource):
         seconds = dt.total_seconds()
         minutes = int(seconds / 60)
         seconds -= minutes * 60
-        return "CountdownGenerator(displaying: {}. {} minutes and {:.2f} seconds remaining)".format(self.current_displaying_number,
+        return "CountdownGenerator(displaying: {:2d}; remaining: {:2d} minutes and {:.2f} seconds)".format(self.current_displaying_number,
                                                                                                     minutes, seconds)
 
 
@@ -439,12 +439,13 @@ def main():
     parser.add_argument('--device', help='The OVDMX device to play to. I.e. /dev/ttyAMA0')
     parser.add_argument('--fps', type=int, default=20, help='Override the default frame rate of 20fps')
     parser.add_argument('--verify', action='store_true', help='Scan the playlist/pgm file and check for errors')
-    parser.add_argument('--countdown', help='Start a countdown to the given datetime in ISO format.'
-                                            ' IE 2019-09-27T00:00:00+02:00')
+    parser.add_argument('--countdown', help='Before playing the given file, start a countdown for the given number of seconds or minutes:seconds')
+    parser.add_argument('--countdown-to', help='Before playing the given file, start a countdown to the given datetime in ISO format, '
+                                               'e.g. 2019-09-27T00:00:00+02:00 (only works on Python 3.7 and above)')
 
     args = parser.parse_args()
-    if not args.playlist and not args.pgm:
-        print('At least one pgm file or a playlist must be specified', file=sys.stderr)
+    if bool(args.playlist) == bool(args.pgm):
+        print('Exactly one of --pgm and --playlist must be specified', file=sys.stderr)
         exit(1)
 
     if not args.device and not args.verify:
@@ -456,7 +457,19 @@ def main():
         exit(1)
 
     if args.countdown:
-        countdown_to = datetime.fromisoformat(args.countdown)
+        items = args.countdown.split(":")
+        if len(items) == 1:
+            minutes = 0
+            seconds = int(items[0])
+        elif len(items) == 2:
+            minutes = int(items[0])
+            seconds = int(items[1])
+        else:
+            print('There can be at most one colon in --countdown')
+            exit(1)
+        countdown_to = datetime.now() + timedelta(minutes=minutes, seconds=seconds)
+    elif args.countdown_to:
+        countdown_to = datetime.fromisoformat(args.countdown_to)
     else:
         countdown_to = None
 
@@ -491,7 +504,7 @@ def main():
         countdown_gen = CountdownGenerator(countdown_to)
         for frame_index, frame in countdown_gen.frames():
             if frame_index % frame_rate == 0:
-                print("frame #{:3d} in {}".format(frame_index, countdown_gen))
+                print("Frame #{:3d} in {}".format(frame_index, countdown_gen))
             frame_rate_controller.next_frame()
             dmx_output.push_frame(frame)
 
@@ -504,7 +517,7 @@ def main():
         frame_rate_controller.reset()
         for frame_index, frame in pgm_reader.frames():
             if frame_index % frame_rate == 0:
-                print("frame #{:3d} in {}".format(frame_index, pgm_reader))
+                print("Frame #{:3d} in {}".format(frame_index, pgm_reader))
             frame_rate_controller.next_frame()
             dmx_output.push_frame(frame)
 
