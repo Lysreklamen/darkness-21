@@ -107,6 +107,9 @@ class Playlist:
         self.current_playlist_line_number = 0
 
     def read_entry(self) -> typing.Optional[Path]:
+        if self.single_pgm_path:
+            return Path(self.single_pgm_path), 1
+
         with open(self.path) as f:
             lines = [
                 (line.strip(), i + 1)
