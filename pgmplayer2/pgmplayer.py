@@ -304,8 +304,8 @@ class CountdownGenerator(DMXFrameSource):
 
             self.frame_counter += 1
             if self.target_dt < current_time:
-                # We are done counting down, blank out the screen and exit generator
-                self.render_number(0)
+                # We are done counting down - blank out all the segments and exit the generator
+                self.zero_all_segments()
                 self.current_displaying_number = None
                 yield self.frame_counter, self.frame_buffer
                 return
@@ -318,7 +318,7 @@ class CountdownGenerator(DMXFrameSource):
                 else:
                     self.render_number(minutes_remaining)
             else:
-                self.render_number(int(seconds_remaining))
+                self.render_number(seconds_remaining)
 
 
             yield self.frame_counter, self.frame_buffer
