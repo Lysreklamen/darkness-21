@@ -86,46 +86,60 @@ class Playlist:
     The default directory can be overwritten as an argument to the constructor.
     """
 
-    def __init__(self, path_or_file: typing.Union[typing.TextIO, str, Path], *,
+    def __init__(self,
+                 path: str = None,
+                 single_pgm_path: str = None,
                  base_dir: typing.Optional[Path] = None,
                  repeating: bool = True):
-        if isinstance(path_or_file, (str, Path)):
-            self.file = open(str(path_or_file), 'r')
-        else:
-            self.file = path_or_file
-
+        if bool(path) == bool(single_pgm_path):
+            raise ValueError("Exactly one of path and single_pgm_path must be not-None")
+        self.path = path
+        self.single_pgm_path = single_pgm_path
         self.repeating = repeating
-        self.directory = Path.cwd()
         if base_dir:
             self.directory = base_dir
-        elif hasattr(self.file, 'name'):
+        elif path:
             # Default to the directory of the playlist if it is a real file
-            self.directory = Path(self.file.name).absolute().parent
-
-        self.pgm_index = 0
+            self.directory = Path(path).absolute().parent
+        else:
+            self.directory = Path.cwd()
+        self.current_pgm_path = None
+        self.current_playlist_line_number = 0
 
     def read_entry(self) -> typing.Optional[Path]:
-        line = self.file.readline().strip()
-        if not line:
-            if self.repeating:
-                if self.pgm_index == 0:
-                    raise IOError('The playlist file is empty')
-                self.file.seek(0)
-                self.pgm_index = 0
-                return self.read_entry()
+        with open(self.path) as f:
+            lines = [
+                (line.strip(), i + 1)
+                for i, line in enumerate(f.readlines())
+                if line.strip()
+            ]
+            if not lines:
+                raise ValueError("Playlist file {} is empty".format(path))
 
-        path = Path(line)
-        self.pgm_index += 1
+        found = False
+        if self.current_pgm_path:
+            for i in range(len(lines)):
+                if lines[i][0] == self.current_pgm_path:
+                    if i == len(lines) - 1 and not self.repeating:
+                        return None
+                    self.current_pgm_path, current_playlist_line_number = lines[(i + 1) % len(lines)]
+                    found = True
+                    break
+        if not found:
+            self.current_pgm_path, current_playlist_line_number = lines[0]
+
+        path = Path(self.current_pgm_path)
         if path.is_absolute():
-            return path.resolve()
-        return Path(self.directory, path).resolve()
+            return path, current_playlist_line_number
+        else:
+            return Path(self.directory, path), current_playlist_line_number
 
     def entry_generator(self) -> typing.Generator[typing.Tuple[int, Path], None, None]:
         while True:
             entry = self.read_entry()
             if not entry:
                 return
-            yield self.pgm_index, entry
+            yield entry
 
 
 class DMXFrameSource:
@@ -432,10 +446,10 @@ class FrameRateController:
 def main():
     parser = argparse.ArgumentParser(description='pgmplayer version 2')
     parser.add_argument('--channel-mapping', type=argparse.FileType(mode='r'), help='A channel mapping file')
-    parser.add_argument('--playlist', type=argparse.FileType(mode='r'), help='A list of pgm files to play')
+    parser.add_argument('--playlist', help='A file that contains a list of pgm files to play')
     parser.add_argument('--playlist-dir', help='Override the folder the playlist files are relative to')
     parser.add_argument('--single-cycle', action='store_true', help='Only play the playlist once and exit')
-    parser.add_argument('--pgm', type=argparse.FileType(mode='r'), help='The PGM file to play')
+    parser.add_argument('--pgm', help='The PGM file to play')
     parser.add_argument('--device', help='The OVDMX device to play to. I.e. /dev/ttyAMA0')
     parser.add_argument('--fps', type=int, default=20, help='Override the default frame rate of 20fps')
     parser.add_argument('--verify', action='store_true', help='Scan the playlist/pgm file and check for errors')
@@ -479,13 +493,13 @@ def main():
 
     repeating = not args.single_cycle
     if args.pgm:
-        # Create a playlist with a single item
-        playlist = Playlist(StringIO(str(Path(args.pgm.name).absolute())), repeating=repeating)
+        # Create a synthetic playlist with a single item
+        playlist = Playlist(single_pgm_path=args.pgm, repeating=repeating)
     else:
         base_dir = None
         if args.playlist_dir:
             base_dir = args.playlist_dir
-        playlist = Playlist(args.playlist, base_dir=base_dir, repeating=repeating)
+        playlist = Playlist(path=args.playlist, base_dir=base_dir, repeating=repeating)
 
     frame_rate = args.fps
     if args.verify:
@@ -511,15 +525,19 @@ def main():
         print("Countdown complete! Starting playlist!")
 
     # Iterate the playlist and play the files
-    for pgm_index, pgm in playlist.entry_generator():
-        print("Starting pgm file #{}: {}".format(pgm_index, pgm))
-        pgm_reader = PGMReader(pgm, channel_map=channel_mapping)
-        frame_rate_controller.reset()
-        for frame_index, frame in pgm_reader.frames():
-            if frame_index % frame_rate == 0:
-                print("Frame #{:3d} in {}".format(frame_index, pgm_reader))
-            frame_rate_controller.next_frame()
-            dmx_output.push_frame(frame)
+    for pgm_path, playlist_line_number in playlist.entry_generator():
+        try:
+            path = pgm_path.resolve()
+            print("Starting pgm file from line #{}: {}".format(playlist_line_number, path))
+            pgm_reader = PGMReader(path, channel_map=channel_mapping)
+            frame_rate_controller.reset()
+            for frame_index, frame in pgm_reader.frames():
+                if frame_index % frame_rate == 0:
+                    print("Frame #{:3d} in {}".format(frame_index, pgm_reader))
+                frame_rate_controller.next_frame()
+                dmx_output.push_frame(frame)
+        except Exception as e:
+            print("Exception when playing pgm file {}: {}".format(pgm_path, e))
 
 
 if __name__ == "__main__":
