@@ -26,7 +26,6 @@
 #   --fps FPS             Override the default frame rate of 20fps
 #   --verify              Scan the playlist/pgm file and check for errors
 ##############################################################################
-import json
 import math
 import struct
 import sys
@@ -87,57 +86,60 @@ class Playlist:
     """
 
     def __init__(self,
-                 path: str = None,
-                 single_pgm_path: str = None,
+                 path_or_file: typing.Union[typing.TextIO, str, Path],
                  base_dir: typing.Optional[Path] = None,
                  repeating: bool = True):
-        if bool(path) == bool(single_pgm_path):
-            raise ValueError("Exactly one of path and single_pgm_path must be not-None")
-        self.path = path
-        self.single_pgm_path = single_pgm_path
+        self.directory = Path.cwd()
         self.repeating = repeating
+        self.prev_pgm_path = None  # Keep the path of the last played file
+
+        if isinstance(path_or_file, (str, Path)):
+            self.file = open(str(path_or_file), 'r')
+            # Default to the directory of the playlist if it is a real file
+            self.directory = Path(path_or_file).absolute().parent
+
+        else:
+            self.file = path_or_file
+
         if base_dir:
             self.directory = base_dir
-        elif path:
-            # Default to the directory of the playlist if it is a real file
-            self.directory = Path(path).absolute().parent
-        else:
-            self.directory = Path.cwd()
-        self.current_pgm_path = None
-        self.current_playlist_line_number = 0
 
-    def read_entry(self) -> typing.Optional[Path]:
-        if self.single_pgm_path:
-            return Path(self.single_pgm_path), 1
+    def read_entry(self) -> typing.Optional[typing.Tuple[int, Path]]:
+        # Seek to the start of the file (reload if changed)
+        self.file.seek(0)
+        lines = [line.strip() for line in self.file.readlines()]
+        if not lines:
+            raise ValueError("Playlist file {} is empty".format(self.file.name))
 
-        with open(self.path) as f:
-            lines = [
-                (line.strip(), i + 1)
-                for i, line in enumerate(f.readlines())
-                if line.strip()
-            ]
-            if not lines:
-                raise ValueError("Playlist file {} is empty".format(path))
-
-        found = False
-        if self.current_pgm_path:
-            for i in range(len(lines)):
-                if lines[i][0] == self.current_pgm_path:
-                    if i == len(lines) - 1 and not self.repeating:
-                        return None
-                    self.current_pgm_path, current_playlist_line_number = lines[(i + 1) % len(lines)]
-                    found = True
+        # Find the previously playing file by it's name
+        # This is done so that we can gracefully handle playlist changes where a new
+        # pgm file is inserted earlier than the currently playing one
+        # This comes at the cost that a playlist with the same pgm file more than once is not supported.
+        prev_file_index = -1
+        if self.prev_pgm_path:
+            for index, path in enumerate(lines):
+                if path == self.prev_pgm_path:
+                    prev_file_index = index
                     break
-        if not found:
-            self.current_pgm_path, current_playlist_line_number = lines[0]
 
-        path = Path(self.current_pgm_path)
-        if path.is_absolute():
-            return path, current_playlist_line_number
-        else:
-            return Path(self.directory, path), current_playlist_line_number
+        next_file_index = prev_file_index + 1  # This becomes 0 if the previous file was not found
+        if next_file_index >= len(lines):
+            # We have reached the end of the playlist. Revert to the first one
+            next_file_index = 0
+
+        # Update the
+        self.prev_pgm_path = lines[next_file_index]
+
+        path = Path(self.prev_pgm_path)
+        if not path.is_absolute():
+            path = Path(self.directory, path).resolve()
+
+        return next_file_index + 1, path  # Convert to 1 indexed lines
 
     def entry_generator(self) -> typing.Generator[typing.Tuple[int, Path], None, None]:
+        """
+        :return: a generator providing pgm files to play in the form [line_number_in_playlist, path_to_pgm]
+        """
         while True:
             entry = self.read_entry()
             if not entry:
@@ -149,6 +151,10 @@ class DMXFrameSource:
     """ The base class for all sources of DMX frame data """
 
     def frames(self) -> typing.Generator[typing.Tuple[int, bytes], None, None]:
+        """
+
+        :return: a generator providing a tuple with the form [frame_number, frame_data]
+        """
         raise NotImplementedError('The DMXFrameSource is an abstract class')
 
 
@@ -174,8 +180,8 @@ class PGMReader(DMXFrameSource):
                 'The second line in the PGM file {} should be [channel_count] [frame_count]'.format(self.file))
         if any((not x.isnumeric() for x in dimensions)):
             raise IOError(
-                'The second line in the PGM file {} should be [channel_count] [frame_count] any be numeric'
-                    .format(self.file))
+                'The second line in the PGM file {} should be [channel_count] [frame_count] any be numeric'.format(
+                    self.file))
 
         self.channel_count = int(dimensions[0])
         self.frame_count = int(dimensions[1])
@@ -251,24 +257,8 @@ class CountdownGenerator(DMXFrameSource):
     ]
     """
     PHYSICAL_CHANNELS = [
-        {
-            "A": 497,
-            "B": 498,
-            "C": 499,
-            "D": 500,
-            "E": 501,
-            "F": 502,
-            "G": 503
-        },
-        {
-            "A": 488,
-            "B": 489,
-            "C": 490,
-            "D": 491,
-            "E": 492,
-            "F": 493,
-            "G": 494
-        },
+        {"A": 497, "B": 498, "C": 499, "D": 500, "E": 501, "F": 502, "G": 503},  # LSB
+        {"A": 488, "B": 489, "C": 490, "D": 491, "E": 492, "F": 493, "G": 494},  # MSB
     ]
 
     NUMBER_SEGMENTS = {
@@ -500,12 +490,12 @@ def main():
     repeating = not args.single_cycle
     if args.pgm:
         # Create a synthetic playlist with a single item
-        playlist = Playlist(single_pgm_path=args.pgm, repeating=repeating)
+        playlist = Playlist(StringIO(str(Path(args.pgm).absolute().resolve())), repeating=repeating)
     else:
         base_dir = None
         if args.playlist_dir:
             base_dir = args.playlist_dir
-        playlist = Playlist(path=args.playlist, base_dir=base_dir, repeating=repeating)
+        playlist = Playlist(args.playlist, base_dir=base_dir, repeating=repeating)
 
     frame_rate = args.fps
     if args.verify:
@@ -531,11 +521,10 @@ def main():
         print("Countdown complete! Starting playlist!")
 
     # Iterate the playlist and play the files
-    for pgm_path, playlist_line_number in playlist.entry_generator():
+    for playlist_line_number, pgm_path in playlist.entry_generator():
         try:
-            path = pgm_path.resolve()
-            print("Starting pgm file from line #{}: {}".format(playlist_line_number, path))
-            pgm_reader = PGMReader(path, channel_map=channel_mapping)
+            print("Starting pgm file from line #{}: {}".format(playlist_line_number, pgm_path))
+            pgm_reader = PGMReader(pgm_path, channel_map=channel_mapping)
             frame_rate_controller.reset()
 
             for frame_index, frame in pgm_reader.frames():
