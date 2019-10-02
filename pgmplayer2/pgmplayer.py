@@ -333,8 +333,13 @@ class CountdownGenerator(DMXFrameSource):
         seconds = dt.total_seconds()
         minutes = int(seconds / 60)
         seconds -= minutes * 60
-        return "CountdownGenerator(displaying: {:2d}; remaining: {:2d} minutes and {:.2f} seconds)".format(
-            self.current_displaying_number,
+
+        displaying = '--'
+        if self.current_displaying_number:
+            displaying = "{:2d}".format(self.current_displaying_number)
+
+        return "CountdownGenerator(displaying: {}; remaining: {:2d} minutes and {:.2f} seconds)".format(
+            displaying,
             minutes, seconds)
 
 
