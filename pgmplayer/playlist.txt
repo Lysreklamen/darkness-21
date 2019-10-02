@@ -1,10 +1,10 @@
-../simulator/sequences/uka19/ElineGlitter.pgm
+../simulator/sequences/uka19/Intro2.pgm
 ../simulator/sequences/uka19/UKEnavnBetydning.pgm
 ../simulator/sequences/uka19/SphericalRainbow.pgm
-../simulator/sequences/uka19/Heart.pgm
+../simulator/sequences/uka19/BeatSpread.pgm
+../simulator/sequences/uka19/FanScrollDemo.pgm
 ../simulator/sequences/uka19/FlashLetters.pgm
 ../simulator/sequences/uka19/OmbreSwipe.pgm
-../simulator/sequences/uka19/FanScrollDemo.pgm
 ../simulator/sequences/uka19/FadeOverFargerFort.pgm
 ../simulator/sequences/uka19/AuroraDemo.pgm
 ../simulator/sequences/uka19/ElineTestHeart.pgm
@@ -15,6 +15,7 @@
 ../simulator/sequences/uka19/Spinner.pgm
 ../simulator/sequences/uka19/SwipeFraAlleKanter.pgm
 ../simulator/sequences/uka19/Blinky2.pgm
+../simulator/sequences/uka19/Heart.pgm
 ../simulator/sequences/uka19/SlaarPaaEnOgEnPaere.pgm
 ../simulator/sequences/uka19/CW19.pgm
 ../simulator/sequences/uka19/UKEnavnBetydningPaereForPaere.pgm
