@@ -244,31 +244,31 @@ class CountdownGenerator(DMXFrameSource):
     E       C
      D D D D
 
-    The segment defintion is defined with a json file of 1 indexed dmx channels. Example:
+    The segment definition is defined as a dict with 1 indexed dmx channels. Example:
     [
     {"A": 1, "B": 2, "C": 3, "D": 4, "E": 5, "F": 6, "G": 7}, // Least significant digit.
     {"A": 8, "B": 9, "C": 10, "D": 11, "E": 12, "F": 13, "G": 14}, // Most significant digit.
     ]
     """
     PHYSICAL_CHANNELS = [
-	{
-	    "A": 497,
-	    "B": 498,
-	    "C": 499,
-	    "D": 500,
-	    "E": 501,
-	    "F": 502,
-	    "G": 503
-	},
-	{
-	    "A": 488,
-	    "B": 489,
-	    "C": 490,
-	    "D": 491,
-	    "E": 492,
-	    "F": 493,
-	    "G": 494
-	},
+        {
+            "A": 497,
+            "B": 498,
+            "C": 499,
+            "D": 500,
+            "E": 501,
+            "F": 502,
+            "G": 503
+        },
+        {
+            "A": 488,
+            "B": 489,
+            "C": 490,
+            "D": 491,
+            "E": 492,
+            "F": 493,
+            "G": 494
+        },
     ]
 
     NUMBER_SEGMENTS = {
@@ -289,7 +289,6 @@ class CountdownGenerator(DMXFrameSource):
         self.frame_counter = 0
         self.frame_buffer = bytearray(512)  # Preallocate a buffer for all our DMX data
         self.current_displaying_number = None
-
 
         for digit_index, segments in enumerate(self.PHYSICAL_CHANNELS):
             for segment_name in "ABCDEFG":
@@ -337,7 +336,6 @@ class CountdownGenerator(DMXFrameSource):
             else:
                 self.render_number(seconds_remaining)
 
-
             yield self.frame_counter, self.frame_buffer
 
     def __str__(self):
@@ -345,8 +343,9 @@ class CountdownGenerator(DMXFrameSource):
         seconds = dt.total_seconds()
         minutes = int(seconds / 60)
         seconds -= minutes * 60
-        return "CountdownGenerator(displaying: {:2d}; remaining: {:2d} minutes and {:.2f} seconds)".format(self.current_displaying_number,
-                                                                                                    minutes, seconds)
+        return "CountdownGenerator(displaying: {:2d}; remaining: {:2d} minutes and {:.2f} seconds)".format(
+            self.current_displaying_number,
+            minutes, seconds)
 
 
 class DMXOutput:
@@ -456,9 +455,13 @@ def main():
     parser.add_argument('--device', help='The OVDMX device to play to. I.e. /dev/ttyAMA0')
     parser.add_argument('--fps', type=int, default=20, help='Override the default frame rate of 20fps')
     parser.add_argument('--verify', action='store_true', help='Scan the playlist/pgm file and check for errors')
-    parser.add_argument('--countdown', help='Before playing the given file, start a countdown for the given number of seconds or minutes:seconds')
-    parser.add_argument('--countdown-to', help='Before playing the given file, start a countdown to the given datetime in ISO format, '
-                                               'e.g. 2019-09-27T00:00:00+02:00 (only works on Python 3.7 and above)')
+    parser.add_argument('--countdown',
+                        help='Before playing the given file, '
+                             'start a countdown for the given number of seconds or minutes:seconds')
+    parser.add_argument('--countdown-to',
+                        help='Before playing the given file, start a countdown to the given datetime in ISO format, '
+                             'e.g. 2019-09-27T00:00:00+02:00 (only works on Python 3.7 and above)')
+    parser.add_argument('--single-step', action='store_true', help='Single step through the PGM file')
 
     args = parser.parse_args()
     if bool(args.playlist) == bool(args.pgm):
@@ -534,10 +537,17 @@ def main():
             print("Starting pgm file from line #{}: {}".format(playlist_line_number, path))
             pgm_reader = PGMReader(path, channel_map=channel_mapping)
             frame_rate_controller.reset()
+
             for frame_index, frame in pgm_reader.frames():
                 if frame_index % frame_rate == 0:
                     print("Frame #{:3d} in {}".format(frame_index, pgm_reader))
-                frame_rate_controller.next_frame()
+                if args.single_step:
+                    ans = input("Single stepping. Proceed to frame #{} Y/y/n/q [or enter]".format(frame_index)).strip()
+                    if ans != '' and ans not in 'Yy':
+                        print("Exiting on request!")
+                        exit(0)
+                else:
+                    frame_rate_controller.next_frame()
                 dmx_output.push_frame(frame)
         except Exception as e:
             print("Exception when playing pgm file {}: {}".format(pgm_path, e))
