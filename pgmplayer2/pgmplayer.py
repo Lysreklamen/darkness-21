@@ -316,15 +316,17 @@ class CountdownGenerator(DMXFrameSource):
                 yield self.frame_counter, self.frame_buffer
                 return
 
-            seconds_remaining = int(math.ceil(diff_time.total_seconds()))
+            seconds_remaining = math.ceil(diff_time.total_seconds())
             minutes_remaining = int(seconds_remaining / 60)
             if minutes_remaining > 0:
                 if minutes_remaining > 60:
                     self.zero_all_segments()
                 else:
                     self.render_number(minutes_remaining)
+            elif seconds_remaining <= 0.5:
+                self.render_number(0)  # Show for the last half second
             else:
-                self.render_number(seconds_remaining)
+                self.render_number(int(seconds_remaining))
 
             yield self.frame_counter, self.frame_buffer
 
