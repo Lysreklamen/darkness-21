@@ -323,8 +323,6 @@ class CountdownGenerator(DMXFrameSource):
                     self.zero_all_segments()
                 else:
                     self.render_number(minutes_remaining)
-            elif diff_time.total_seconds() <= 0.5:
-                self.render_number(0)
             else:
                 self.render_number(seconds_remaining)
 
