@@ -1,9 +1,9 @@
 package darkness.generator
 
 import darkness.generator.api.BulbManager
+import darkness.generator.api.ScriptBase
 import darkness.generator.api.ScriptManager
 import darkness.generator.output.PgmOutput
-import darkness.generator.scripts.uka19.AuroraDemo
 import kotlinx.coroutines.runBlocking
 
 object Main {
@@ -18,9 +18,13 @@ object Main {
             BulbManager.registerBulb(i, i - 100, i - 50, i)
         }
 
-        PgmOutput("demo.pgm").use { output ->
+	val scriptClassName = args[0]
+        val scriptClass = Main.javaClass.classLoader.loadClass("darkness.generator.scripts.uka19.${scriptClassName}")
+        val script = scriptClass.getConstructor().newInstance() as ScriptBase
+
+        PgmOutput("output/${scriptClassName}.pgm").use { output ->
             runBlocking {
-                ScriptManager.start(AuroraDemo(), output)
+                ScriptManager.start(script, output)
             }
         }
     }
