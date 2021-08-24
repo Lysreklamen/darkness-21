@@ -15,3 +15,5 @@ out/
 *.o
 *.dll
 generator/output/
+generator/bin/
+libsvg/bin/

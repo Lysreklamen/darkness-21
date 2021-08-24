@@ -227,10 +227,10 @@ class SVGParser(val svgFile: File, val flatness: Float, val maxLineLength: Float
 
 
         // Calculate the bounding box for the all the points found
-        var minX = letters.map { it.boundingBox[0] }.min()!!
-        var minY = letters.map { it.boundingBox[1] }.min()!!
-        var maxX = letters.map { it.boundingBox[0] + it.boundingBox[2] }.max()!!
-        var maxY = letters.map { it.boundingBox[1] + it.boundingBox[3] }.max()!!
+        var minX = letters.map { it.boundingBox[0] }.minOrNull()!!
+        var minY = letters.map { it.boundingBox[1] }.minOrNull()!!
+        var maxX = letters.map { it.boundingBox[0] + it.boundingBox[2] }.maxOrNull()!!
+        var maxY = letters.map { it.boundingBox[1] + it.boundingBox[3] }.maxOrNull()!!
 
         for (bulb in bulbs.values) {
             minX = min(minX, bulb.x)
@@ -350,10 +350,10 @@ class SVGParser(val svgFile: File, val flatness: Float, val maxLineLength: Float
 
         val boundingBox: FloatArray
             get() {
-                val minX = outline.map { it.x }.min()!!
-                val minY = outline.map { it.y }.min()!!
-                val maxX = outline.map { it.x }.max()!!
-                val maxY = outline.map { it.y }.max()!!
+                val minX = outline.map { it.x }.minOrNull()!!
+                val minY = outline.map { it.y }.minOrNull()!!
+                val maxX = outline.map { it.x }.maxOrNull()!!
+                val maxY = outline.map { it.y }.maxOrNull()!!
 
                 return floatArrayOf(minX, minY, maxX - minX, maxY - minY)
             }
