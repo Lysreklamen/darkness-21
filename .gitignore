@@ -1,8 +1,7 @@
+.*
+!.gitignore
 build/
 out/
-pgmplayer/dmx
-pgmplayer/test
-pgmplayer/generatedefault
 .gradle/
 .idea/
 *.swp
@@ -15,3 +14,4 @@ pgmplayer/generatedefault
 *.dylib
 *.o
 *.dll
+generator/output/

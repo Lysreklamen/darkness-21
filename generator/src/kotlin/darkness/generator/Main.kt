@@ -18,7 +18,7 @@ object Main {
             BulbManager.registerBulb(i, i - 100, i - 50, i)
         }
 
-	val scriptClassName = args[0]
+	    val scriptClassName = args[0]
         val scriptClass = Main.javaClass.classLoader.loadClass("darkness.generator.scripts.uka19.${scriptClassName}")
         val script = scriptClass.getConstructor().newInstance() as ScriptBase
 

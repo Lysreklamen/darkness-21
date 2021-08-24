@@ -1,7 +1,4 @@
 rootProject.name = 'darkness'
 
 include 'generator'
-include 'patterneditor'
-include 'simulator'
-include 'libsvg'
 
