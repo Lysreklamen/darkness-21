@@ -1,23 +1,27 @@
-# Experimental Dockerfile for the sequence generator.
-# Build with:
-#     docker build -t lysreklamen-generator:latest .
-# Run with:
-#     docker run --rm -it -v ./darkness-19/generator/scripts:/app/darkness-19/generator/scripts -v ~/darkness-19/generator/output:/app/generator/output lysreklamen-generator:latest
+#
+# Docker container for simplifying developing sequences with darkness.
+#
+#
+# This container intentionally does not contain anything sensitive.
+# The purpose of this is to be able to publish this container publicly,
+# such that new members of Lysreklamen can get started as quickly as possible
+# without any knowledge about docker except installing it.
+# 
 
-FROM openjdk:8
+FROM openjdk:18-slim-buster
 
+# Install python3 from debian repos
+RUN apt-get update -y && \
+    apt-get install -y python3 python3-pip
+
+# The /app directory will be volume mounted
+# to the root folder of this project
 RUN mkdir /app
 WORKDIR /app
 
-COPY gradle ./gradle
-COPY gradlew .
-RUN ./gradlew -v
+# Install the dependencies of pgmplayer.development
+RUN python3 -m pip install websockets
 
-COPY build.gradle .
-COPY settings.gradle .
-COPY generator ./generator
-COPY simulator ./simulator
-
-RUN ./gradlew generator:build
-
-ENTRYPOINT ["./gradlew", "generator:run"]
+# The default entrypoint should simply start the development
+# service with no arguments
+ENTRYPOINT ["python3", "-m", "pgmplayer.development"]
