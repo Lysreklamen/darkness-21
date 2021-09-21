@@ -8,7 +8,7 @@
 # without any knowledge about docker except installing it.
 # 
 
-FROM openjdk:18-slim-buster
+FROM openjdk:17-slim-buster
 
 # Install python3 from debian repos
 RUN apt-get update -y && \

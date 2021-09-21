@@ -21,3 +21,4 @@ libsvg/bin/
 # library usage in the pgmplayer and development service (except websockets)
 Pipfile
 Pipfile.lock
+__pycache__/
