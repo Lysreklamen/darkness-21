@@ -13,4 +13,10 @@ if [ -n "$FORCE_BUILD" ]; then
     docker build -t "$IMAGE_NAME" .
 fi    
 
-docker run --rm -it --name "uka_devserver" -u "$(id -u):$(id -g)" -v "$DIR:/app/" -p 127.0.0.1:5678:5678 "$IMAGE_NAME"
+docker run --rm -it \
+    --name "uka_devserver" \
+    -u "$(id -u):$(id -g)" \
+    -v "$DIR:/app/" \
+    -e GRADLE_USER_HOME=/tmp/.gradle \
+    -p 127.0.0.1:5678:5678 \
+    "$IMAGE_NAME"
