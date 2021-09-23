@@ -16,7 +16,8 @@ RUN apt-get update -y && \
 
 # The /app directory will be volume mounted
 # to the root folder of this project
-RUN mkdir /app
+# and a homedirectory writeable by anyone and owned by nobody
+RUN mkdir /app && mkdir /home/user && chown nobody. /home/user && chmod a+rwx /home/user
 WORKDIR /app
 
 # Install the dependencies of pgmplayer.development
