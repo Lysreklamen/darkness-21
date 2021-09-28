@@ -20,7 +20,9 @@ Using darkness for developing new sequences requires `docker` to be installed on
 - Click on the "Development" tab in the tabbed panel on the bottom of the page. 
   - The panel will contain the current connection status to the sequence generation software.
 - If this is the first time you are running the simulator, you need to build the docker container: `docker build -t ghcr.io/lysreklamen/publicpkg/devserver:latest .`
-- Start the development docker container using the command `./start-dev.sh` in the terminal.
+- Start the development docker container:
+-- On Linux/Mac: open a terminal, go to the Darkness folder (probably `cd ~/darkness-21`), and run `./start-dev.sh`
+-- On Windows: open a terminal (Start -> `cmd`), go to the Darkness folder (probably `cd "%USERPROFILE%\darkness-21"`). You could run `start-dev.bat`, but you probably want to run `create-container.bat` one time and then `start-container.bat` every time you want to run the container; this will save startup time.
 - The development panel should show that a connection to the sequence generation software has been established.
 - Follow the instructions in the terminal.
 
