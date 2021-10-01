@@ -149,6 +149,22 @@ If you have a more involved animation that isn't general-purpose but that you wa
 
 
 
+### Setting up a machine key for a controller machine
+
+The physical sign will be driven by a computer that runs `pgmplayer` (and there will hopefully be at least one backup machine too). These machines should be set up with a user account that everyone in Lysreklamen can log in to. Since that user account is effectively an "impersonal" account, we should _not_ use the standard approach of adding that account's SSH key to someone's GitHub account, as that would give anyone in Lysreklamen access to that person's GitHub. Instead, we should use a [deploy key](https://docs.github.com/en/developers/overview/managing-deploy-keys#deploy-keys). Deploy keys are repository-specific, so in case we'll need to clone more than one repository, we should name each key based on the repository. First, log in to the controller machine with the shared account, and create a new SSH key (press enter at the two prompts unless you want to password-protect the key, in which case everyone in Lysreklamen should be told what the password is):
+```
+ssh-keygen -f ~/.ssh/deploy-key-darkness-21
+```
+Copy the contents of the ~/.ssh/deploy-key-darkness-21.pub` file (the one that ends in `.pub`, _not_ the filename from the command above - the latter file is the private key, which must never leave the machine!) except for the trailing account name - it will look something like `ssh-rsa ABCDEF...uvwxyz`. Open the [deploy keys setting](https://github.com/Lysreklamen/darkness-21/settings/keys) in the repository, and paste the key there (the title could be anything, e.g. "Lysreklamekontroller"). You'll probably want to give it write access so that you can e.g. push `pgmplayer` fixes back to the repository. Now, we're ready to clone, which is unfortunately a bit fidgety:
+```
+GIT_SSH_COMMAND="ssh -i $HOME/.ssh/deploy-key-darkness-21" git clone git@github.com:Lysreklamen/darkness-21
+cd darkness-21
+git config core.sshCommand "ssh -i $HOME/.ssh/deploy-key-darkness-21
+```
+Note the lack of a `--global` flag to `git config`, since the key only works for this repository. From now on, you can use `git` commands the usual way in that repository - the config setting takes care of selecting the right key.
+
+
+
 ### Miscellaneous
 
 In `generator/src/kotlin/darkness/generator/scripts/uka21/BaseScript.kt` (not to be confused with `ScriptBase`, which is the top-level base class for scripts and effects, while `BaseScript` is a subclass of `ScriptBase` that is specific to a particular UKA year - the bulb groups for that UKA sign should be defined in `BaseScript`, and the sequenes for that sign should extend `BaseScript`), you can define and functions that you want to reuse across scripts for this UKA year (if the function is specific to this year's UKA sign - if it's a completely general function, it should go in `ScriptBase` instead).
