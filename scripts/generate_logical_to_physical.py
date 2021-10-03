@@ -60,11 +60,12 @@ def main():
 			print('%d\t%d' % (rgb[color], physical))
 
 	# The two seven-segment displays that make up the counter
-	for display in range(2):
-		for segment in range(7):
-			logical = display * 7 + segment + 101
-			physical = display * 9 + segment + 488
-			print("{:d}\t{:d}".format(logical, physical))
+	# TODO place these in a different range as we have duplicates for UKA-21
+	# for display in range(2):
+	# 	for segment in range(7):
+	# 		logical = display * 7 + segment + 101
+	# 		physical = display * 9 + segment + 488
+	# 		print("{:d}\t{:d}".format(logical, physical))
 	
 
 def load_bulbs(scene_file):	
