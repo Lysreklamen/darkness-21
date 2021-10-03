@@ -9,10 +9,10 @@ class CW21 : BaseScript() {
 
         val warmWhite = Color(255, 197, 143)
         val skyBlue = Color(64, 156, 255)
-        val framesPerDit = 3
+        val framesPerDit = 2
 
         rgbFade(allBulbsGroup, skyBlue, 10)
-        skip(30)
+        skip(15)
 
         // Using hexadecimal character codes so as to not easily reveal the UKEnavn
         val charCodes = listOf(0x72, 0x61, 0x7a, 0x7a, 0x6d, 0x61, 0x74, 0x61, 0x7a, 0x7a)
@@ -22,12 +22,12 @@ class CW21 : BaseScript() {
 
         for (cwEffect in cwEffects) {
             effect(cwEffect)
-            skip(cwEffect.totalFrames + framesPerDit * 2)
+            skip(cwEffect.totalFrames + framesPerDit * 1)
             cwEffect.cancel()
         }
 
-        skip(20)
+        skip(10)
         rgbFade(allBulbsGroup, Color.black, 10)
-        skip(30)
+        skip(15)
     }
 }
