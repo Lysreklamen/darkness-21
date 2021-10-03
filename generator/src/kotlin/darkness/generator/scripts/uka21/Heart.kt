@@ -1,58 +1,105 @@
 package darkness.generator.scripts.uka21
 
 import darkness.generator.api.BulbGroup
+import darkness.generator.api.BulbRGB
+import darkness.generator.api.effects.Aurora
+import darkness.generator.api.effects.FanScroll
+import java.awt.Color
 
 class Heart : BaseScript() {
     override suspend fun run() {
         super.run()
+        val centerHeart = bulb(55)
+        var r = 0.17
+        var r_ = -0.03
+        val w = 0.85
+        val r_heart = 0.5
 
-        for (letter in letters) {
-            set(letter, 255, 196, 0)
+        val frames = 100
+
+        // Red
+        val strong = Color(255, 0, 0)
+        val c = Color(200, 0, 0 )
+        val dim = Color(100, 0 , 0)
+        val off = Color(255, 255, 255)
+
+        val largest_dist = dist_bulbs(bulb(103), centerHeart)+2*w
+
+        set(E, dim)
+        skip(2)
+        set(E, c)
+        skip(5)
+        set(E, dim)
+        skip(4)
+        set(E, c)
+        skip(4)
+        set(E, strong)
+
+        var first = true
+        for (i in 0 until frames) {
+            for (bulb in allBulbs) {
+                // Calculate distance from bulb to center
+                var dist = dist_bulbs(bulb, centerHeart)
+
+                // If bulb is inside circle, turn on
+                if((dist > r && dist < r.plus(w)) || (dist > r_ && dist < r_.plus(w))|| dist < r_heart){
+                    set(bulb, c)
+                }
+                else {
+                    if(first && dist > r.plus(w)){
+                        set(bulb, Color.black)
+                    }
+                    else
+                        set(bulb, dim)
+                }
+            }
+            r += 0.4
+            r_+= 0.4
+            skip(1)
+
+            if(r > largest_dist){
+                r = 0.17
+                /*set(C, dim)
+                skip(6)
+                set(C, strong)
+                skip(2)*/
+                set(E, dim)
+                skip(2)
+                set(E, c)
+                skip(5)
+                set(E, dim)
+                skip(4)
+                first = false
+            }
+            if (r_  > largest_dist) {
+                r_ = -0.03
+                /*set(C, 50, 0, 0)
+                skip(6)
+                set(C, dim)
+                skip(2)*/
+                set(E, c)
+                skip(4)
+                set(E, strong)
+                //skip(4)
+            }
+
         }
 
-        set(E, 100, 0, 0)
-        for (i in 1..10) {
-            rgbFade(E, 255, 0, 0, 2)
-            skip(3)
-	    rgbFade(E, 140, 0, 0, 4)
-	    skip(2)
+        skip(1)
+    }
 
-            skip(2)
-	    rgbFade(E, 220, 0, 0, 2)
-            skip(1)
-            rgbFade(C, 255, 0, 0, 4)
-            rgbFade(F, 255, 0, 0, 4)
-	    skip(2)
-            
-            rgbFade(F, 170, 0, 0, 4)
-            skip(1)
-	    rgbFade(F, 100, 0, 0, 20)
-	    skip(1)
-	    rgbFade(A, 255, 0, 0, 4)
-        rgbFade(F, 255, 0, 0, 4)
-	    skip(3)
+    fun dist_bulbs(bulb_1: BulbRGB, bulb_2: BulbRGB):Double{
+        val x_1 = bulb_1.position[0].toDouble()
+        val y_1 = bulb_2.position[1].toDouble()
 
-            skip(1)
-            rgbFade(C, 255, 196, 0, 6)
-	    rgbFade(E, 255, 196, 0, 6)
-            rgbFade(G, 255, 0, 0, 4)
-            skip(3)
-            skip(1)
-            
-            rgbFade(H, 255, 0, 0, 4)
-            rgbFade(A, 255, 196, 0, 6)            
-            rgbFade(F, 255, 196, 0, 6)
-            skip(3)
-            skip(1)
-            rgbFade(G, 255, 196, 0, 6)
-	    skip(1)
-            
-            skip(2)
-            skip(1)
-	    rgbFade(G, 255, 196, 0, 6)
-            skip(2)
+        val x_2 = bulb_2.position[0].toDouble()
+        val y_2 = bulb_2.position[1].toDouble()
 
-            skip(5)
-        }
+        val dist_x = (x_2.minus(x_1))*(x_2.minus(x_1))
+        val dist_y = (y_2.minus(y_1))*(y_2.minus(y_1))
+
+        val dist = Math.sqrt(dist_x.plus(dist_y))
+
+        return dist
     }
 }
