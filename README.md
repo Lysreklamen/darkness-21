@@ -89,7 +89,7 @@ As an exercise to the reader, you are invited to complete the sequence with all 
 
 ### Bulbs and loops
 
-You can target individual bulbs by using `allBulbs[0]` for the first bulb, `allBulbs[1]` for the second bulb, and so on. `allBulbs.length` tells you the number of bulbs, meaning that `allBulbs[allBulbs.length - 1]` is the last bulb. If you want to go through all the bulbs, you can use a `for` loop. In this example, we set all the bulbs in turn to red with 0.1 seconds in-between:
+You can target individual bulbs by using `allBulbs[0]` for the first bulb, `allBulbs[1]` for the second bulb, and so on. `allBulbs.size` tells you the number of bulbs, meaning that `allBulbs[allBulbs.size - 1]` is the last bulb. If you want to go through all the bulbs, you can use a `for` loop. In this example, we set all the bulbs in turn to red with 0.1 seconds in-between:
 
 ```kotlin
 for (bulb in allBulbs) {
@@ -101,7 +101,7 @@ for (bulb in allBulbs) {
 Sometimes, you'll want to count how many bulbs you've seen so far, in order to e.g. make them gradually brighter. You can then use a different type of `for` loop in which you instead get a _counter_ through the bulbs. Here, we also illustrate the use of variables (declared with `val`) to split up a computation:
 
 ```kotlin
-for (i in 0 until allBulbs.length) {
+for (i in 0 until allBulbs.size) {
     val bulb = allBulbs[i]
     val red = 2 * i
     set(bulb, red, 0, 0)
