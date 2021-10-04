@@ -9,7 +9,7 @@ class UKAColor : BaseScript() {
 
         var uke_lilla = Color(102, 0, 152)
         var uke_gull = Color(255, 205, 0)
-        var uke_blå = Color(51,51,153)
+        var uke_blå = Color(0,0,255)
         var uke_turkis = Color(172, 246, 231)
         var uke_rød = Color(229, 1, 1)
 
