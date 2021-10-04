@@ -30,6 +30,9 @@ abstract class ScriptBase {
     var isCancelled: Boolean = false
         private set
 
+    /** Status object if script is running */
+    var isRunning: Boolean = false
+
     /** The communication channel with the [ScriptManager], which controls the progress through the frames. */
     private lateinit var coroutineChannel: Channel<MutableFrame>
 

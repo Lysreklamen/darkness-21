@@ -113,6 +113,7 @@ object ScriptManager {
         synchronized(scriptContexts) {
             scriptContexts.add(ScriptContext(script, scriptCoroutineChannel))
         }
+        script.isRunning = true
         // `start()` will immediately wait for a message over the channel before starting to generate the first frame
         GlobalScope.launch { script.start(scriptCoroutineChannel) }
         output.beginScript(script.toString())
@@ -127,6 +128,7 @@ object ScriptManager {
     }
 
     private fun removeScriptContext(scriptContext: ScriptContext) {
+        scriptContext.script.isRunning = false
         synchronized(scriptContexts) {
             scriptContexts.remove(scriptContext)
         }
