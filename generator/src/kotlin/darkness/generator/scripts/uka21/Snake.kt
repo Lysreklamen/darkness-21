@@ -16,7 +16,7 @@ class Snake : BaseScript() {
             skip(5)
         }
 
-        rgbFade(allBulbsGroup, uke_lilla, 10)
+        rgbFade(allBulbsGroup, Color.black, 10)
         skip(20)
         var trail_length = 4
         for (i in 0 until allBulbs.size+trail_length*3) {
