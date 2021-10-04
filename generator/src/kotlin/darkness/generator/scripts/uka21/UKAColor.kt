@@ -7,7 +7,7 @@ class UKAColor : BaseScript() {
     override suspend fun run() {
         super.run()
 
-        var uke_lilla = Color(102, 0, 102)
+        var uke_lilla = Color(102, 0, 152)
         var uke_gull = Color(255, 205, 0)
         var uke_blå = Color(51,51,153)
         var uke_turkis = Color(172, 246, 231)
