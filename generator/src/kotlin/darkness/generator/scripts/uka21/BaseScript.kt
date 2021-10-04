@@ -3,6 +3,7 @@ package darkness.generator.scripts.uka21
 import darkness.generator.api.BulbGroup
 import darkness.generator.api.BulbRGB
 import darkness.generator.api.ScriptBase
+import java.awt.Color
 
 open class BaseScript : ScriptBase() {
     protected lateinit var A: BulbGroup
@@ -18,6 +19,11 @@ open class BaseScript : ScriptBase() {
     protected lateinit var letters: List<BulbGroup>
     protected lateinit var allBulbs: List<BulbRGB>
     protected lateinit var allBulbsGroup: BulbGroup
+    protected lateinit var uke_lilla : Color
+    protected lateinit var uke_gull : Color
+    protected lateinit var uke_blå : Color
+    protected lateinit var uke_turkis : Color
+    protected lateinit var uke_rød : Color
 
     override suspend fun run() {
         A = group(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13)
@@ -31,6 +37,11 @@ open class BaseScript : ScriptBase() {
         I = group(91, 92, 93, 94, 95, 96, 97, 98)
         J = group(101, 102, 103, 104, 105, 106, 107, 108)
         letters = listOf(A, B, C, D, E, F, G, H, I, J)
+        uke_lilla = Color(102, 0, 152)
+        uke_gull = Color(255, 205, 0)
+        uke_blå = Color(0,0,255)
+        uke_turkis = Color(172, 246, 231)
+        uke_rød = Color(229, 1, 1)
 
         allBulbs = letters.flatMap { letter -> letter.allBulbs }
         allBulbsGroup = BulbGroup(allBulbs)
