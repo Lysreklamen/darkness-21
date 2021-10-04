@@ -20,7 +20,7 @@ class NorskFlaggBitmap : BaseScript() {
 	val res_y: Int = 16
 	val sub_res: Int = 10		// sub-resolution, pixels-per-pixel, gives us higher actual resolution for smoother scrolling-effect.
 					// Set projection plane to define desired zoom. Bigger plane means more zoomed-in. Plane should keep aspect-ratio of bitmap. 44x16 => 10m x 3.64m.
-	var plane: BitMap = BitMap(allBulbs, res_x*sub_res, res_y*sub_res, -2.8f, -1.15f, 10.0f, 3.64f)
+	var plane: BitMap = BitMap(allBulbs, res_x*sub_res, res_y*sub_res, -3.2f, -1.15f, 10.0f, 3.64f)
 	effect(plane)
 	plane.setOffset(offset_x + Math.round(wavey_x*(sub_res.toFloat())*Math.sin((start_angular_time.toDouble())/30.0f)).toInt(), Math.round(wavey_y*(sub_res.toFloat())*Math.cos((start_angular_time.toDouble())/13.0f)).toInt())
 	
