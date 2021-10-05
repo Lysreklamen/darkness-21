@@ -12,15 +12,15 @@ class Heart : BaseScript() {
         val centerHeart = bulb(55)
         var r = 0.17
         var r_ = -0.03
-        val w = 0.85
-        val r_heart = 0.5
+        val w = 1.05
+        val r_heart = 0.4
 
         val frames = 100
 
         // Red
-        val strong = Color(255, 0, 0)
-        val c = Color(200, 0, 0 )
-        val dim = Color(100, 0 , 0)
+        val strong = Color(229, 1, 1)
+        val c = Color(179, 1, 1)
+        val dim = Color(79, 1, 1)
         val off = Color(255, 255, 255)
 
         val largest_dist = dist_bulbs(bulb(103), centerHeart)+2*w
@@ -53,8 +53,8 @@ class Heart : BaseScript() {
                         set(bulb, dim)
                 }
             }
-            r += 0.4
-            r_+= 0.4
+            r += 0.5
+            r_+= 0.5
             skip(1)
 
             if(r > largest_dist){
@@ -86,6 +86,9 @@ class Heart : BaseScript() {
         }
 
         skip(1)
+        for (bulb in allBulbsGroup) {
+            rgbFade(bulb, Color.black, 10)
+        }
     }
 
     fun dist_bulbs(bulb_1: BulbRGB, bulb_2: BulbRGB):Double{
