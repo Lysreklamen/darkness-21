@@ -9,5 +9,12 @@ class AuroraDemo : BaseScript() {
         //val c = Color(57, 255, 20) // Neon green
         val c = uke_gull
         effect(Aurora(allBulbsGroup, c, 10, 4, 30, 0.0f))
+        skip(201)
+
+        for (bulb in allBulbsGroup) {
+            rgbFade(bulb, Color.black, 10)
+        }
+
+        skip(5)
     }
 }
