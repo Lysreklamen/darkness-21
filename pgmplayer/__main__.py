@@ -36,9 +36,9 @@ from .channels import ChannelMap
 from .playlist import Playlist
 from .frame_rate import FrameRateController
 from .ovdmx import OVDMXOutput
-from .pgm import PGMReader
 from .base import DummyDMXOutput
 from .countdown import CountdownGenerator
+from .player import Player
 
 def main():
     parser = argparse.ArgumentParser(description='pgmplayer version 2')
@@ -48,6 +48,7 @@ def main():
     parser.add_argument('--single-cycle', action='store_true', help='Only play the playlist once and exit')
     parser.add_argument('--pgm', help='The PGM file to play')
     parser.add_argument('--device', help='The OVDMX device to play to. I.e. /dev/ttyAMA0')
+    parser.add_argument('--simulator', action="store_true", help="Send to the simulator instead of a real device")
     parser.add_argument('--fps', type=int, default=20, help='Override the default frame rate of 20fps')
     parser.add_argument('--verify', action='store_true', help='Scan the playlist/pgm file and check for errors')
     parser.add_argument('--countdown',
@@ -55,7 +56,9 @@ def main():
                              'start a countdown for the given number of seconds or minutes:seconds')
     parser.add_argument('--countdown-to',
                         help='Before playing the given file, start a countdown to the given datetime in ISO format, '
-                             'e.g. 2019-09-27T00:00:00+02:00 (only works on Python 3.7 and above)')
+                             'e.g. 2019-09-27T00:00:00 (only works on Python 3.7 and above)')
+    parser.add_argument('--loop-until', help="Run a single PGM file in a loop until a given point in time formatted in ISO format.")
+    parser.add_argument('--loop-pgm', help="Run a single PGM file in a loop until a given point in time provided by --loop-until")
     parser.add_argument('--single-step', action='store_true', help='Single step through the PGM file')
 
     args = parser.parse_args()
@@ -63,13 +66,18 @@ def main():
         print('Exactly one of --pgm and --playlist must be specified', file=sys.stderr)
         exit(1)
 
-    if not args.device and not args.verify:
+    if not args.device and not args.simulator and not args.verify:
         print('A device must be specified if not running a format verification', file=sys.stderr)
         exit(1)
 
     if args.device and args.verify:
         print('A device can not be specified if running a format verification', file=sys.stderr)
         exit(1)
+
+    if args.simulator and args.verify:
+        print('A simulator output can not be specified if running a format verification', file=sys.stderr)
+        exit(1)
+
 
     if args.countdown:
         items = args.countdown.split(":")
@@ -87,6 +95,21 @@ def main():
         countdown_to = datetime.fromisoformat(args.countdown_to)
     else:
         countdown_to = None
+
+    
+    if args.loop_until or args.loop_pgm:
+        if countdown_to is not None:
+            print('--loop-until and --loop-pgm can not be combined with --countdown flags')
+            exit(1)
+        if not args.loop_until:
+            print('--loop-until arg must be set')
+            exit(1)
+        if not args.loop_pgm:
+            print('--loop-pgm arg must be set')
+            exit(1)
+        loop_until = datetime.fromisoformat(args.loop_until)
+    else:
+        loop_until = None
 
     channel_mapping = None
     if args.channel_mapping:
@@ -109,6 +132,11 @@ def main():
 
     if args.device:
         dmx_output = OVDMXOutput(args.device)
+    elif args.simulator:
+        # Do not import in main scope a that would require websocket 
+        # dependencies which is not required for the normal mode.
+        from .development.ws_output import WSDMXOutput
+        dmx_output = WSDMXOutput()
     elif args.verify:
         dmx_output = DummyDMXOutput()
     else:
@@ -125,26 +153,17 @@ def main():
 
         print("Countdown complete! Starting playlist!")
 
-    # Iterate the playlist and play the files
-    for playlist_line_number, pgm_path in playlist.entry_generator():
-        try:
-            print("Starting pgm file from line #{}: {}".format(playlist_line_number, pgm_path))
-            pgm_reader = PGMReader(pgm_path, channel_map=channel_mapping)
-            frame_rate_controller.reset()
+    # Create a Player object    
+    player = Player(dmx_output, channel_mapping, frame_rate_controller)
 
-            for frame_index, frame in pgm_reader.frames():
-                if frame_index % frame_rate == 0:
-                    print("Frame #{:3d} in {}".format(frame_index, pgm_reader))
-                if args.single_step:
-                    ans = input("Single stepping. Proceed to frame #{} Y/y/n/q [or enter]".format(frame_index)).strip()
-                    if ans != '' and ans not in 'Yy':
-                        print("Exiting on request!")
-                        exit(0)
-                else:
-                    frame_rate_controller.next_frame()
-                dmx_output.push_frame(frame)
-        except Exception as e:
-            print("Exception when playing pgm file {}: {}".format(pgm_path, e))
+    if loop_until:
+        # Create a playlist with a single item
+        print("Stopping loop at {}. Current time is {}".format(loop_until, datetime.now()))
+        loop_playlist = Playlist(StringIO(str(Path(args.loop_pgm).absolute().resolve())), repeating=repeating)
+        player.run_playlist(loop_playlist, stop_at=loop_until)
+
+    player.run_playlist(playlist, single_step=args.single_step)
+
 
 
 if __name__ == "__main__":
