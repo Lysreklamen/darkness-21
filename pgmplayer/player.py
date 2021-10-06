@@ -28,7 +28,15 @@ class Player:
                         return
                     
                     if frame_index % self.frame_rate_controller.frame_rate == 0:
-                        print("Frame #{:3d} in {}".format(frame_index, pgm_reader))
+                        print("Frame #{:3d} in {}".format(frame_index, pgm_reader), end="")
+                        if stop_at:
+                            dt = stop_at - datetime.now()
+                            seconds = dt.total_seconds()
+                            minutes = int(seconds / 60)
+                            seconds -= minutes * 60
+                            print(" remaining: {:2d} minutes and {:.2f} seconds)".format(minutes, seconds), end="")
+
+                        print("")
                     if single_step:
                         ans = input("Single stepping. Proceed to frame #{} Y/y/n/q [or enter]".format(frame_index)).strip()
                         if ans != '' and ans not in 'Yy':
