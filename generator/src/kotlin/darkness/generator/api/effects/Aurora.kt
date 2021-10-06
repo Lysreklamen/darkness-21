@@ -14,7 +14,8 @@ class Aurora(
     private val fade: Int,
     /** Number of bulbs that possibly change between blocks */
     private val nChangeBulbs: Int,
-    private val minBrightness: Float
+    private val minBrightness: Float,
+    private val brightnessScale: Float = 1.0f
 ) : EffectBase() {
     private val rnd: Random = Random(1337)
 	private var alt_color: Color = Color(0,0,0)
@@ -32,7 +33,7 @@ class Aurora(
                 while (nextBrightness <= minBrightness) {
                     nextBrightness = rnd.nextFloat()
                 }
-                val c = Color.getHSBColor(hsbValues[0], hsbValues[1], nextBrightness)
+                val c = Color.getHSBColor(hsbValues[0], hsbValues[1], nextBrightness*brightnessScale)
                 rgbFade(nextBulb, c, fade)
             }
             skip(fade)
