@@ -39,5 +39,10 @@ class SimultanDemo : BaseScript() {
             set(allBulbs[allBulbs.size/2-i], 255, 0, 0)
             skip(2)
         }
+        for (bulb in A) {
+                set(bulb, 255, 0, 0)
+                skip(2)
+            }
+        skip(200)
     }
 }
