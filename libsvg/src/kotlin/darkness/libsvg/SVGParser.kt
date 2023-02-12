@@ -29,7 +29,7 @@ import kotlin.math.*
  * - Optionally have a <rectangle> element called background_outline to define a background for the sign
  *   - Optionally have a <desc>path/to/texture.png</desc> subnode to define a rasterized background
  */
-class SVGParser(val svgFile: File, val flatness: Float, val maxLineLength: Float) {
+class SVGParser(val svgFile: File, val flatness: Float, val maxLineLength: Float, val scale: Float) {
     val letters = mutableListOf<Shape>()
     val bulbs = mutableMapOf<Int, Point>()
     val backgroundOutline = Rectangle2D.Float()
@@ -121,7 +121,7 @@ class SVGParser(val svgFile: File, val flatness: Float, val maxLineLength: Float
 
                 // Transform the point to the root coordinate system
                 p = p.matrixTransform(transform)
-                currentPath.add(Point(p.x, p.y))
+                currentPath.add(Point(p.x * scale, p.y * scale))
             }
 
         }
@@ -158,9 +158,9 @@ class SVGParser(val svgFile: File, val flatness: Float, val maxLineLength: Float
                     if (bulbId in bulbs) {
                         throw IOException("Bulb with id $bulbId is defined twice")
                     }
-                    bulbs[bulbId] = Point(p.x, p.y)
+                    bulbs[bulbId] = Point(p.x * scale, p.y * scale)
                 } else {
-                    bulbsWithoutId.add(Point(p.x, p.y))
+                    bulbsWithoutId.add(Point(p.x * scale, p.y * scale))
                 }
 
             }
@@ -177,9 +177,9 @@ class SVGParser(val svgFile: File, val flatness: Float, val maxLineLength: Float
                     if (bulbs.containsKey(bulbId)) {
                         throw IOException("Bulb with id $bulbId is defined twice")
                     }
-                    bulbs[bulbId] = Point(p.x, p.y)
+                    bulbs[bulbId] = Point(p.x * scale, p.y * scale)
                 } else {
-                    bulbsWithoutId.add(Point(p.x, p.y))
+                    bulbsWithoutId.add(Point(p.x * scale, p.y * scale))
                 }
             }
 
@@ -210,10 +210,10 @@ class SVGParser(val svgFile: File, val flatness: Float, val maxLineLength: Float
                     topLeft.x + backgroundOutlineElement.width.baseVal.value,
                     topLeft.y + backgroundOutlineElement.height.baseVal.value).matrixTransform(transform)
 
-                backgroundOutline.x = topLeft.x
-                backgroundOutline.y = topLeft.y
-                backgroundOutline.width = bottomRight.x - topLeft.x
-                backgroundOutline.height = bottomRight.y - topLeft.y
+                backgroundOutline.x = topLeft.x * scale
+                backgroundOutline.y = topLeft.y * scale
+                backgroundOutline.width = (bottomRight.x - topLeft.x) * scale
+                backgroundOutline.height = (bottomRight.y - topLeft.y) * scale
 
                 val backgroundDescElements = backgroundOutlineElement.getElementsByTagName("desc")
                 if (backgroundDescElements.length == 1) {
@@ -261,8 +261,8 @@ class SVGParser(val svgFile: File, val flatness: Float, val maxLineLength: Float
                     SVGOMPoint(centerElement.cx.baseVal.value, centerElement.cy.baseVal.value).matrixTransform(transform)
                 else -> throw NotImplementedError("The center element is not a circle nor a ellipse")
             }
-            cx = p.x
-            cy = p.y
+            cx = p.x * scale
+            cy = p.y * scale
         }
 
         // Move all the points to be referenced to the new center point origo

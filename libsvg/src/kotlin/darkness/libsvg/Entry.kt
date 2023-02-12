@@ -26,6 +26,7 @@ class Entry {
             var flatness = 10.0f
             var maxLineLength = 10.0f
             var visualize = false
+            var scale = 1.0f
 
             var index = 0
             while (index < args.size) {
@@ -36,8 +37,10 @@ class Entry {
                     maxLineLength = args[++index].toFloat()
                 } else if (arg == "-o" && index + 1 < args.size) {
                     outputFileName = args[++index]
-                } else if(arg == "-v") {
+                } else if (arg == "-v") {
                     visualize = true
+                } else if ((arg == "--scale" || arg == "-s") && index + 1 < args.size) {
+                    scale = args[++index].toFloat()
                 } else {
                     if (fileName != null) {
                         error("Filename can not be provided twice")
@@ -53,7 +56,7 @@ class Entry {
 
             // Load the SVG file into Batik
             val svgFile = File(fileName)
-            val parser = SVGParser(svgFile, flatness, maxLineLength)
+            val parser = SVGParser(svgFile, flatness, maxLineLength, scale)
             parser.parse()
 
             val gen = PatternGenerator(parser)

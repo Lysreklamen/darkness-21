@@ -51,7 +51,27 @@ class PatternGenerator(val parser: SVGParser) {
                 }
                 output.append("${" ".repeat(16)}]\n")
                 output.append("${" ".repeat(12)}},\n")
-                output.append("${" ".repeat(12)}\"bulbs\":[]\n")
+                output.append("${" ".repeat(12)}\"bulbs\": [\n")
+
+                for((index, bulbEntry) in parser.bulbs.entries.withIndex()) {
+                    val (bulbId, bulb) = bulbEntry
+                    var rChan = 200 +bulbId
+                    var gChan = 300 +bulbId
+                    var bChan = 400 +bulbId
+                    if (bulbId >= 100) {
+                        rChan = bulbId-100
+                        gChan = 50+bulbId-100
+                        bChan = 100+bulbId-100
+                    }
+                    output.append("${" ".repeat(16)}")
+                    output.append("[${bulbId}, ${bulb.x}, ${-bulb.y}, ${rChan}, ${gChan}, ${bChan}]")
+                    if(index != parser.bulbs.size - 1){
+                        output.append(",")
+                    }
+                    output.append("\n")
+                }
+                output.append("${" ".repeat(12)}")
+                output.append("]\n")
 
                 output.append("${" ".repeat(8)}}")
                 if(s != parser.letters.size -1){
