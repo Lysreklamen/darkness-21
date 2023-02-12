@@ -76,23 +76,24 @@ class Visualizer(private val parser: SVGParser) : JPanel() {
                 parser.backgroundOutline.height.toInt())
         }
 
-        for (shape in parser.letters) {
+        for (letter in parser.letters) {
 
             g2.color = Color.LIGHT_GRAY
             g2.stroke = BasicStroke(2.0f)
-            val bb = shape.boundingBox
+            val bb = letter.boundingBox
             g2.drawRect(CENTER_X + bb[0].toInt(), CENTER_Y + bb[1].toInt(), bb[2].toInt(), bb[3].toInt())
 
-            drawOutline(g2, shape.outline)
-            for (hole in shape.holes) {
+            drawOutline(g2, letter.outline)
+            for (hole in letter.holes) {
                 drawOutline(g2, hole)
+            }
+            for ((bulbId, bulb) in letter.bulbs.entries) {
+                g2.color = COLOR_BULB
+                g2.draw(Ellipse2D.Float(CENTER_X + bulb.x, CENTER_Y + bulb.y, 4.0f, 4.0f))
+                g2.drawString("$bulbId", CENTER_X + bulb.x, CENTER_Y + bulb.y)
             }
         }
 
-        for ((bulbId, bulb) in parser.bulbs.entries) {
-            g2.color = COLOR_BULB
-            g2.draw(Ellipse2D.Float(CENTER_X + bulb.x, CENTER_Y + bulb.y, 4.0f, 4.0f))
-            g2.drawString("$bulbId", CENTER_X + bulb.x, CENTER_Y + bulb.y)
-        }
+
     }
 }

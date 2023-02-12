@@ -9,6 +9,7 @@ import org.apache.batik.dom.svg.SVGOMPoint
 import org.apache.batik.parser.AWTPathProducer
 import org.apache.batik.parser.PathParser
 import org.apache.batik.util.XMLResourceDescriptor
+import org.w3c.dom.Element
 import org.w3c.dom.svg.*
 import java.awt.geom.PathIterator
 import java.awt.geom.Rectangle2D
@@ -30,8 +31,8 @@ import kotlin.math.*
  *   - Optionally have a <desc>path/to/texture.png</desc> subnode to define a rasterized background
  */
 class SVGParser(val svgFile: File, val flatness: Float, val maxLineLength: Float, val scale: Float) {
-    val letters = mutableListOf<Shape>()
-    val bulbs = mutableMapOf<Int, Point>()
+    val letters = mutableListOf<Letter>()
+
     val backgroundOutline = Rectangle2D.Float()
     var backgroundTexture = ""
 
@@ -66,17 +67,24 @@ class SVGParser(val svgFile: File, val flatness: Float, val maxLineLength: Float
 
         // The letters outline will consist of a series of closed polygons
 
+        val allBulbs = mutableMapOf<Int, Point>()
+        val bulbsWithoutId = mutableListOf<Pair<Letter, Point>>()
+
         // Iterate all the <path> elements under the text group
-        val elems = textGroup.getElementsByTagName("path")
-        for (i in 0 until elems.length) {
-            val elem = elems.item(i) as SVGOMPathElement
+        val letterGroups = textGroup.getElementsByTagName("g")
+        for (i in 0 until letterGroups.length) {
+            val letterGroup = letterGroups.item(i) as Element
+            val paths = letterGroup.getElementsByTagName("path")
+            if (paths.length != 1) throw Exception("There must be exactly one path inside a letter group")
+            val path = paths.item(0) as SVGOMPathElement
+
             // Calculate a transform from the root node to the element
-            val transform = elem.getTransformToElement(root)
+            val transform = path.getTransformToElement(root)
             // Create a path parser to parse the svg path format
             val pp = PathParser()
             val pa = AWTPathProducer()
             pp.pathHandler = pa
-            pp.parse(elem.getAttribute("d"))
+            pp.parse(path.getAttribute("d"))
 
             // Flatten and iterate through the path.
             // Flattening causes the path iterator to only output straight lines
@@ -85,9 +93,9 @@ class SVGParser(val svgFile: File, val flatness: Float, val maxLineLength: Float
             val pathIterator = pa.shape.getPathIterator(null, flatness.toDouble())
 
             // Create an empty shape
-            val currentShape = Shape()
-            letters.add(currentShape)
-            var currentPath = currentShape.outline
+            val currentLetter = Letter()
+            letters.add(currentLetter)
+            var currentPath = currentLetter.outline
 
             // The PathInterator api requires a float array with 6 elements, even tho we only
             // really use the first 2 elements when using a flattened path
@@ -103,9 +111,9 @@ class SVGParser(val svgFile: File, val flatness: Float, val maxLineLength: Float
                     continue
                 } else if (ret == PathIterator.SEG_MOVETO) {
                     // Create a new hole
-                    if (currentShape.outline.isNotEmpty()) {
+                    if (currentLetter.outline.isNotEmpty()) {
                         currentPath = ArrayList()
-                        currentShape.holes.add(currentPath)
+                        currentLetter.holes.add(currentPath)
                     }
                     // Add the point to our shape
                 } else if (ret == PathIterator.SEG_LINETO) {
@@ -124,6 +132,65 @@ class SVGParser(val svgFile: File, val flatness: Float, val maxLineLength: Float
                 currentPath.add(Point(p.x * scale, p.y * scale))
             }
 
+            // Iterate all bulbs. Either SVG circles or ellipses
+            val circles = letterGroup.getElementsByTagName("circle")
+            for (j in 0 until circles.length) {
+                val elem = circles.item(j) as SVGOMCircleElement
+
+                val transform = elem.getTransformToElement(root)
+                val p = (SVGOMPoint(elem.cx.baseVal.value, elem.cy.baseVal.value) as SVGPoint)
+                    .matrixTransform(transform)
+
+                val bulb = Point(p.x * scale, p.y * scale)
+                if (elem.id != null && elem.id.startsWith("bulb-")) {
+                    val bulbId = elem.id.substringAfter('-').toInt()
+                    if (bulbId in allBulbs) {
+                        throw IOException("Bulb with id $bulbId is defined twice")
+                    }
+                    allBulbs[bulbId] = bulb
+                    currentLetter.bulbs[bulbId] = bulb
+                } else {
+                    bulbsWithoutId.add(Pair(currentLetter, bulb))
+                }
+
+            }
+
+            val ellipses = letterGroup.getElementsByTagName("ellipse")
+            for (i in 0 until ellipses.length) {
+                val elem = ellipses.item(i) as SVGOMEllipseElement
+
+                val transform = elem.getTransformToElement(root)
+                val p = (SVGOMPoint(elem.cx.baseVal.value, elem.cy.baseVal.value) as SVGPoint)
+                    .matrixTransform(transform)
+
+                val bulb = Point(p.x * scale, p.y * scale)
+                if (elem.id != null && elem.id.startsWith("bulb-")) {
+                    val bulbId = elem.id.substringAfter('-').toInt()
+                    if (bulbId in allBulbs) {
+                        throw IOException("Bulb with id $bulbId is defined twice")
+                    }
+                    allBulbs[bulbId] = bulb
+                    currentLetter.bulbs[bulbId] = bulb
+                } else {
+                    bulbsWithoutId.add(Pair(currentLetter, bulb))
+                }
+            }
+
+        }
+
+        // Order the bulbs. Columns first, highest first
+        bulbsWithoutId.sortWith(compareBy({ it.second.x }, { it.second.y }))
+
+        var nextAvailableId = 0
+        for ((letter, bulb) in bulbsWithoutId) {
+            while (nextAvailableId in allBulbs) {
+                nextAvailableId++
+            }
+            if (nextAvailableId > 1000) {
+                throw Exception("Ran out of available bulb ids")
+            }
+            allBulbs[nextAvailableId] = bulb
+            letter.bulbs[nextAvailableId] = bulb
         }
 
         if (letters.isEmpty()) {
@@ -141,62 +208,6 @@ class SVGParser(val svgFile: File, val flatness: Float, val maxLineLength: Float
             }
         }
 
-        val bulbGroup = root.getElementById("group_bulbs")
-        if (bulbGroup != null) {
-            val bulbsWithoutId = mutableListOf<Point>()
-            // Iterate all bulbs. Either SVG circles or ellipses
-            val circleElems = bulbGroup.getElementsByTagName("circle")
-            for (i in 0 until circleElems.length) {
-                val elem = circleElems.item(i) as SVGOMCircleElement
-
-                val transform = elem.getTransformToElement(root)
-                var p = SVGOMPoint(elem.cx.baseVal.value, elem.cy.baseVal.value) as SVGPoint
-                p = p.matrixTransform(transform)
-
-                if (elem.id != null && elem.id.startsWith("bulb-")) {
-                    val bulbId = elem.id.substringAfter('-').toInt()
-                    if (bulbId in bulbs) {
-                        throw IOException("Bulb with id $bulbId is defined twice")
-                    }
-                    bulbs[bulbId] = Point(p.x * scale, p.y * scale)
-                } else {
-                    bulbsWithoutId.add(Point(p.x * scale, p.y * scale))
-                }
-
-            }
-
-            val ellipseElems = bulbGroup.getElementsByTagName("ellipse")
-            for (i in 0 until ellipseElems.length) {
-                val elem = ellipseElems.item(i) as SVGOMEllipseElement
-
-                val transform = elem.getTransformToElement(root)
-                val p = (SVGOMPoint(elem.cx.baseVal.value, elem.cy.baseVal.value) as SVGPoint).matrixTransform(transform)
-
-                if (elem.id != null && elem.id.startsWith("bulb-")) {
-                    val bulbId = elem.id.substringAfter('-').toInt()
-                    if (bulbs.containsKey(bulbId)) {
-                        throw IOException("Bulb with id $bulbId is defined twice")
-                    }
-                    bulbs[bulbId] = Point(p.x * scale, p.y * scale)
-                } else {
-                    bulbsWithoutId.add(Point(p.x * scale, p.y * scale))
-                }
-            }
-
-            // Order the bulbs. Columns first, highest first
-            bulbsWithoutId.sortWith(compareBy({ (it.x / 10.0f).roundToInt() }, { (it.y / 10.0f).roundToInt() }, { it.x }, { it.y }))
-
-            var nextAvailableId = 0
-            for (bulb in bulbsWithoutId) {
-                while (nextAvailableId in bulbs) {
-                    nextAvailableId++
-                }
-                if (nextAvailableId > 1000) {
-                    throw Exception("Ran out of available bulb ids")
-                }
-                bulbs[nextAvailableId] = bulb
-            }
-        }
 
         // Find the background outline if it exists
         val backgroundOutlineElement = root.getElementById("background_outline")
@@ -232,7 +243,7 @@ class SVGParser(val svgFile: File, val flatness: Float, val maxLineLength: Float
         var maxX = letters.map { it.boundingBox[0] + it.boundingBox[2] }.maxOrNull()!!
         var maxY = letters.map { it.boundingBox[1] + it.boundingBox[3] }.maxOrNull()!!
 
-        for (bulb in bulbs.values) {
+        for (bulb in allBulbs.values) {
             minX = min(minX, bulb.x)
             minY = min(minY, bulb.y)
             maxX = max(maxX, bulb.x)
@@ -266,23 +277,27 @@ class SVGParser(val svgFile: File, val flatness: Float, val maxLineLength: Float
         }
 
         // Move all the points to be referenced to the new center point origo
-        for (shape in letters) {
-            for (i in 0 until shape.outline.size) {
-                val p = shape.outline[i]
-                shape.outline[i] = Point(p.x - cx, p.y - cy)
+        for (letter in letters) {
+            for (i in 0 until letter.outline.size) {
+                val p = letter.outline[i]
+                letter.outline[i] = Point(p.x - cx, p.y - cy)
             }
 
-            for (hole in shape.holes) {
+            for (hole in letter.holes) {
                 for (i in 0 until hole.size) {
                     val p = hole[i]
                     hole[i] = Point(p.x - cx, p.y - cy)
                 }
             }
+            
+            for ((bulbId, p) in letter.bulbs.toMap()) {
+                val point = Point(p.x - cx, p.y - cy)
+                allBulbs[bulbId] = point
+                letter.bulbs[bulbId] = point
+            }
         }
 
-        for ((bulbId, p) in bulbs) {
-            bulbs[bulbId] = Point(p.x - cx, p.y - cy)
-        }
+
 
         if (!backgroundOutline.isEmpty) {
             backgroundOutline.x -= cx
@@ -344,9 +359,10 @@ class SVGParser(val svgFile: File, val flatness: Float, val maxLineLength: Float
 
     class Point(val x: Float, val y: Float)
 
-    class Shape {
+    class Letter {
         val outline = mutableListOf<Point>()
         val holes = mutableListOf<MutableList<Point>>()
+        val bulbs = mutableMapOf<Int, Point>()
 
         val boundingBox: FloatArray
             get() {
