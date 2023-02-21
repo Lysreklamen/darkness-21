@@ -1,99 +1,78 @@
 package darkness.libsvg
 
-import java.awt.geom.Rectangle2D
+import com.fasterxml.jackson.core.JsonGenerator
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter.Indenter
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 
-class PatternGenerator(val parser: SVGParser) {
+/**
+ * This class, along with [PatternGroup] and [PatternAlu], match the structure of the JSON file
+ * format that is expected by websim for the pattern file.
+ */
+private data class Pattern(
+    val formatVersion: String,
+    val groups: List<PatternGroup>,
+)
 
-    val pattern: String
-        get() {
-            val output = StringBuilder()
-            val scale = 0.01f
+private data class PatternGroup(
+    val pos: List<Float>,
+    val alu: PatternAlu,
+    val bulbs: List<List<Any>>,
+)
 
-            output.append("""
-                {
-                    "format_versin": "v0.1.0",
-                    "groups": [
-                """.trimIndent() + "\n"
-            )
+private data class PatternAlu(
+    val outline: List<List<Float>>,
+    val holes: List<List<List<Float>>>,
+)
 
-            if (!parser.backgroundOutline.isEmpty) {
-                output.append("BACKGROUND (%.3f, %.3f, %.3f, %.3f)".format(parser.backgroundOutline.x * scale,
-                    parser.backgroundOutline.y * scale,
-                    parser.backgroundOutline.width * scale,
-                    parser.backgroundOutline.height * scale))
-
-                if (parser.backgroundTexture.isNotBlank()) {
-                    output.append("; ").append(parser.backgroundTexture)
+private val prettyPrinter = DefaultPrettyPrinter()
+    .withArrayIndenter(
+        object : Indenter {
+            override fun writeIndentation(g: JsonGenerator?, level: Int) {
+                val list = g?.currentValue as? List<*>
+                // Write points (two floats) and bulbs (six elements, first is bulb id) on a single line,
+                // but write all other arrays with each element on its own line and indented
+                if (list?.size == 2 && list.all { it is Float } || list?.size == 6 && list[0] is Int) {
+                    g.writeRaw(' ')
+                } else {
+                    g?.writeRaw("\n" + "  ".repeat(level))
                 }
-                output.append("\n\n")
             }
+            override fun isInline() = false
+        },
+    )
 
-            for ((letterIndex, letter) in parser.letters.withIndex()) {
-                output.append("""        {
-            "pos": [0.0, 0.0],
-            "alu": {
-                "outline": [
-"""
+private val jsonMapper = jacksonObjectMapper().writer(prettyPrinter)
+
+/**
+ * This class accepts an [SVGParser] that has already parsed an SVG file. Calling [generate] will
+ * return a JSON file for the pattern, in the format that is expected by websim.
+ */
+class PatternGenerator(private val parser: SVGParser) {
+    fun generate(): String {
+        val pattern = Pattern(
+            formatVersion = "v0.1.0",
+            groups = parser.letters.map { letter ->
+                PatternGroup(
+                    pos = listOf(0.0f, 0.0f),
+                    alu = PatternAlu(
+                        outline = letter.outline.map { point -> listOf(point.x, -point.y) },
+                        holes = letter.holes.map { hole ->
+                            hole.map { point -> listOf(point.x, -point.y) }
+                        },
+                    ),
+                    bulbs = letter.bulbs.map { (bulbId, bulb) ->
+                        val (redChannel, greenChannel, blueChannel) = if (bulbId >= 100) {
+                            Triple(bulbId - 100, 50 + bulbId - 100, 100 + bulbId - 100)
+                        } else {
+                            Triple(200 + bulbId, 300 + bulbId, 400 + bulbId)
+                        }
+                        listOf(bulbId, bulb.x, -bulb.y, redChannel, greenChannel, blueChannel)
+                    }
                 )
-
-                printPoints(letter.outline, output, 20)
-                output.append("${" ".repeat(16)}],\n")
-                output.append("${" ".repeat(16)}\"holes\": [\n")
-
-                for ((i,holePoints) in letter.holes.withIndex()){
-                    output.append("${" ".repeat(20)}[\n")
-                    printPoints(holePoints, output, 24)
-                    output.append("${" ".repeat(20)}]")
-                    if( i != letter.holes.size-1){
-                        output.append(",")
-                    }
-                    output.append("\n")
-                }
-                output.append("${" ".repeat(16)}]\n")
-                output.append("${" ".repeat(12)}},\n")
-                output.append("${" ".repeat(12)}\"bulbs\": [\n")
-
-                for((index, bulbEntry) in letter.bulbs.entries.withIndex()) {
-                    val (bulbId, bulb) = bulbEntry
-                    var rChan = 200 +bulbId
-                    var gChan = 300 +bulbId
-                    var bChan = 400 +bulbId
-                    if (bulbId >= 100) {
-                        rChan = bulbId-100
-                        gChan = 50+bulbId-100
-                        bChan = 100+bulbId-100
-                    }
-                    output.append("${" ".repeat(16)}")
-                    output.append("[${bulbId}, ${bulb.x}, ${-bulb.y}, ${rChan}, ${gChan}, ${bChan}]")
-                    if(index != letter.bulbs.size - 1){
-                        output.append(",")
-                    }
-                    output.append("\n")
-                }
-                output.append("${" ".repeat(12)}")
-                output.append("]\n")
-
-                output.append("${" ".repeat(8)}}")
-                if(letterIndex != parser.letters.size -1){
-                    output.append(",")
-                }
-                output.append("\n")
-
             }
-            output.append("]\n}")
+        )
 
-            output.append("\n\n")
-
-            return output.toString()
-        }
-
-    private fun printPoints(points: List<SVGParser.Point>, output: StringBuilder, indentation: Int) {
-        for ((i, p) in points.withIndex()) {
-            output.append("${" ".repeat(indentation)}[${p.x}, ${-p.y}]")
-            if (i != points.size - 1) {
-                output.append(",")
-            }
-            output.append("\n")
-        }
+        return jsonMapper.writeValueAsString(pattern)
     }
 }

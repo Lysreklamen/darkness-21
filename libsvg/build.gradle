@@ -9,6 +9,7 @@ repositories {
 
 dependencies {
     implementation 'org.apache.xmlgraphics:batik-all:1.11'
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.13.4'
 }
 
 application {
