@@ -74,7 +74,9 @@ class PatternGenerator(private val parser: SVGParser) {
             },
         )
 
-        return jsonMapper.writeValueAsString(pattern)
+        val json = jsonMapper.writeValueAsString(pattern)
+        // Unfortunately, Jackson generates Windows line endings "\r\n", so we delete all the "\r"
+        return json.replace("\r", "")
     }
 }
 
