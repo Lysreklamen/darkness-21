@@ -25,23 +25,28 @@ private data class PatternAlu(
     val holes: List<List<List<Float>>>,
 )
 
+// This is somewhat unnecessary, but it makes the output JSON look nicer than the default pretty
+// printing that Jackson offers.
 private val prettyPrinter = DefaultPrettyPrinter()
     .withArrayIndenter(
         object : Indenter {
-            override fun writeIndentation(g: JsonGenerator?, level: Int) {
-                val list = g?.currentValue as? List<*>
-                // Write points (two floats) and bulbs (six elements, first is bulb id) on a single line,
-                // but write all other arrays with each element on its own line and indented
+            override fun writeIndentation(g: JsonGenerator, level: Int) {
+                val list = g.currentValue as? List<*>
+                // This function is called before every array element is printed, and we get to
+                // check what is in the array that we're printing. We want to write points
+                // (two floats) and bulbs (six elements, where the first one is an int) on a single
+                // line, but write all other arrays with each element on its own line and indented.
                 if (list?.size == 2 && list.all { it is Float } || list?.size == 6 && list[0] is Int) {
                     g.writeRaw(' ')
                 } else {
-                    g?.writeRaw("\n" + "  ".repeat(level))
+                    g.writeRaw("\n" + "  ".repeat(level))
                 }
             }
             override fun isInline() = false
         },
     )
 
+/** This is the object that can convert Kotlin objects to JSON. */
 private val jsonMapper = jacksonObjectMapper().writer(prettyPrinter)
 
 /**
@@ -61,18 +66,40 @@ class PatternGenerator(private val parser: SVGParser) {
                             hole.map { point -> listOf(point.x, -point.y) }
                         },
                     ),
-                    bulbs = letter.bulbs.map { (bulbId, bulb) ->
-                        val (redChannel, greenChannel, blueChannel) = if (bulbId >= 100) {
-                            Triple(bulbId - 100, 50 + bulbId - 100, 100 + bulbId - 100)
-                        } else {
-                            Triple(200 + bulbId, 300 + bulbId, 400 + bulbId)
-                        }
-                        listOf(bulbId, bulb.x, -bulb.y, redChannel, greenChannel, blueChannel)
-                    }
+                    bulbs = letter.bulbs.map { (bulbId, position) ->
+                        val (redChannel, greenChannel, blueChannel) = createChannels(bulbId)
+                        listOf(bulbId, position.x, -position.y, redChannel, greenChannel, blueChannel)
+                    },
                 )
-            }
+            },
         )
 
         return jsonMapper.writeValueAsString(pattern)
+    }
+}
+
+/**
+ * Here, we autogenerate DMX channel numbers based on the bulb ids, in a way that is fairly easy to
+ * work with mentally. Most signs have less than 100 bulbs, so that is the simplest scheme: the bulb
+ * with id x gets the red channel 200+x, the green channel 300+x, and the blue channel 400+x. If any
+ * bulb has an id that is greater than 99, we require that it is less than 150; we subtract 100 from
+ * the bulb id to get a number 0 <= y < 50, and it gets the red channel y, the green channel y+50,
+ * and the blue channel y+100. Thus, we get the following channel setup:
+ * Red:       0-49 and 200-299
+ * Green:    50-99 and 300-399
+ * Blue:   100-149 and 400-499
+ * The channels 150-199 and 500-511 will never be assigned, but if need be, we could come up with
+ * assignments for those as well if more than 150 bulbs are needed.
+ */
+private fun createChannels(bulbId: Int): Triple<Int, Int, Int> {
+    return when {
+        bulbId < 100 -> Triple(200 + bulbId, 300 + bulbId, 400 + bulbId)
+        bulbId < 150 -> {
+            val shiftedId = bulbId - 100
+            Triple(shiftedId + 0, shiftedId + 50, shiftedId + 100)
+        }
+        else -> throw Exception(
+            "Bulb id $bulbId is not supported for pattern generation (must be less than 150)",
+        )
     }
 }
