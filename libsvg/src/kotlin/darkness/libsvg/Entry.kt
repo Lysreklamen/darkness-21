@@ -1,8 +1,7 @@
-package darkness.libsvg;
+package darkness.libsvg
 
 import java.awt.Dimension
 import java.io.File
-import java.io.FileOutputStream
 import javax.swing.JFrame
 import javax.swing.WindowConstants
 
@@ -14,10 +13,10 @@ import javax.swing.WindowConstants
  * --splitlines <float> : the maximum distance between points in the outline of the letters
  * -o <filename> : the filename to write a pattern file to
  * -v : Display a UI of the parsed SVG
+ * -s <scale> or --scale <scale> : scale the SVG by the given factor
  * <filename.svg> : the SVG file to parse
  */
 class Entry {
-
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
@@ -55,26 +54,22 @@ class Entry {
             }
 
             // Load the SVG file into Batik
-            val svgFile = File(fileName)
-            val parser = SVGParser(svgFile, flatness, maxLineLength, scale)
+            val parser = SVGParser(File(fileName), flatness, maxLineLength, scale)
             parser.parse()
 
-            val gen = PatternGenerator(parser)
-            println(gen.pattern)
-            if (outputFileName != null) {
-                val of = File(outputFileName)
-                FileOutputStream(of).use {
-                    it.write(gen.pattern.toByteArray())
-                }
-            }
+            val generator = PatternGenerator(parser)
+            val pattern = generator.generate()
+            println(pattern)
+            outputFileName?.let { File(it).writeText(pattern) }
 
             if (visualize) {
-                val ui = JFrame()
-                ui.title = "SVG Visualizer"
-                ui.size = Dimension(640, 480)
-                ui.contentPane.add(Visualizer(parser))
-                ui.defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
-                ui.isVisible = true;
+                with(JFrame()) {
+                    title = "SVG Visualizer"
+                    size = Dimension(640, 480)
+                    contentPane.add(Visualizer(parser))
+                    defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
+                    isVisible = true
+                }
             }
         }
     }
