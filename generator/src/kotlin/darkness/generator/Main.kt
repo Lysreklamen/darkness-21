@@ -50,7 +50,7 @@ object Main {
         val scriptClass = Main.javaClass.classLoader.loadClass("darkness.generator.scripts.${sceneName}.${scriptName}")
         val script = scriptClass.getConstructor().newInstance() as ScriptBase
 
-        PgmOutput("output/${scriptName}.pgm").use { output ->
+        PgmOutput("generator/output/${scriptName}.pgm").use { output ->
             runBlocking {
                 ScriptManager.start(script, output)
             }

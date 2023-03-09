@@ -6,7 +6,9 @@ import subprocess
 import time
 import os
 
-SIGN="uka21"
+
+
+SIGN="la100k"
 SCRIPTS_BASE_DIR=Path(Path.cwd(), "generator/src/kotlin/darkness/generator/scripts/")
 OUTPUT_DIR=Path(Path.cwd(), "generator/output/")
 SCRIPTS_DIR=Path(SCRIPTS_BASE_DIR, SIGN)
@@ -21,17 +23,16 @@ last_script_selected = None
 while True:
     # Send a blank frame to make the sign go dark
     ws.broadcast(bytes(512))
-    
+
     # If the script has been deleted remove the reference
     if last_script_selected and not last_script_selected.exists():
         last_script_selected = None
-
 
     scripts = sorted([s for s in SCRIPTS_DIR.glob('*.kt') if s.name != 'BaseScript.kt'])
     print("Select script to run or action:")
     for i, script in enumerate(scripts):
         print(f"[{i: >2}] {script.stem}")
-    
+
     print("[ R] refresh")
     print("[ D] set startup delay")
     print("[ Q] exit")
@@ -63,15 +64,15 @@ while True:
         run_script = last_script_selected
     elif cmd.isnumeric():
         script_num = int(cmd)
-        if script_num < 0 or script_num > len(scripts):
+        if script_num < 0 or script_num >= len(scripts):
             print("Script index out of range")
             continue
         run_script = scripts[script_num]
-    
+
     if not run_script:
         print("No script selected...")
         continue
-    
+
     last_script_selected = run_script
     script_name = run_script.stem
     print(f"Selected script \"{script_name}\"")
@@ -85,7 +86,7 @@ while True:
 
     # illegal-access=permit thingy is a workaround for openjdk 16/17 for kotlin
     res = subprocess.run(f"{gradlew} -Dkotlin.daemon.jvm.options=--illegal-access=permit :generator:run --args=\"{SIGN} '{script_name}'\"", shell=True)
-    if res.returncode != 0: 
+    if res.returncode != 0:
         print("Build failed! check compile log for errors")
         input("press enter to continue:")
         continue
@@ -100,7 +101,7 @@ while True:
         print("For some reason the generated PGM file does not exist. Error!")
         input("press enter to continue:")
         continue
-    
+
 
     pgm = PGMReader(pgm_path)
     frc.reset()

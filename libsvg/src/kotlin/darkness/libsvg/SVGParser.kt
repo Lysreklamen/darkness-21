@@ -289,7 +289,7 @@ class SVGParser(val svgFile: File, val flatness: Float, val maxLineLength: Float
                     hole[i] = Point(p.x - cx, p.y - cy)
                 }
             }
-            
+
             for ((bulbId, p) in letter.bulbs.toMap()) {
                 val point = Point(p.x - cx, p.y - cy)
                 allBulbs[bulbId] = point
