@@ -22,18 +22,18 @@ object Main {
 
         parser.addArgument("scene").help("The scene name to use. Ie 'uka21'")
         parser.addArgument("script").help("The script to run")
+        parser.addArgument("pgmOutputDir").setDefault("generator/output").help("The directory in which to place the output pgm")
 
-        var sceneName = ""
-        var scriptName = ""
-        try {
-            val ns = parser.parseArgs(args)
-            sceneName = ns["scene"]
-            scriptName = ns["script"]
+        val ns = try {
+            parser.parseArgs(args)
         } catch (e: ArgumentParserException) {
             parser.handleError(e)
             exitProcess(1)
             return
         }
+        val sceneName: String = ns["scene"]
+        val scriptName: String = ns["script"]
+        val pgmOutputDir: String = ns["pgmOutputDir"]
 
 
         val sceneFile = javaClass.classLoader.getResourceAsStream("scenes/${sceneName}/scene.json");
@@ -49,8 +49,7 @@ object Main {
 
         val scriptClass = Main.javaClass.classLoader.loadClass("darkness.generator.scripts.${sceneName}.${scriptName}")
         val script = scriptClass.getConstructor().newInstance() as ScriptBase
-
-        PgmOutput("generator/output/${scriptName}.pgm").use { output ->
+        PgmOutput("$pgmOutputDir/${scriptName}.pgm").use { output ->
             runBlocking {
                 ScriptManager.start(script, output)
             }

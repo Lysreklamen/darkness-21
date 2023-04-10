@@ -85,7 +85,7 @@ while True:
         gradlew = "gradlew.bat"
 
     # illegal-access=permit thingy is a workaround for openjdk 16/17 for kotlin
-    res = subprocess.run(f"{gradlew} -Dkotlin.daemon.jvm.options=--illegal-access=permit :generator:run --args=\"{SIGN} '{script_name}'\"", shell=True)
+    res = subprocess.run(f"{gradlew} -Dkotlin.daemon.jvm.options=--illegal-access=permit :generator:run --args=\"{SIGN} '{script_name}' output\"", shell=True)
     if res.returncode != 0:
         print("Build failed! check compile log for errors")
         input("press enter to continue:")
