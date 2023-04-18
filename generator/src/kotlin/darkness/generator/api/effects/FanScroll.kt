@@ -81,8 +81,6 @@ class FanScroll(
                 val angle = atan2((bulb.position[0] - centerX).toDouble(), (bulb.position[1] - centerY).toDouble())
                 if (abs(angle - state) < epsilon) {
                     set(bulb, fanColor)
-                } else {
-                    relinquish(bulb)
                 }
             }
 

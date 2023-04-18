@@ -9,7 +9,6 @@ import net.sourceforge.argparse4j.ArgumentParsers
 import net.sourceforge.argparse4j.inf.ArgumentParserException
 import org.json.JSONArray
 import org.json.JSONObject
-import java.math.BigDecimal
 import kotlin.system.exitProcess
 
 object Main {
@@ -29,23 +28,21 @@ object Main {
         } catch (e: ArgumentParserException) {
             parser.handleError(e)
             exitProcess(1)
-            return
         }
         val sceneName: String = ns["scene"]
         val scriptName: String = ns["script"]
         val pgmOutputDir: String = ns["pgmOutputDir"]
 
-
-        val sceneFile = javaClass.classLoader.getResourceAsStream("scenes/${sceneName}/scene.json");
+        val sceneFile = javaClass.classLoader.getResourceAsStream("scenes/${sceneName}/scene.json")
         if (sceneFile == null) {
             println("Scene not found")
             exitProcess(1)
         }
 
-        val sceneJsonBytes = sceneFile.readBytes();
+        val sceneJsonBytes = sceneFile.readBytes()
         val scene = JSONObject(sceneJsonBytes.decodeToString())
 
-        registerBulbsFromScene(scene);
+        registerBulbsFromScene(scene)
 
         val scriptClass = Main.javaClass.classLoader.loadClass("darkness.generator.scripts.${sceneName}.${scriptName}")
         val script = scriptClass.getConstructor().newInstance() as ScriptBase
@@ -59,7 +56,7 @@ object Main {
     private fun registerBulbsFromScene(scene: JSONObject) {
         val groups = scene["groups"] as JSONArray
         for (gi in 0 until groups.length()) {
-            val group = groups.getJSONObject(gi);
+            val group = groups.getJSONObject(gi)
             val groupPos = group["pos"] as JSONArray
             val groupX = groupPos.getDouble(0)
             val groupY = groupPos.getDouble(1)

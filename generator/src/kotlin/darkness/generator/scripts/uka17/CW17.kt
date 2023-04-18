@@ -9,7 +9,6 @@ class CW17 : BaseScript() {
         super.run()
 
         // Change up colours
-        val warmerWhite = Color(255, 214, 170)
         val warmWhite = Color(255, 197, 143)
         val skyBlue = Color(64, 156, 255)
 

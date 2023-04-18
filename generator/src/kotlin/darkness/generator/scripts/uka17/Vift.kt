@@ -8,8 +8,6 @@ class Vift : BaseScript() {
         super.run()
 
         val c = Color(218, 165, 32)
-        val t = 3
-        val fade_ext = 7
 
         val fan_full1 = FanScroll(allBulbsRGB, 50, c, true, false, 1.0)
         effect(fan_full1)

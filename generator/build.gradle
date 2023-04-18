@@ -17,6 +17,11 @@ application {
     mainClass = "darkness.generator.Main"
 }
 
+tasks.compileKotlin {
+    kotlinOptions {
+        freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
+    }
+}
 
 sourceSets {
     main {

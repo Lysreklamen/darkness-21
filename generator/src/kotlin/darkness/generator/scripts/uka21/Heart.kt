@@ -21,7 +21,6 @@ class Heart : BaseScript() {
         val strong = Color(229, 1, 1)
         val c = Color(179, 1, 1)
         val dim = Color(79, 1, 1)
-        val off = Color(255, 255, 255)
 
         val largest_dist = dist_bulbs(bulb(103), centerHeart)+2*w
 

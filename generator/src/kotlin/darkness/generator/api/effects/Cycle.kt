@@ -19,9 +19,7 @@ class Cycle(
                     if (i == currentSet) {
                         set(bulbSets[i], onColor)
                     } else {
-                        if (offColor == null) {
-                            relinquish(bulbSets[i])
-                        } else {
+                        if (offColor != null) {
                             set(bulbSets[i], offColor)
                         }
                     }

@@ -7,7 +7,6 @@ class Marit : BaseScript() {
     override suspend fun run() {
         super.run()
 
-        val color = Color(255, 0, 0)
         val fadeDuration = 15
         val duration = 40
         val spacing = 10

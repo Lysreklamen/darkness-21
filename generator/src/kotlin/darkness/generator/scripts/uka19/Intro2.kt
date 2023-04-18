@@ -96,7 +96,6 @@ class Intro2: BaseScript() {
         val strong = Color(255, 0, 0)
         val c = Color(200, 0, 0 )
         val dim = Color(100, 0 , 0)
-        val off = Color(255, 255, 255)
 
         val largest_dist = dist_bulbs(bulb(61), centerHeart)+2*w
 

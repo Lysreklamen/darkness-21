@@ -19,18 +19,16 @@ class WaterFill : BaseScript() {
             var bulbList: ArrayList<BulbRGB>
             for (bulb in letter) {
                 positionBuffer = bulb.position
-                bulbList = (orderedBulbs as java.util.Map<Float, ArrayList<BulbRGB>>).getOrDefault(positionBuffer[1], ArrayList())
+                bulbList = orderedBulbs.getOrDefault(positionBuffer[1], ArrayList())
                 bulbList.add(bulb)
                 orderedBulbs[positionBuffer[1]] = bulbList
             }
 
-            var lastHeight: Float
-            for ((key, value) in orderedBulbs) {
+            for (value in orderedBulbs.values) {
                 for (bulb in value) {
                     rgbFade(bulb, c, t + fade_ext)
                 }
                 skip(t)
-                lastHeight = key
             }
             // TODO: filling drops through thingy missing
             skip(fade_ext)

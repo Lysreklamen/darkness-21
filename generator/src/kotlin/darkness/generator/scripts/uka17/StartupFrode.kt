@@ -33,7 +33,6 @@ class StartupFrode : BaseScript() {
         for (i in 0 until time) {
             for (letter in letters)
                 for (bulb in letter) {
-                    val `val` = Math.random()
                     if (randint(1000) < probability) {
                         var intens = randint(intensvar * 2) - intensvar + intensmid
                         if (intens > 100)

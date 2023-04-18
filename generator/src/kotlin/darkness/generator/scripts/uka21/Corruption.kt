@@ -1,6 +1,5 @@
 package darkness.generator.scripts.uka21
 
-import darkness.generator.api.BulbSet
 import java.awt.Color
 import darkness.generator.api.BulbGroup
 
@@ -9,7 +8,6 @@ class Corruption : BaseScript() {
     override suspend fun run() {
         super.run()
 
-        val band = 0.1f
         val color = Color(128, 0, 128)
 
         val razz = BulbGroup(A.allBulbs.plus(B.allBulbs).plus(C.allBulbs).plus(D.allBulbs))
@@ -18,7 +16,7 @@ class Corruption : BaseScript() {
 
         val razzEnd = razz.allBulbs.maxOf { it.position[0] }
         val razzStart = razz.allBulbs.minOf { it.position[0] }
-        
+
         val atazzEnd = atazz.allBulbs.maxOf { it.position[0] }
         val atazzStart = atazz.allBulbs.minOf { it.position[0] }
 
@@ -49,9 +47,9 @@ class Corruption : BaseScript() {
             }
             skip(1)
             x += step
-            atazzX -= atazzStep      
+            atazzX -= atazzStep
         }
-    
+
 
         skip(5 * 20)
     }

@@ -5,7 +5,7 @@ import java.awt.Color
 
 /**
  * Bitmap plane
- * 
+ *
  * Make sure the physical measures enclose the bulb-group you want affected
  *
  */
@@ -41,19 +41,19 @@ class BitMap(
 	for (bulb in bulbs) {
 		if(bulb.position[0] < x_left)
 		{
-			x_left = bulb.position[0];
+			x_left = bulb.position[0]
 		}
 		if(bulb.position[0] > x_right)
 		{
-			x_right = bulb.position[0];
+			x_right = bulb.position[0]
 		}
 		if(bulb.position[1] < y_bottom)
 		{
-			y_bottom = bulb.position[1];
+			y_bottom = bulb.position[1]
 		}
 		if(bulb.position[1] > y_top)
 		{
-			y_top = bulb.position[1];
+			y_top = bulb.position[1]
 		}
 	}
 
@@ -80,7 +80,7 @@ class BitMap(
 		for (bulb in bulbs) {
 			val posX: Float = bulb.position[0]
 			val posY: Float = bulb.position[1]
-	
+
 			if(posX >= physical_x && posX < physical_x+physical_w && posY >= physical_y && posY < physical_y+physical_h)
 			{
 				val pixelX: Int = ((resolution_x*(posX-physical_x))/physical_w).toInt()

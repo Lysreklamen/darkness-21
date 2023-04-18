@@ -233,8 +233,4 @@ abstract class ScriptBase {
     protected suspend fun rgbFade(bulbSet: BulbSet, red: Int, green: Int, blue: Int, duration: Int) {
         rgbFade(bulbSet, bulbSet.color, Color(red, green, blue), duration)
     }
-
-    /** Legacy function that no longer does anything. */
-    protected fun relinquish(bulbSet: BulbSet) {
-    }
 }

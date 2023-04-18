@@ -19,9 +19,7 @@ class SnowEffect(private val allBulbs: List<BulbRGB>, private val xTarget: Doubl
                 val x = bulb.position[0].toDouble()
                 val y = bulb.position[1].toDouble()
                 val c = 255 * (1 - Math.sqrt(Math.pow(xTarget - x, 2.0) + Math.pow(yTarget - y, 2.0)) / radius)
-                if (c <= 10) {
-                    relinquish(bulb)
-                } else {
+                if (c > 10) {
                     setCoerced(bulb, c, c, c)
                 }
             }

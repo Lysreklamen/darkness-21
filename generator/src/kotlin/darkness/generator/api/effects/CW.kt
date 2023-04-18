@@ -5,9 +5,15 @@ import darkness.generator.api.BulbSet
 import java.awt.*
 import java.util.ArrayList
 import java.util.HashMap
+import java.util.Locale
 
-class CW @JvmOverloads constructor(private val bulbSet: BulbSet, str: String, private val color: Color = Color.LIGHT_GRAY, private val framesPerDit: Int = 3) : EffectBase() {
-    private val str = str.toLowerCase()
+class CW @JvmOverloads constructor(
+    private val bulbSet: BulbSet,
+    str: String,
+    private val color: Color = Color.LIGHT_GRAY,
+    private val framesPerDit: Int = 3,
+) : EffectBase() {
+    private val str = str.lowercase(Locale.getDefault())
 
     var totalFrames: Int = 0
         private set

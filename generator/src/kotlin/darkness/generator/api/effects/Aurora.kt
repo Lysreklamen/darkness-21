@@ -42,12 +42,12 @@ class Aurora(
 
 	fun setAlternateColor(alternate: Color)
 	{
-		alt_color = alternate;
+		alt_color = alternate
 	}
 
 	fun setAlternateColorAmount(amount: Float)
 	{
-		alt_amount = amount;
+		alt_amount = amount
 	}
 
     override fun toString() = "Effect Aurora"

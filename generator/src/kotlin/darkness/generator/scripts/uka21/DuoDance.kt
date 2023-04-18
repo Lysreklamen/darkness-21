@@ -14,9 +14,7 @@ class DuoDance : BaseScript() {
         val nodisplayGroupBulbs = BulbGroup(nodisplayGroup.flatMap { letter -> letter.allBulbs })
         val group2 = listOf(G,H,I,J)
         val group2Bulbs = BulbGroup(group2.flatMap { letter -> letter.allBulbs })
-        
-        val warmWhite = Color(255, 197, 143)
-        val skyBlue = Color(64, 156, 255)
+
         val warmYellow = Color(255, 196, 0)
 
         val startFargeListe = listOf(uke_blå, uke_gull, uke_lilla, uke_turkis, uke_rød, warmYellow)
@@ -44,7 +42,7 @@ class DuoDance : BaseScript() {
         rgbFade(nodisplayGroupBulbs, Color.black, 30)
 
 
-/* 
+/*
         rgbFade(allBulbsGroup, Color.black, 10)
         skip(5)
         rgbFade(group1Bulbs, warmWhite, 20)

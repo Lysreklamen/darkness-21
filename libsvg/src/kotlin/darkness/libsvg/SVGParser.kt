@@ -42,10 +42,10 @@ class SVGParser(val svgFile: File, val flatness: Float, val maxLineLength: Float
         }
         // Windows path hacks
         val extraSlash = if (svgFile.absolutePath.contains(":")) "/" else ""
-        val path = svgFile.absolutePath.replace("\\", "/")
+        val svgFilePath = svgFile.absolutePath.replace("\\", "/")
 
         val sax = SAXSVGDocumentFactory(XMLResourceDescriptor.getXMLParserClassName())
-        val doc = sax.createSVGDocument("file://$extraSlash$path")
+        val doc = sax.createSVGDocument("file://$extraSlash$svgFilePath")
 
         // Create a context to make transforms work
         val userAgent = UserAgentAdapter()
@@ -64,7 +64,6 @@ class SVGParser(val svgFile: File, val flatness: Float, val maxLineLength: Float
         val textGroup = root.getElementById("group_text")
             ?: throw IOException("SVG does not contain a group with the id 'group_text'")
 
-
         // The letters outline will consist of a series of closed polygons
 
         val allBulbs = mutableMapOf<Int, Point>()
@@ -72,8 +71,8 @@ class SVGParser(val svgFile: File, val flatness: Float, val maxLineLength: Float
 
         // Iterate all the <path> elements under the text group
         val letterGroups = textGroup.getElementsByTagName("g")
-        for (i in 0 until letterGroups.length) {
-            val letterGroup = letterGroups.item(i) as Element
+        for (g in 0 until letterGroups.length) {
+            val letterGroup = letterGroups.item(g) as Element
             val paths = letterGroup.getElementsByTagName("path")
             if (paths.length != 1) throw Exception("There must be exactly one path inside a letter group")
             val path = paths.item(0) as SVGOMPathElement
@@ -134,12 +133,12 @@ class SVGParser(val svgFile: File, val flatness: Float, val maxLineLength: Float
 
             // Iterate all bulbs. Either SVG circles or ellipses
             val circles = letterGroup.getElementsByTagName("circle")
-            for (j in 0 until circles.length) {
-                val elem = circles.item(j) as SVGOMCircleElement
+            for (c in 0 until circles.length) {
+                val elem = circles.item(c) as SVGOMCircleElement
 
-                val transform = elem.getTransformToElement(root)
+                val bulbTransform = elem.getTransformToElement(root)
                 val p = (SVGOMPoint(elem.cx.baseVal.value, elem.cy.baseVal.value) as SVGPoint)
-                    .matrixTransform(transform)
+                    .matrixTransform(bulbTransform)
 
                 val bulb = Point(p.x * scale, p.y * scale)
                 if (elem.id != null && elem.id.startsWith("bulb-")) {
@@ -152,16 +151,15 @@ class SVGParser(val svgFile: File, val flatness: Float, val maxLineLength: Float
                 } else {
                     bulbsWithoutId.add(Pair(currentLetter, bulb))
                 }
-
             }
 
             val ellipses = letterGroup.getElementsByTagName("ellipse")
-            for (i in 0 until ellipses.length) {
-                val elem = ellipses.item(i) as SVGOMEllipseElement
+            for (e in 0 until ellipses.length) {
+                val elem = ellipses.item(e) as SVGOMEllipseElement
 
-                val transform = elem.getTransformToElement(root)
+                val bulbTransform = elem.getTransformToElement(root)
                 val p = (SVGOMPoint(elem.cx.baseVal.value, elem.cy.baseVal.value) as SVGPoint)
-                    .matrixTransform(transform)
+                    .matrixTransform(bulbTransform)
 
                 val bulb = Point(p.x * scale, p.y * scale)
                 if (elem.id != null && elem.id.startsWith("bulb-")) {
@@ -175,7 +173,6 @@ class SVGParser(val svgFile: File, val flatness: Float, val maxLineLength: Float
                     bulbsWithoutId.add(Pair(currentLetter, bulb))
                 }
             }
-
         }
 
         // Order the bulbs. Columns first, highest first
@@ -208,7 +205,6 @@ class SVGParser(val svgFile: File, val flatness: Float, val maxLineLength: Float
             }
         }
 
-
         // Find the background outline if it exists
         val backgroundOutlineElement = root.getElementById("background_outline")
         when (backgroundOutlineElement) {
@@ -236,23 +232,19 @@ class SVGParser(val svgFile: File, val flatness: Float, val maxLineLength: Float
             else -> throw NotImplementedError("The background outline can only be a rectangle")
         }
 
-
         // Calculate the bounding box for the all the points found
         var minX = letters.map { it.boundingBox[0] }.minOrNull()!!
-        var minY = letters.map { it.boundingBox[1] }.minOrNull()!!
         var maxX = letters.map { it.boundingBox[0] + it.boundingBox[2] }.maxOrNull()!!
         var maxY = letters.map { it.boundingBox[1] + it.boundingBox[3] }.maxOrNull()!!
 
         for (bulb in allBulbs.values) {
             minX = min(minX, bulb.x)
-            minY = min(minY, bulb.y)
             maxX = max(maxX, bulb.x)
             maxY = max(maxY, bulb.y)
         }
 
         if (!backgroundOutline.isEmpty) {
             minX = min(minX, backgroundOutline.x)
-            minY = min(minY, backgroundOutline.y)
             maxX = max(maxX, backgroundOutline.x + backgroundOutline.width)
             maxY = max(maxY, backgroundOutline.y + backgroundOutline.height)
         }
@@ -297,18 +289,14 @@ class SVGParser(val svgFile: File, val flatness: Float, val maxLineLength: Float
             }
         }
 
-
-
         if (!backgroundOutline.isEmpty) {
             backgroundOutline.x -= cx
             backgroundOutline.y -= cy
         }
-
     }
 
-
     private fun expandLine(p1: Point, p2: Point, maxLength: Float): List<Point> {
-        val output = mutableListOf<Point>();
+        val output = mutableListOf<Point>()
 
         // Calculate the length of the line
         val totalLen = sqrt((p1.x - p2.x).pow(2) + (p1.y - p2.y).pow(2))

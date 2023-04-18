@@ -11,8 +11,6 @@ class IntroAurora : BaseScript() {
         val green = Color(57, 255, 20) // neon green
         val warmWhite = Color(218, 165, 32)
 
-        val longWaitTime = 1 // TODO: increase to number of seconds
-
         effect(Aurora(mergedAllBulbs, warmWhite, 1, 4, 30, 0.0f))
         skip(1 * 20)
 

@@ -8,7 +8,6 @@ import java.util.*
 abstract class BoxTesting : BaseScript() {
     override suspend fun run() {
         val boxId = Integer.parseInt(javaClass.simpleName.replace("[a-zA-Z.]".toRegex(), ""))
-        val boxFile = File("../simulator/patterns/UKA-17/boxes.txt")
         val connectors = ArrayList<Connector>()
         try {
             val scanner = Scanner(File("../simulator/patterns/UKA-17/boxes.txt"))

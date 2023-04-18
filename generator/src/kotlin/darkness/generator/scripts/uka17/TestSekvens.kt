@@ -23,7 +23,6 @@ class TestSekvens : BaseScript() {
         foo.green
 
         var previousLetter: BulbGroup? = null
-        val hei = 0
 
         for (letter in letters) {
             for (i in 0..9) {

@@ -2,6 +2,7 @@ package darkness.generator.api
 
 import darkness.generator.api.effects.EffectBase
 import darkness.generator.output.BaseOutput
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import java.util.LinkedList
 import kotlinx.coroutines.channels.Channel
@@ -105,6 +106,7 @@ object ScriptManager {
      * and has the ability to pause and resume its execution. This is what allows us to
      * "jump out" of a script/effect when it calls `next()` or `skip()`.
      */
+    @OptIn(DelicateCoroutinesApi::class)
     suspend fun registerScript(script: ScriptBase) {
         // Note that the `Channel` class we're using here is a coroutine channel,
         // which is unrelated to a DMX channel. A coroutine channel is
